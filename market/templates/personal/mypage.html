@@ -2,5 +2,86 @@
 
 {% extends 'base.html' %}
 {% block content %}
+<div class="container">   <!-- container css로 위치조정 -->
+    <!-- 프로필 나중에 static 폴더 생기면 css에 옮기기 -->
+    <div class="d-flex align-items-center mb-5">
+        <div class="avatar-circle" style="background-color: #4A90E2; width: 100px; height: 100px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 2.5rem; font-weight: bold;">
+            {{ user.username[0] | upper }}  <!-- 프로필사진에 유저아이디의 첫 글자만 보이게 -->
+        </div>
+        <!-- 유저이름과 상태메시지 -->
+        <div class="ms-4">
+            <div class="d-flex align-items-center">
+                <h3 class="mb-0 me-2">{{ user.username }}</h3>
+                <button class="btn btn-sm btn-outline-secondary">편집</button>
+            </div>
+            <div class="text-muted small">UID: {{ user.id }}</div>
+            <p class="mt-2 mb-0">{{ user.status_message or "상태 메시지가 없습니다." }}</p>
+        </div>
+    </div>
 
+    <hr class="my-4">
+    <!-- 판매 중인 상품 -->
+    <div class="mb-5">
+        <h5 class="fw-bold mb-3">📦 판매 중인 상품</h5>
+        <div class="row row-cols-1 row-cols-md-2 g-3">
+            {% for product in products %}  <!-- 상품 정보 db에서 나중에 컬럼 수정 -->
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="row g-0">
+                        <div class="col-4">
+                            <img src="/static/img/default_product.png" class="img-fluid rounded-start" alt="상품이미지" style="height: 100px; object-fit: cover;">
+                        </div>
+                        <div class="col-8">
+                            <div class="card-body py-2">
+                                <h6 class="card-title mb-1 text-truncate">{{ product.title }}</h6>
+                                <p class="card-text fw-bold text-primary">{{ product.price }}원</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- 찜한 물건 목록 -->
+    <div class="mb-5">
+        <h5 class="fw-bold mb-3">❤️ 찜한 물건 목록</h5>
+        <div class="row row-cols-1 row-cols-md-2 g-3">
+            {% for wish in wishes %}  <!-- 찜 기능 컬럼 생성 후 수정 -->
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="row g-0">
+                        <div class="col-4">
+                            <img src="/static/img/default_wish.png" class="img-fluid rounded-start" alt="찜이미지" style="height: 100px; object-fit: cover;">
+                        </div>
+                        <div class="col-8">
+                            <div class="card-body py-2">
+                                <h6 class="card-title mb-1 text-truncate">{{ wish.product.title }}</h6>
+                                <p class="card-text fw-bold text-danger">{{ wish.product.price }}원</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+        <!-- 구매자 리뷰 -->
+    <div>
+        <h5 class="fw-bold mb-3">💬 구매자 리뷰</h5>
+        <div class="list-group list-group-flush border-top">
+            {% for review in reviews %}   <!-- 리뷰 컬럼 생성 후 수정 -->
+            <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                <div class="me-3">
+                    <p class="mb-1">{{ review.content }}</p>
+                    <small class="text-muted">거래 상품: {{ review.product.title }}</small>
+                </div>
+                <img src="/static/img/default_product.png" class="rounded shadow-sm" width="60" height="60" style="object-fit: cover;">
+            </div>
+            {% endfor %}
+        </div>
+        <button class="btn btn-light w-100 mt-3 py-2 text-muted">더보기</button>
+    </div>
+
+</div>
 {% endblock %}
