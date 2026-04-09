@@ -1,7 +1,9 @@
+
 <!-- 공통 header -->
 <!--header 대신 nav 태그 사용 및 nav 태그 기본 디자인 지정-->
 
 <style>
+
     nav {
         margin-top: 15px;
         min-height: 60px;
@@ -130,7 +132,9 @@
             </button>
         </div>
 
+
         <!-- 햄버거 버튼 -->
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -149,11 +153,12 @@
                 <!-- 로그아웃 상태일 때 로그인, 회원가입 출력  -->
                 {% else %}
                     <li class="nav-item">
+
                         <a class="nav-link active" href="#" style="font-size: 15px; color: #ababfa">로그인</a>
                     </li>
                     <li class="nav-item ms-md-2 mt-2 mt-md-0">
                         <a class="custom-btn" href="#">회원가입</a>
-                    </li>
+
                 {% endif %}
             </ul>
         </div>
