@@ -22,13 +22,8 @@ def create_app():
     from . import models
 
     # 블루프린트
-    from .views import main_view
+    from .views import main_view, auth_views, product_view # view 파일들 임포트
     app.register_blueprint(main_view.bp)
-
-
-    @app.route('/detail')
-    def detail():
-        return render_template('detail.html', product=None)
+    app.register_blueprint(auth_views.bp) # 회원가입/로그인 블루프린트
 
     return app
-
