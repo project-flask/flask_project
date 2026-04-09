@@ -1,60 +1,169 @@
-<!-- 공통 헤더 -->
-<!-- header -> nav 변경 -->
+<style>
 
-<nav class = 'navbar navbar-expand-md bg-body-tertiary'>
-    <div class = 'container-fluid'>
-        <!--  로고  -->
-        <a class = 'navbar-brand' href = 'main.html'><img src = '../img/person.png' alt = 'logo', style = 'height: 30px;'></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+    /* header 대신 nav 태그 사용 및 nav 태그 기본 디자인 지정 */
+    nav {
+        margin-top: 15px;
+        min-height: 60px;
+        background-color: white;
+        border: none !important;
+        position: relative;
+    }
+
+    /* 회원가입, 마이페이지 버튼 */
+    .custom-btn {
+        background-color: #CCCCFF;
+        color: white !important;
+        border-radius: 8px;
+        padding: 6px 18px;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
+        border: none;
+        font-weight: bold;
+    }
+
+    /* 회원가입, 마이페이지 버튼 효과 */
+    .custom-btn:hover {
+        background-color: #B3B3FF;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(204, 204, 255, 0.4);
+    }
+
+    /* 상품 검색하기 버튼 */
+    .search-toggle-btn {
+        background-color: transparent;
+        color: #CCCCFF !important;
+        border: 2px solid #CCCCFF !important;
+        border-radius: 8px;
+        padding: 6px 18px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    /* 상품 검색하기 버튼 효과 */
+    .search-toggle-btn:hover {
+        background-color: #CCCCFF;
+        color: white !important;
+    }
+
+    /* 상품 검색하기 영역 그룹 */
+    .center-search-area {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+    }
+
+    .search-wrapper {
+        background-color: white;
+        border: none !important;
+        width: 100%;
+    }
+
+    /* 검색창 쏠림 방지 및 중앙 정렬용 박스 */
+    .search-inner-box {
+        display: flex;
+        justify-content: center;
+        padding: 15px 0 25px 0;
+        width: 100%;
+    }
+
+    /* 검색 요소 그룹 */
+    .search-input-group {
+        display: flex;
+        width: 70%;
+        min-width: 300px;
+        max-width: 600px;
+        background-color: white;
+        border: 3px solid #CCCCFF;
+        border-radius: 25px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(204, 204, 255, 0.1);
+    }
+
+    /* 검색창 */
+    .custom-search-input {
+        flex: 1;
+        border: none !important;
+        padding: 12px 20px;
+        outline: none;
+    }
+
+    /* 검색창 오른쪽 검색 버튼 */
+    .search-submit-btn {
+        background-color: #CCCCFF;
+        color: white;
+        border: none;
+        padding: 0 25px;
+        font-weight: bold;
+        transition: background-color 0.2s;
+    }
+
+    /* 검색 버튼 효과 */
+    .search-submit-btn:hover {
+        background-color: #B3B3FF;
+    }
+
+    /* 반응형 화면에서 상품 검색하기, 햄버거 메뉴 겹치지 않게 */
+    @media (max-width: 768px) {
+        .center-search-area {
+            position: static;
+            transform: none;
+            margin: 10px 0;
+            text-align: center;
+        }
+    }
+</style>
+
+<nav class="navbar navbar-expand-md">
+    <div class="container-fluid d-flex align-items-center">
+        <a class="navbar-brand" href="/">
+            <img src="{{ url_for('static', filename='img/person.png') }}" alt="logo" style="height: 35px;">
+        </a>
+
+        <!--  상품 검색하기  -->
+        <div class="center-search-area">
+            <button class="btn search-toggle-btn" type="button" data-bs-toggle="collapse" data-bs-target="#searchCollapse">
+                상품 검색하기
+            </button>
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
         </button>
 
-
-        <div class = 'collapse navbar-collapse' id = 'navbarNav'>
-            <!--  검색창  -->
-            <form class="d-flex align-items-center ms-3" role="search">
-                <span class="me-2 text-nowrap">상품 검색</span>
-                <input class="form-control form-control-sm" type="search" placeholder="검색어 입력">
-            </form>
-                <!--  로그인 / 회원가입 <-> 로그아웃  -->
-                <!--{% if g.user %}-->
-                <!--    로그아웃, 마이페이지    -->
-                <ul class = 'navbar-nav ms-auto'>
-                    <!--     로그아웃     -->
-                    <li class = 'nav-item'>
-                        <a class = 'nav-link active'>
-                            로그아웃
-                        </a>
+        <!--  로그인, 로그아웃, 회원가입, 마이페이지  -->
+        <div class="collapse navbar-collapse flex-grow-0" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <!-- 로그인 상태일 때 로그아웃, 마이페이지 출력 -->
+                {% if g.user %}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">로그아웃</a>
                     </li>
-
-                    <!--     마이페이지     -->
-                    <li class = 'nav-item'>
-                        <a class = 'nav-link active fw-bold' style = "background-color: #ccccff; color: white; border-radius: 5px; padding: 5px 15px;" href = '#'>
-                        마이페이지
-                        </a>
+                    <li class="nav-item ms-md-2 mt-2 mt-md-0">
+                        <a class="custom-btn" href="#">마이페이지</a>
                     </li>
-                </ul>
-
-<!--            {% else %}-->
-                <!--      로그인, 회원가입      -->
-                <ul>
-                    <!--     로그인     -->
-                    <li>
-                        <a class = 'nav-link active'>
-
-                        </a>
+                <!-- 로그아웃 상태일 때 로그인, 회원가입 출력  -->
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">로그인</a>
                     </li>
-
-                    <!--     회원가입     -->
-                    <li>
-                        <a class = 'nav-link active'>
-
-                        </a>
+                    <li class="nav-item ms-md-2 mt-2 mt-md-0">
+                        <a class="custom-btn" href="{{ url_for('auth.signup') }}">회원가입</a>
                     </li>
-                </ul>
-<!--            {% endif%}-->
+                {% endif %}
+            </ul>
         </div>
     </div>
 </nav>
 
-<!--확인용-->
+<!-- 상품 검색 눌렀을 때 나오는 검색창 -->
+<div class="collapse search-wrapper" id="searchCollapse">
+    <div class="search-inner-box">
+        <form action="/search" method="GET" class="search-input-group">
+            <input type="text" name="kw" class="custom-search-input" placeholder="찾으시는 상품을 검색해주세요">
+            <button type="submit" class="search-submit-btn">검색</button>
+        </form>
+    </div>
+</div>
