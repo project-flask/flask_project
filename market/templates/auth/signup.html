@@ -3,6 +3,28 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<style>
+     /* 회원가입, 마이페이지 버튼 */
+    .custom-btn {
+        background-color: #CCCCFF;
+        color: white !important;
+        border-radius: 8px;
+        padding: 6px 18px;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
+        border: none;
+        font-weight: bold;
+    }
+
+    /* 회원가입, 마이페이지 버튼 효과 */
+    .custom-btn:hover {
+        background-color: #B3B3FF;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(204, 204, 255, 0.4);
+    }
+</style>
+
 <div class="container">
     <h5 class="my-3 border-bottom pb-2">회원 가입</h5>
     <form method="post" novalidate>
