@@ -12,7 +12,7 @@
         position: relative;
     }
 
-    /* 회원가입, 마이페이지 버튼 */
+    /*  회원가입, 마이페이지 버튼 */
     .custom-btn {
         background-color: #CCCCFF;
         color: white !important;
@@ -20,7 +20,7 @@
         padding: 6px 18px;
         transition: all 0.3s ease;
         display: inline-block;
-        text-decoration: none;
+        text-decoration:none;
         border: none;
         font-weight: bold;
     }
@@ -154,10 +154,10 @@
                 {% else %}
                     <li class="nav-item">
 
-                        <a class="nav-link active" href="#" style="font-size: 15px; color: #ababfa">로그인</a>
+                        <a class="nav-link active" href="#" style="font-size: 15px; color: #ABABFA">로그인</a>
                     </li>
                     <li class="nav-item ms-md-2 mt-2 mt-md-0">
-                        <a class="custom-btn" href="#">회원가입</a>
+                        <a class="custom-btn" href="{{ url_for('auth.signup') }}">회원가입</a>
 
                 {% endif %}
             </ul>

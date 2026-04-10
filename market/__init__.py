@@ -10,20 +10,25 @@ migrate = Migrate()
 def create_app():
     app = Flask(__name__)
 
+    app.config['SECRET_KEY'] = 'dev'
+
     BASE_DIR = os.path.dirname(__file__)
 
-    db_path = os.path.abspath(os.path.join(BASE_DIR, '..', 'market.db'))
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{}'.format(db_path)
+    #db_path = os.path.abspath(os.path.join(BASE_DIR, '..', 'market.db'))
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{}'.format(db_path)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
     migrate.init_app(app, db)
 
-    from . import models
+    #from . import models
 
     # 블루프린트
-    from .views import main_view, auth_views, product_view # view 파일들 임포트
+    from .views import main_view, auth_views, product_view
+
     app.register_blueprint(main_view.bp)
     app.register_blueprint(auth_views.bp) # 회원가입/로그인 블루프린트
+    app.register_blueprint(product_view.bp) # 제품 페이지 블루프린트
+
 
     return app

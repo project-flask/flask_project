@@ -2,30 +2,136 @@
 
 {% extends 'base.html' %}
 {% block content %}
-    <main>
-        <!--   사이드 메뉴, 필터, 카테고리     -->
-        <aside>
 
-        </aside>
-        <!--    상품 출력될 페이지    -->
-        <div>
-            <!--     요소 1행에 4열 배치, 총 5행      -->
-            <div>
+    <style>
+        .custom-btn {
+            background-color: #CCCCFF;
+            color: white !important;
+            border-radius: 8px;
+            padding: 6px 18px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration:none;
+            border: none;
+            font-weight: bold;
+        }
 
-            </div>
-            <div>
+        .custom-btn:hover {
+            background-color: #B3B3FF;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(204, 204, 255, 0.4);
+        }
 
-            </div>
-            <div>
+        .main-container {
+            margin-top: 50px;
+            padding: 40px 0;
+        }
 
-            </div>
-            <div>
+        .product-card {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            background-color: white;
+            cursor: pointer;
+        }
 
-            </div>
-            <div>
+        .product-card:hover {
+            transform: translateY(-8px); /* 위로 슥 올라가게 */
+            box-shadow: 0 10px 20px rgba(204, 204, 255, 0.3); /* 보라색 느낌의 그림자 */
+            border-color: #CCCCFF; /* 테두리도 살짝 보라색으로 */
+        }
 
+        .product-img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background-color: #f8f9fa;
+            object-fit: cover;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .filter-link {
+            text-decoration: none;
+            color: #999;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+
+        .filter-link:hover {
+            color: #CCCCFF;
+            text-decoration: underline;
+        }
+
+        .category-link {
+            display: block;
+            padding: 8px 0;
+            color: #666;
+            text-decoration: none;
+        }
+
+        .category-link:hover { color: #CCCCFF; }
+    </style>
+
+    <main class="container main-container">
+        <div class="row">
+	        <!--   사이드 메뉴, 필터, 카테고리     -->
+            <aside class="col-md-2">
+                <div>
+                    <h6 class="fw-bold mb-3">필터</h6>
+                    <a class="filter-link">거래 가능만 보기</a>
+                </div>
+
+                <div>
+                    <h6 class="fw-bold mb-3">카테고리</h6>
+                    <a href="#" class="category-link">디지털기기</a>
+                    <a href="#" class="category-link">생활가전</a>
+                    <a href="#" class="category-link">가구/인테리어</a>
+                    <a href="#" class="category-link">생활/주방</a>
+                    <a href="#" class="category-link">유아동</a>
+                    <a href="#" class="category-link">유아도서</a>
+                    <a href="#" class="category-link">여성의류</a>
+                    <a href="#" class="category-link">여성잡화</a>
+                    <a href="#" class="category-link">남성패션/잡화</a>
+                    <a href="#" class="category-link">뷰티/미용</a>
+                    <a href="#" class="category-link">스포츠/레저</a>
+                    <a href="#" class="category-link">취미/게임/음반</a>
+                    <a href="#" class="category-link">도서</a>
+                    <a href="#" class="category-link">티켓/교환권</a>
+                    <a href="#" class="category-link">e쿠폰</a>
+                    <a href="#" class="category-link">가공식품</a>
+                    <a href="#" class="category-link">건강기능식품</a>
+                    <a href="#" class="category-link">반려동물용품</a>
+                    <a href="#" class="category-link">식물</a>
+                    <a href="#" class="category-link">기타 중고물품</a>
+                    <a href="#" class="category-link">삽니다</a>
+                </div>
+            </aside>
+
+	        <!-- 상품 등록하기 버튼 ( 로그인 했을 때만 기능 추가해야됨 ) -->
+            <div class="col-md-10">
+                <div class="d-flex justify-content-end mb-4">
+                    <div>
+                        <button class="btn custom-btn" type="button" data-bs-toggle="collapse">
+                            상품 등록하기
+                        </button>
+                    </div>
+                </div>
+
+		        <!--    상품 출력될 페이지    -->
+                <div class="row">
+                    {% for i in range(20) %}
+                    <div class="col-md-3 col-6">
+                        <div class="product-card">
+                            <img src="#" class="product-img" alt="상품">
+                            <div class="product-info p-2 text-center">
+                                <div class="fw-bold text-truncate">상품 제목 {{ i + 1 }}</div>
+                                <div class="text-muted">0원</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
-
     </main>
 {% endblock %}
