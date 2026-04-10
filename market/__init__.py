@@ -22,8 +22,11 @@ def create_app():
     from . import models
 
     # 블루프린트
-    from .views import main_view, auth_views, product_view # view 파일들 임포트
+    from .views import main_view, auth_view, product_view, favorite_view, deal_view, review_view  # view 파일들 임포트
     app.register_blueprint(main_view.bp)
-    app.register_blueprint(auth_views.bp) # 회원가입/로그인 블루프린트
+    app.register_blueprint(auth_view.bp) # 회원가입/로그인 블루프린트
+    app.register_blueprint(favorite_view.bp)
+    app.register_blueprint(deal_view.bp)
+    app.register_blueprint(review_view.bp)
 
     return app
