@@ -62,7 +62,7 @@ def load_logged_in_user():
         g.user = None
     else:
         g.user = User.query.get(user_id)
-        
+
 # 로그아웃 라우팅 함수
 @bp.route('/logout/')
 def logout():
@@ -88,3 +88,4 @@ def find_account():
             flash("일치하는 회원 정보가 없습니다.", "danger")
 
     return render_template('auth/find_account.html')
+
