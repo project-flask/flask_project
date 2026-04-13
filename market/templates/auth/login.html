@@ -1,3 +1,160 @@
+
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    /* 레이아웃: 화면 전체 중앙 정렬 */
+    .login-container {
+        background-color: #f9f9ff;
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    /* 로그인 카드 스타일 */
+    .login-card-custom {
+        display: flex;
+        width: 100%;
+        max-width: 800px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(204, 204, 255, 0.2);
+        overflow: hidden;
+    }
+
+    /* 왼쪽 포인트 영역 */
+    .brand-section {
+        flex: 1;
+        background-color: #CCCCFF;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+    }
+
+    /* 오른쪽 폼 영역 */
+    .form-section {
+        flex: 1.2;
+        padding: 50px 40px;
+    }
+
+    /* 입력창 및 일반 로그인 버튼 */
+    .custom-input {
+        border: 2px solid #eeeeff !important;
+        border-radius: 12px !important;
+        padding: 12px 15px;
+    }
+
+    /* 일반 로그인 버튼 */
+    .login-submit-btn {
+        background-color: #CCCCFF;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 14px;
+        font-weight: bold;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    /* 카카오 로그인 버튼 */
+    .kakao-login-btn {
+        background-color: #FEE500;
+        color: #3C1E1E;
+        border: none;
+        border-radius: 12px;
+        padding: 12px;
+        width: 100%;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: opacity 0.2s;
+    }
+
+    .kakao-login-btn:hover {
+        opacity: 0.9;
+        color: #3C1E1E;
+    }
+
+    .kakao-icon {
+        width: 20px;
+        margin-right: 10px;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+        color: #aaa;
+        font-size: 0.8rem;
+    }
+
+    /* 중간 "또는" 구분선 */
+    .divider::before, .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #eee;
+    }
+
+    .divider span {
+        padding: 0 10px;
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-card-custom">
+
+        <!-- 왼쪽(또는 상단)에 로고와 커뮤니티 이름을 보여주는 영역-->
+        <div class="brand-section d-none d-md-flex">
+            <h2 class="fw-bold">Logo</h2>
+            <p class="mt-2 text-center opacity-75">가치의 선순환, REBORN</p>
+        </div>
+
+        <!--로그인 폼 섹션: 실제 사용자가 정보를 입력하는 오른쪽 영역-->
+        <div class="form-section">
+            <h3 class="fw-bold mb-4">로그인</h3>
+
+            <!-- 보안 및 에러 처리: CSRF 공격 방지 토큰과 입력 오류 메시지 출력-->
+            <form method="post" novalidate>
+                {{ form.csrf_token }}
+                {% include 'form_errors.html' %}
+
+                <!--입력창: Flask-WTF 폼을 사용해 아이디와 비밀번호 칸 생성-->
+                <div class="mb-3">
+                    {{ form.username(class="form-control custom-input", placeholder="아이디") }}
+                </div>
+                <div class="mb-4">
+                    {{ form.password(class="form-control custom-input", placeholder="비밀번호") }}
+                </div>
+
+                <!--로그인 버튼: 입력한 정보를 서버로 제출-->
+                <button type="submit" class="login-submit-btn">로그인</button>
+
+                <!--구분선-->
+                <div class="divider"><span>또는</span></div>
+
+                <!--소셜 로그인: 카카오 API를 이용해 간편 로그인 페이지로 이동-->
+                <a href="/auth/kakao" class="kakao-login-btn">
+                    카카오 로그인하기
+                </a>
+
+                <!--하단 보조 메뉴: 회원가입이나 계정찾기 페이지로 이동하는 링크-->
+                <div class="text-end mt-3" style="font-size: 0.85rem;">
+                    <a href="{{ url_for('auth.signup') }}" style="color: #ababfa; text-decoration: none;">회원가입</a>
+                    <span class="mx-2 text-muted">|</span>
+                    <a href="{{ url_for('auth.find_account') }}" style="color: #ababfa; text-decoration: none;">계정찾기</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
 <!-- 로그인 페이지    -->
 
 {% extends 'base.html' %}
