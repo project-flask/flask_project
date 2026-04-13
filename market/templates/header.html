@@ -5,11 +5,21 @@
 <style>
 
     nav {
-        margin-top: 15px;
-        min-height: 60px;
+        margin-top: 10px;
+        min-height: 100px;
         background-color: white;
         border: none !important;
         position: relative;
+    }
+
+    /* 헤더 고정용 css */
+    .hfixed.active {
+        display: block !important;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        margin-top: 0;
     }
 
     /* 회원가입, 마이페이지 버튼 */
@@ -119,10 +129,10 @@
     }
 </style>
 
-<nav class="navbar navbar-expand-md">
+<nav class="navbar navbar-expand-md hfixed">
     <div class="container-fluid d-flex align-items-center">
         <a class="navbar-brand" href="/">
-            <img src="{{ url_for('static', filename='img/person.png') }}" alt="logo" style="height: 35px;">
+            <img src="{{ url_for('static', filename='img/reborn_logo.png') }}" alt="logo" style="height: 80px;">
         </a>
 
         <!--  상품 검색하기  -->
@@ -145,7 +155,7 @@
                 <!-- 로그인 상태일 때 로그아웃, 마이페이지 출력 -->
                 {% if g.user %}
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">로그아웃</a>
+                        <a class="nav-link active" href="{{ url_for('auth.logout') }}">로그아웃</a>
                     </li>
                     <li class="nav-item ms-md-2 mt-2 mt-md-0">
                         <a class="custom-btn" href="#">마이페이지</a>
@@ -163,6 +173,28 @@
         </div>
     </div>
 </nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const headerFixed = document.querySelector('.hfixed');
+        // nav 높이 미리 측정
+        const navHeight = headerFixed.offsetHeight;
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.scrollY;
+
+            if (scrollTop >= 40) {
+                headerFixed.classList.add('active');
+                // 네비가 뜬 만큼 body에 패딩 부여해서 버튼 요소 겹치는 이슈 제거
+                document.body.style.paddingTop = navHeight + 'px';
+            } else {
+                headerFixed.classList.remove('active');
+                // 고정 풀리면 다시 패딩 0
+                document.body.style.paddingTop = '0';
+            }
+        });
+    });
+</script>
 
 <!-- 상품 검색 눌렀을 때 나오는 검색창 -->
 <div class="collapse search-wrapper" id="searchCollapse">

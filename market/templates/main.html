@@ -53,7 +53,7 @@
         .filter-link {
             text-decoration: none;
             color: #999;
-            font-size: 0.85rem;
+            font-size: 12rem;
             transition: color 0.2s;
         }
 
@@ -76,34 +76,35 @@
         <div class="row">
 	        <!--   사이드 메뉴, 필터, 카테고리     -->
             <aside class="col-md-2">
-                <div>
+                <div style="margin-bottom: 20px;">
                     <h6 class="fw-bold mb-3">필터</h6>
-                    <a class="filter-link">거래 가능만 보기</a>
+                    <input class = "filter-link" type="radio"> 거래 가능만 보기
                 </div>
 
+                <!-- 카테고리 별 번호 부여 -->
                 <div>
                     <h6 class="fw-bold mb-3">카테고리</h6>
-                    <a href="#" class="category-link">디지털기기</a>
-                    <a href="#" class="category-link">생활가전</a>
-                    <a href="#" class="category-link">가구/인테리어</a>
-                    <a href="#" class="category-link">생활/주방</a>
-                    <a href="#" class="category-link">유아동</a>
-                    <a href="#" class="category-link">유아도서</a>
-                    <a href="#" class="category-link">여성의류</a>
-                    <a href="#" class="category-link">여성잡화</a>
-                    <a href="#" class="category-link">남성패션/잡화</a>
-                    <a href="#" class="category-link">뷰티/미용</a>
-                    <a href="#" class="category-link">스포츠/레저</a>
-                    <a href="#" class="category-link">취미/게임/음반</a>
-                    <a href="#" class="category-link">도서</a>
-                    <a href="#" class="category-link">티켓/교환권</a>
-                    <a href="#" class="category-link">e쿠폰</a>
-                    <a href="#" class="category-link">가공식품</a>
-                    <a href="#" class="category-link">건강기능식품</a>
-                    <a href="#" class="category-link">반려동물용품</a>
-                    <a href="#" class="category-link">식물</a>
-                    <a href="#" class="category-link">기타 중고물품</a>
-                    <a href="#" class="category-link">삽니다</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 1) }}" class="category-link">디지털기기</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 2) }}" class="category-link">생활가전</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 3) }}" class="category-link">가구/인테리어</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 4) }}" class="category-link">생활/주방</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 5) }}" class="category-link">유아동</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 6) }}" class="category-link">유아도서</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 7) }}" class="category-link">여성의류</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 8) }}" class="category-link">여성잡화</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 9) }}" class="category-link">남성패션/잡화</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 10) }}" class="category-link">뷰티/미용</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 11) }}" class="category-link">스포츠/레저</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 12) }}" class="category-link">취미/게임/음반</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 13) }}" class="category-link">도서</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 14) }}" class="category-link">티켓/교환권</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 15) }}" class="category-link">e쿠폰</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 16) }}" class="category-link">가공식품</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 17) }}" class="category-link">건강기능식품</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 18) }}" class="category-link">반려동물용품</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 19) }}" class="category-link">식물</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 20) }}" class="category-link">기타 중고물품</a>
+                    <a href="{{ url_for('items.product_categories', category_id = 21) }}" class="category-link">삽니다</a>
                 </div>
             </aside>
 
@@ -111,9 +112,8 @@
             <div class="col-md-10">
                 <div class="d-flex justify-content-end mb-4">
                     <div>
-                        <button class="btn custom-btn" type="button" data-bs-toggle="collapse">
-                            상품 등록하기
-                        </button>
+                        <!-- product_upload -> items/write.html -->
+                        <a href="{{ url_for('items.product_upload') }}" class="custom-btn">상품 등록하기</a>
                     </div>
                 </div>
 
