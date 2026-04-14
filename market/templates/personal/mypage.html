@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+
 <style>
     body {
         background-color: #eeeeff;
@@ -271,6 +272,7 @@
                     <div class="summary-label">받은 리뷰</div>
                     <div class="summary-value">{{ reviews|length }}</div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -310,6 +312,8 @@
         </div>
     </div>
 
+
+    <!-- 찜한 물건 목록 -->
     <div class="mypage-section">
         <h5 class="section-title">❤️ 찜한 물건 목록</h5>
         <div class="row row-cols-1 row-cols-md-2 g-3">
@@ -325,10 +329,12 @@
                             <div class="card-body py-2">
                                 <h6 class="card-title mb-1 text-truncate">{{ wish.item.item_title }}</h6>
                                 <p class="card-text fw-bold text-danger">{{ wish.item.item_price }}원</p>
+
                                 <form method="post"
                                     action="{{ url_for('product.remove_favorite', item_id=wish.item.id) }}">
                                     <button class="btn btn-sm btn-outline-danger">찜 취소</button>
                                 </form>
+
                             </div>
                         </div>
                     </div>
@@ -342,6 +348,8 @@
             {% endfor %}
         </div>
     </div>
+
+    <!-- 구매자 리뷰 -->
 
     <div class="mypage-section">
         <h5 class="section-title">💬 구매자 리뷰</h5>
@@ -362,13 +370,13 @@
                 </div>
                 <div class="review-thumb">
                     <img src="/static/img/default_product.png" alt="상품 이미지">
+
                 </div>
             </div>
             {% else %}
             <div class="empty-box">아직 받은 리뷰가 없습니다.</div>
             {% endfor %}
         </div>
-
         <button class="more-btn">더보기</button>
     </div>
 </div>

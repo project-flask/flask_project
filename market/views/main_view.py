@@ -4,4 +4,6 @@ bp = Blueprint('main', __name__, url_prefix='/')
 
 @bp.route('/')
 def index():
-    return render_template('main.html')
+    items = Item.query.order_by(Item.created_at.desc()).all()
+    return render_template('main.html', items=items)
+

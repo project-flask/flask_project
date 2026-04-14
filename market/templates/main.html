@@ -78,56 +78,52 @@
             <aside class="col-md-2">
                 <div style="margin-bottom: 20px;">
                     <h6 class="fw-bold mb-3">필터</h6>
-                    <input class = "filter-link" type="radio"> 거래 가능만 보기
+                    <a href="{{ url_for('items.product_statuses', item_status_id=1) }}" class="category-link">
+                        거래 가능만 보기
+                    </a>
                 </div>
 
                 <!-- 카테고리 별 번호 부여 -->
                 <div>
                     <h6 class="fw-bold mb-3">카테고리</h6>
-                    <a href="{{ url_for('items.product_categories', category_id = 1) }}" class="category-link">디지털기기</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 2) }}" class="category-link">생활가전</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 3) }}" class="category-link">가구/인테리어</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 4) }}" class="category-link">생활/주방</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 5) }}" class="category-link">유아동</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 6) }}" class="category-link">유아도서</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 7) }}" class="category-link">여성의류</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 8) }}" class="category-link">여성잡화</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 9) }}" class="category-link">남성패션/잡화</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 10) }}" class="category-link">뷰티/미용</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 11) }}" class="category-link">스포츠/레저</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 12) }}" class="category-link">취미/게임/음반</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 13) }}" class="category-link">도서</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 14) }}" class="category-link">티켓/교환권</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 15) }}" class="category-link">e쿠폰</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 16) }}" class="category-link">가공식품</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 17) }}" class="category-link">건강기능식품</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 18) }}" class="category-link">반려동물용품</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 19) }}" class="category-link">식물</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 20) }}" class="category-link">기타 중고물품</a>
-                    <a href="{{ url_for('items.product_categories', category_id = 21) }}" class="category-link">삽니다</a>
+                    {% for cat in all_categories %}
+                    <a href="{{ url_for('items.product_categories', category_id=cat.id) }}" class="category-link">
+                        {{ cat.category_name }}
+                    </a>
+                    {% endfor %}
                 </div>
             </aside>
 
-	        <!-- 상품 등록하기 버튼 ( 로그인 했을 때만 기능 추가해야됨 ) -->
+	        <!-- 상품 등록하기 버튼  -->
             <div class="col-md-10">
-                <div class="d-flex justify-content-end mb-4">
-                    <div>
-                        <!-- product_upload -> items/write.html -->
-                        <a href="{{ url_for('items.product_upload') }}" class="custom-btn">상품 등록하기</a>
-                    </div>
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                    <h3 class="fw-bold mb-4 d-flex justify-content-start">
+                        전체 상품
+                    </h3>
+                <div class="d-flex justify-content-end">
+                    <!-- product_upload -> items/write.html -->
+                    <a href="{{ url_for('items.product_upload') }}" class="custom-btn">상품 등록하기</a>
+                </div>
                 </div>
 
 		        <!--    상품 출력될 페이지    -->
                 <div class="row">
-                    {% for i in range(20) %}
+                    {% for product in product_list %}
                     <div class="col-md-3 col-6">
-                        <div class="product-card">
-                            <img src="#" class="product-img" alt="상품">
-                            <div class="product-info p-2 text-center">
-                                <div class="fw-bold text-truncate">상품 제목 {{ i + 1 }}</div>
-                                <div class="text-muted">0원</div>
+                        <a href="{{ url_for('product.product_details', item_id=product.id) }}" class="text-decoration-none text-dark">
+                            <div class="product-card">
+
+                                <img src="{{ product.images[0].image_url if product.images else '/static/img/default.png' }}"
+                                     class="product-img"
+                                     alt="{{ product.item_title }}">
+
+                                <div class="product-info p-2 text-center">
+                                    <div class="fw-bold text-truncate">{{ product.item_title }}</div>
+
+                                    <div class="text-muted">{{ "{:,}원".format(product.item_price) }}</div>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                     {% endfor %}
                 </div>

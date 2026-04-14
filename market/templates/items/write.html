@@ -68,11 +68,11 @@
     <div class="form-container">
         <h2 class="fw-bold mb-5 text-center">상품 등록하기</h2>
 
-        <form action="#" method="post" enctype="multipart/form-data">
+        <form action="{{ url_for('items.product_upload') }}" method="post" enctype="multipart/form-data">
 
 
             <div class="d-flex justify-content-end">
-                <a href="{{ url_for('main.index') }}" class="custom-btn mb-4">뒤로가기</a>
+                <a href="{{ url_for('main.index') }}" class="custom-btn mb-4">등록 취소하기</a>
             </div>
 
             <div class="mb-4">
@@ -90,27 +90,9 @@
                 <label class="form-label fw-bold">카테고리 선택</label>
                 <select class="form-select" name="category">
                     <option selected disabled>카테고리</option>
-                    <option value="디지털기기">디지털기기</option>
-                    <option value="생활가전">생활가전</option>
-                    <option value="가구/인테리어">가구/인테리어</option>
-                    <option value="생활/주방">생활/주방</option>
-                    <option value="유아동">유아동</option>
-                    <option value="유아도서">유아도서</option>
-                    <option value="여성의류">여성의류</option>
-                    <option value="여성잡화">여성잡화</option>
-                    <option value="남성패션/잡화">남성패션/잡화</option>
-                    <option value="뷰티/미용">뷰티/미용</option>
-                    <option value="스포츠/레저">스포츠/레저</option>
-                    <option value="취미/게임/음반">취미/게임/음반</option>
-                    <option value="도서">도서</option>
-                    <option value="티켓/교환권">티켓/교환권</option>
-                    <option value="e쿠폰">e쿠폰</option>
-                    <option value="가공식품">가공식품</option>
-                    <option value="건강기능식품">건강기능식품</option>
-                    <option value="반려동물용품">반려동물용품</option>
-                    <option value="식물">식물</option>
-                    <option value="기타 중고물품">기타 중고물품</option>
-                    <option value="삽니다">삽니다</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}">{{ cat.category_name }}</option>
+                    {% endfor %}
                 </select>
             </div>
 
@@ -128,7 +110,8 @@
             </div>
 
             <div class="text-center mt-5">
-                <button type="submit" class="upload-btn">상품 등록</button>
+                <button href="{{ url_for('main.index') }}" class="upload-btn" type="submit"> 상품 등록
+                </button>
             </div>
         </form>
     </div>
