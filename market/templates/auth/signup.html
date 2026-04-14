@@ -1,7 +1,24 @@
+<!--회원가입-->
 {% extends 'base.html' %}
 {% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <style>
+    /* 비밀번호 보이기/숨기기 아이콘 스타일 */
+     .pw-container {
+        position: relative;
+    }
+    .pw-container i {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #ccc;
+        z-index: 10;
+        font-size: 1.2rem;
+    }
+
     /* 레이아웃: 화면 중앙 정렬 */
     .signup-container {
         background-color: #f9f9ff;
@@ -23,7 +40,7 @@
         overflow: hidden;
     }
 
-    /* 왼쪽 포인트 영역 (로그인 페이지와 통일) */
+    /* 왼쪽 포인트 영역 */
     .brand-section {
         flex: 1;
         background-color: #CCCCFF;
@@ -80,18 +97,119 @@
         margin-bottom: 5px;
 
     }
+
+    /* 이메일 혹은 카카오 가입 선택 화면용 스타일 */
+    .btn-select-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .btn-choice {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        font-weight: bold;
+        border: none;
+        transition: all 0.2s;
+        text-decoration: none;
+        font-size: 0.95rem;
+    }
+
+    .btn-choice.kakao { background-color: #FEE500; color: #3c1e1e; }
+    .btn-choice.email { background-color: #f8f8ff; color: #666; border: 2px solid #eeeeff; }
+    .btn-choice:hover { transform: translateY(-2px); filter: brightness(0.95); }
+
+    /* 폼 전환 애니메이션 */
+    #email-form-area {
+        display: none;
+        animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 </style>
 
 <div class="signup-container">
     <div class="signup-card-custom">
-
-        <!-- 왼쪽 로고 영역-->
+        <!--왼쪽 브랜드 영역-->
         <div class="brand-section d-none d-md-flex">
             <h2 class="fw-bold">Join Us</h2>
             <p class="mt-2 text-center opacity-75">REBORN과<br>함께하세요!</p>
         </div>
-
+        <!-- 오른쪽 회원가입 영역-->
         <div class="form-section">
+            <h3 class="fw-bold mb-4" id="signup-title" style="color: #555;">회원가입</h3>
+            <!-- 가입 방식 선택 화면 -->
+            <div id="select-area">
+                <p class="text-muted mb-4" style="font-size: 0.9rem;">반가워요! 가입 방법을 선택해주세요.</p>
+                <div class="btn-select-group">
+                    <!-- 카카오 로그인 -->
+                    <a href="{{ url_for('auth.kakao_sign_in') }}" class="btn-choice kakao">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111466.png" width="20" style="margin-right: 8px;">
+                        카카오로 시작하기
+                    </a>
+                    <!-- 이메일 가입 (JS로 폼 전환) -->
+                    <button type="button" class="btn-choice email" onclick="toggleForm()">
+                        이메일로 시작하기
+                    </button>
+                </div>
+            </div>
+            <!--이메일 회원가입 폼-->
+            <div id="email-form-area">
+                <form method="post" novalidate>
+                    {{ form.csrf_token }}
+                    {% include 'form_errors.html' %}
+                    <!-- 아이디 -->
+                    <div class="mb-3">
+                        <label class="form-label">아이디</label>
+                        {{ form.user_id(class="form-control custom-input", placeholder="아이디를 입력하세요") }}
+                    </div>
+                    <!-- 이름 -->
+                    <div class="mb-3">
+                        <label class="form-label">성명</label>
+                        {{ form.username(class="form-control custom-input", placeholder="이름을 입력하세요") }}
+                    </div>
+                    <!-- 비밀번호 / 확인 -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">비밀번호</label>
+                            {{ form.password1(class="form-control custom-input", placeholder="비밀번호") }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">비밀번호 확인</label>
+                            {{ form.password2(class="form-control custom-input", placeholder="비밀번호 확인") }}
+                        </div>
+                    </div>
+                    <!-- 이메일 -->
+                    <div class="mb-3">
+                        <label class="form-label">이메일</label>
+                        {{ form.email(class="form-control custom-input", placeholder="example@email.com") }}
+                    </div>
+                    <!-- 전화번호 -->
+                    <div class="mb-4">
+                        <label class="form-label">전화번호</label>
+                        {{ form.phone(class="form-control custom-input", placeholder="010-0000-0000") }}
+                    </div>
+                    <!-- 제출 -->
+                    <button type="submit" class="signup-submit-btn">가입 완료하기</button>
+                    <!-- 이전으로 -->
+                    <div class="text-center mt-3">
+                        <button type="button" class="btn btn-sm text-muted" style="font-size: 0.8rem; text-decoration: underline;" onclick="toggleForm()">이전으로 돌아가기</button>
+                    </div>
+                </form>
+            </div>
+            <!--로그인 이동 링크-->
+            <div class="text-center mt-4" style="font-size: 0.85rem;">
+                <span class="text-muted">이미 계정이 있으신가요?</span>
+                <a href="{{ url_for('auth.login') }}" style="color: #ababfa; text-decoration: none; font-weight: bold;">로그인</a>
+            </div>
+
             <h3 class="fw-bold mb-4" style="color: #555;">회원 가입</h3>
             <!--CSRF 토큰과 입력 오류(중복 아이디 등) 메시지 출력-->
             <form method="post" novalidate>
@@ -151,8 +269,34 @@
                     </form>
                 </div>
             </form>
+
         </div>
     </div>
 </div>
+
+<!--JS: 화면 전환-->
+<script>
+    function toggleForm() {
+        const selectArea = document.getElementById('select-area');
+        const formArea = document.getElementById('email-form-area');
+        const title = document.getElementById('signup-title');
+
+        if (formArea.style.display === 'none' || formArea.style.display === '') {
+            // 이메일 폼 보여주기
+            selectArea.style.display = 'none';
+            formArea.style.display = 'block';
+            title.innerText = '회원가입';
+        } else {
+            // 선택 화면으로 돌아가기
+            selectArea.style.display = 'block';
+            formArea.style.display = 'none';
+            title.innerText = '회원 가입';
+        }
+    }
+
+    {% if form.errors %}
+        document.addEventListener('DOMContentLoaded', toggleForm);
+    {% endif %}
+</script>
 
 {% endblock %}

@@ -54,7 +54,6 @@ def create_app():
     # 모델 등록
     from . import models
 
-
     # DB 생성 + Seed 데이터
     with app.app_context():
         db.create_all()      # 테이블 없으면 생성
@@ -81,5 +80,6 @@ def create_app():
     # app.register_blueprint(review_view.bp)    # 리뷰
 
     return app
+
 
 

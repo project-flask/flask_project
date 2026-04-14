@@ -1,9 +1,25 @@
+
 <!-- 로그인 페이지    -->
 
 {% extends 'base.html' %}
 {% block content %}
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
+    /* 2. 아이콘 위치를 잡기 위한 전용 스타일 */
+    .pw-container {
+        position: relative;
+    }
+    .pw-container i {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #ccc;
+        z-index: 10;
+        font-size: 1.2rem;
+    }
+
     /* 레이아웃: 화면 전체 중앙 정렬 */
     .login-container {
         background-color: #f9f9ff;
@@ -60,7 +76,13 @@
         font-weight: bold;
         width: 100%;
         margin-bottom: 15px;
+        transition: all 0.3s ease;
     }
+
+    .login-submit-btn:hover {
+        background-color: #B3B3FF;
+        transform: translateY(-2px);
+}
 
     /* 카카오 로그인 버튼 */
     .kakao-login-btn {
@@ -76,12 +98,14 @@
         justify-content: center;
         text-decoration: none;
         transition: opacity 0.2s;
+        transition: all 0.3s ease;
     }
 
     .kakao-login-btn:hover {
-        opacity: 0.9;
+        background-color: #F7E111;
+        transform: translateY(-2px);
         color: #3C1E1E;
-    }
+}
 
     .kakao-icon {
         width: 20px;
@@ -111,42 +135,46 @@
 
 <div class="login-container">
     <div class="login-card-custom">
-
         <!-- 왼쪽(또는 상단)에 로고와 커뮤니티 이름을 보여주는 영역-->
         <div class="brand-section d-none d-md-flex">
             <h2 class="fw-bold">Logo</h2>
             <p class="mt-2 text-center opacity-75">가치의 선순환, REBORN</p>
         </div>
 
-        <!--로그인 폼 섹션: 실제 사용자가 정보를 입력하는 오른쪽 영역-->
+        <!--로그인 폼 섹션: 정보를 입력하는 오른쪽 영역-->
         <div class="form-section">
             <h3 class="fw-bold mb-4">로그인</h3>
 
-            <!-- 보안 및 에러 처리: CSRF 공격 방지 토큰과 입력 오류 메시지 출력-->
+            <!-- CSRF 공격 방지-->
             <form method="post" novalidate>
                 {{ form.csrf_token }}
                 {% include 'form_errors.html' %}
 
-                <!--입력창: Flask-WTF 폼을 사용해 아이디와 비밀번호 칸 생성-->
+                <!--Flask-WTF 폼을 사용해 아이디와 비밀번호 칸 생성-->
                 <div class="mb-3">
                     {{ form.username(class="form-control custom-input", placeholder="아이디") }}
                 </div>
                 <div class="mb-4">
-                    {{ form.password(class="form-control custom-input", placeholder="비밀번호") }}
-                </div>
+    <div class="pw-container">
+        {{ form.password(class="form-control custom-input", placeholder="비밀번호", id="login-password") }}
 
-                <!--로그인 버튼: 입력한 정보를 서버로 제출-->
+        <i class="bi bi-eye-slash" id="togglePassword"></i>
+    </div>
+</div>
+
+                <!--로그인 버튼: 입력한 정보를 서버로 보냄-->
                 <button type="submit" class="login-submit-btn">로그인</button>
 
                 <!--구분선-->
                 <div class="divider"><span>또는</span></div>
 
-                <!--소셜 로그인: 카카오 API를 이용해 간편 로그인 페이지로 이동-->
+                <!--카카오 로그인: 카카오 API를 이용해 간편 로그인 페이지로 이동-->
                 <a href="/auth/kakao" class="kakao-login-btn">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111466.png" width="20" style="margin-right: 8px;">
                     카카오 로그인하기
                 </a>
 
-                <!--하단 보조 메뉴: 회원가입이나 계정찾기 페이지로 이동하는 링크-->
+                <!--하단 메뉴: 회원가입이나 계정찾기 페이지로 이동하는 링크-->
                 <div class="text-end mt-3" style="font-size: 0.85rem;">
                     <a href="{{ url_for('auth.signup') }}" style="color: #ababfa; text-decoration: none;">회원가입</a>
                     <span class="mx-2 text-muted">|</span>
@@ -156,6 +184,28 @@
         </div>
     </div>
 </div>
+
+<!--비밀번호 보이기/숨기기 JS-->
+<script>
+    // 페이지가 로드된 후 실행
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleIcon = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#login-password');
+
+        if (toggleIcon && passwordInput) {
+            toggleIcon.addEventListener('click', function() {
+                // 비밀번호 보이기/숨기기 토글
+                const isPassword = passwordInput.getAttribute('type') === 'password';
+                passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+
+                // 아이콘 모양 바꾸기
+                this.classList.toggle('bi-eye');
+                this.classList.toggle('bi-eye-slash');
+            });
+        }
+    });
+</script>
+
 
 
 {% endblock %}
