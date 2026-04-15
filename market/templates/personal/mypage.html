@@ -235,6 +235,7 @@
         background-color: #ccccff;
         color: white;
     }
+<!--    4월15일 수정함-->
 </style>
 <div class="container mt-4">
     <div class="mypage-section">
@@ -286,13 +287,13 @@
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="row g-0">
                         <div class="col-4">
-                            <img src="/static/img/default_product.png" class="img-fluid rounded-start" alt="상품이미지"
-                                style="height: 100px; object-fit: cover;">
+                    <img src="{{ url_for('static', filename='img/default_product.png') }}" class="img-fluid rounded-start" alt="상품이미지"
+                              style="height: 100px; object-fit: cover;">
                         </div>
                         <div class="col-8">
                             <div class="card-body py-2">
                                 <h6 class="card-title mb-1 text-truncate">
-                                    <a href="{{ url_for('product.detail', id=product.id) }}"
+                                    <a href="{{ url_for('items.product_details', item_id=product.id) }}"
                                         class="text-decoration-none text-dark">
                                         {{ product.item_title }}
                                     </a>
@@ -331,7 +332,7 @@
                                 <p class="card-text fw-bold text-danger">{{ wish.item.item_price }}원</p>
 
                                 <form method="post"
-                                    action="{{ url_for('product.remove_favorite', item_id=wish.item.id) }}">
+                                      action="{{ url_for('items.remove_favorite', item_id=wish.item.id) }}">
                                     <button class="btn btn-sm btn-outline-danger">찜 취소</button>
                                 </form>
 
@@ -369,7 +370,7 @@
                     </small>
                 </div>
                 <div class="review-thumb">
-                    <img src="/static/img/default_product.png" alt="상품 이미지">
+                    <img src="{{ url_for('static', filename='img/default_product.png') }}" alt="상품 이미지">
 
                 </div>
             </div>

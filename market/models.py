@@ -19,37 +19,29 @@ class User(db.Model):
 
 
 
-# [2. 상품 모델]
+# [2. 상품 모델 통합 버전]
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     item_title = db.Column(db.String(100), nullable=False)
     item_price = db.Column(db.Integer, nullable=False)
     item_description = db.Column(db.String(500))
 
-    # 외래키 연결
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    # --- 팀원들 코드에서 가져온 부분 ---
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     status_id = db.Column(db.Integer, db.ForeignKey('item_status.id'), nullable=False)
-
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
-# 상품 (4월14일 수정함)
-class Item(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    item_title = db.Column(db.String(100), unique=False) # 상품 제목
-    item_price = db.Column(db.Integer) # 가격
-    item_reg_datetime = db.Column(db.DateTime(), unique = False) # 상품 업로드 시간
-    item_description = db.Column(db.String(500)) # 상품 내용
-    # 어떤 유저가 올린 상품인지 연결 (외래키)
+    # 1. 판매자 연결 (외래키 및 관계 설정)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship('User', backref=db.backref('item_set'))
 
-
-    # 가격 음수 방지 제약조건
+    # 2. 가격 음수 방지 제약조건 및 테이블 설정
     __table_args__ = (
         db.CheckConstraint('item_price >= 0', name='check_price_positive'),
+        {'extend_existing': True} # 중복 정의 에러 방지용 안전장치
     )
+
 
 
 # [3. 상품 상태 모델]
@@ -108,19 +100,21 @@ class ItemImage(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey('item.id', ondelete='CASCADE'), nullable=False)
     image_url = db.Column(db.String(300))
 
-# 댓글정보테이블
+# 댓글정보테이블 4월15일 수정함
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text(), nullable=False)
     create_date = db.Column(db.DateTime(), nullable=False)
 
+
     # 어떤 상품에 달린 댓글인지 연결 (Foreign Key)
     item_id = db.Column(db.Integer, db.ForeignKey('item.id', ondelete='CASCADE'))
     item = db.relationship('Item', backref=db.backref('comment_set'))
+    # --- 여기부터 새로 추가할 내용 4월15일 ---
+    # 1. 작성자(User)의 번호를 저장할 칸 (Foreign Key)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
 
-    # (선택) 작성자 기능이 있다면 추가
-    # user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
+    # 2. 작성자 모델과 직접 연결 (관계 설정)
+    # backref='comment_set'을 쓰면 유저가 쓴 모든 댓글을 user.comment_set으로 가져올 수 있습니다.
+    user = db.relationship('User', backref=db.backref('comment_set'))
 
-
-    # images라는 이름으로 상품에서 여러 장의 이미지를 불러냄
-    item = db.relationship('Item', backref='images')
