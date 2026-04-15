@@ -117,3 +117,68 @@ def product_categories(category_id):
 def product_statuses(item_status_id):
     item_statuses = Item.query.filter_by(status_id=item_status_id).all()
     return render_template('items/CP.html', items = item_statuses, title = "거래 가능 상품")
+
+
+@bp.route('/comment/create/<int:item_id>', methods=('POST',))
+@login_required
+def comment_create(item_id):
+    item = Item.query.get_or_404(item_id)
+    content = request.form.get('content')
+
+    if content:
+        # 모델 설계도와 똑같이 'create_date'를 사용합니다.
+        comment = Comment(
+            content=content,
+            create_date=datetime.now(),  # 확인하신 모델 변수명과 일치시켰습니다!
+            item=item,
+            user=g.user
+        )
+        db.session.add(comment)
+        db.session.commit()
+
+        print(f"--- 댓글 저장 성공: {content[:10]}... ---")
+
+    return redirect(url_for('items.product_details', item_id=item_id))
+
+# 서버에 삭제 함수 만들기 4월15일 만듬
+@bp.route('/comment/delete/<int:comment_id>')
+@login_required
+def comment_delete(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+
+    if g.user != comment.user:
+        return redirect(url_for('items.product_details', item_id=comment.item.id))
+
+    # ★ 핵심: 삭제하기 전에 돌아갈 상품의 ID를 미리 변수에 저장해둡니다.
+    item_id = comment.item.id
+
+    db.session.delete(comment)
+    db.session.commit()
+
+    # 이제 comment.item.id 대신 미리 뽑아둔 item_id를 사용합니다.
+    return redirect(url_for('items.product_details', item_id=item_id))
+
+ # 서버에 게시글 삭제 함수 4월15일 만듬
+@bp.route('/product/delete/<int:item_id>')
+@login_required
+def product_delete(item_id):
+    item = Item.query.get_or_404(item_id)
+
+    # 보안 체크: 로그인한 사람과 게시글 작성자가 같은지 확인
+    if g.user != item.user:
+        # 본인이 아니면 상세 페이지로 다시 돌려보내기
+        return redirect(url_for('items.product_details', item_id=item_id))
+
+    db.session.delete(item)
+    db.session.commit()
+
+    # 삭제 후에는 메인 페이지로 이동합니다.
+    return redirect(url_for('main.index'))
+
+
+@bp.route('/user/items/<int:user_id>/')
+def user_items(user_id):
+    # Item.created_at으로 변경 완료!
+    item_list = Item.query.filter_by(user_id=user_id).order_by(Item.created_at.desc()).all()
+    return render_template('main.html', item_list=item_list)
+
