@@ -35,9 +35,6 @@
         -webkit-appearance: none;
         margin: 0;
     }
-    input[type=number] {
-        -moz-appearance: textfield; /* 파이어폭스용 */
-    }
 
     /* 등록 버튼 스타일 */
     .upload-btn {
@@ -69,7 +66,6 @@
         <h2 class="fw-bold mb-5 text-center">상품 등록하기</h2>
 
         <form action="{{ url_for('items.product_upload') }}" method="post" enctype="multipart/form-data">
-
 
             <div class="d-flex justify-content-end">
                 <a href="{{ url_for('main.index') }}" class="custom-btn mb-4">등록 취소하기</a>

@@ -27,4 +27,4 @@ def complete_deal(id):
         return str(e), 400
 
     # 처리 완료 후 메인 페이지로 이동
-    return redirect(url_for('main_view.index'))
+    return redirect(url_for('main.index'))

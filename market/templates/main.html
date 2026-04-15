@@ -110,7 +110,7 @@
                 <div class="row">
                     {% for product in product_list %}
                     <div class="col-md-3 col-6">
-                        <a href="{{ url_for('product.product_details', item_id=product.id) }}" class="text-decoration-none text-dark">
+                        <a href="{{ url_for('items.product_details', item_id=product.id) }}" class="text-decoration-none text-dark">
                             <div class="product-card">
 
                                 <img src="{{ product.images[0].image_url if product.images else '/static/img/default.png' }}"

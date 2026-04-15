@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms.fields.simple import StringField, TextAreaField, PasswordField, EmailField
-from wtforms.validators import DataRequired, Length, EqualTo, Email
+from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError
+from market.models import User
 
 
 # 회원가입 폼
@@ -10,7 +11,11 @@ class UserCreateForm(FlaskForm):
     ])
     username = StringField('사용자이름', validators=[
         DataRequired(message='이름을 입력해주세요.'),
-        Length(min=3, max=25, message='이름은 3~25자여야 합니다.')
+        Length(min=2, max=25, message='이름은 2~25자여야 합니다.')
+    ])
+    nickname = StringField('닉네임', validators=[
+        DataRequired('닉네임은 필수입니다.'),
+        Length(min=2, max=10, message='닉네임은 2~10자여야 합니다.')
     ])
     password1 = PasswordField('비밀번호', validators=[
         DataRequired(message='비밀번호를 입력해주세요.'),
@@ -26,6 +31,17 @@ class UserCreateForm(FlaskForm):
     phone = StringField('전화번호', validators=[
         DataRequired(message='전화번호를 입력해주세요.')
     ])
+
+    # --- 여기서부터 중복 체크 함수 ---
+    # 아이디 중복 체크
+    def validate_user_id(self, field):
+        if User.query.filter_by(login_id=field.data).first():
+            raise ValidationError('이미 사용 중인 아이디입니다.')
+
+    # 닉네임 중복 체크
+    def validate_nickname(self, field):
+        if User.query.filter_by(nickname=field.data).first():
+            raise ValidationError('이미 사용 중인 닉네임입니다.')
 
 
 # 로그인 폼

@@ -4,7 +4,7 @@
 
 <style>
 
-    nav 
+    nav {
         min-height: 60px;
         margin-top: 10px;
         background-color: white;
@@ -176,8 +176,8 @@
 <!-- 상품 검색 눌렀을 때 나오는 검색창 -->
 <div class="collapse search-wrapper search" id="searchCollapse">
     <div class="search-inner-box">
-        <form action="/search" method="GET" class="search-input-group">
-            <input type="text" name="kw" class="custom-search-input" placeholder="찾으시는 상품을 검색해주세요">
+        <form action="{{ url_for('items._list') }}" method="GET" class="search-input-group">
+            <input type="text" name="kw" value="{{ kw or '' }}" class="custom-search-input" placeholder="찾으시는 상품을 검색해주세요">
             <button type="submit" class="search-submit-btn">검색</button>
         </form>
     </div>

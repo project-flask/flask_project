@@ -4,6 +4,31 @@
 {% block content %}
 
 <style>
+
+    .product-card {
+        border: 1px solid #eee;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+        background-color: white;
+        cursor: pointer;
+        overflow: hidden; /* 이미지가 튀어나가지 않게 */
+    }
+
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 20px rgba(204, 204, 255, 0.3);
+        border-color: #CCCCFF;
+    }
+
+    .product-img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        background-color: #f8f9fa;
+        object-fit: cover;
+        border-radius: 12px 12px 0 0;
+    }
+
     .category-link {
         display: block;
         padding: 8px 0;
@@ -71,6 +96,31 @@
                 <a href="{{ url_for('main.index') }}" class="custom-btn mb-4">메인으로</a>
             </div>
             <div class="row">
+                {% for product in product_list %}
+                <div class="col-md-3 col-6 mb-4">
+                    <a href="{{ url_for('items.product_details', item_id=product.id) }}" class="text-decoration-none text-dark">
+                        <div class="product-card">
+                            <img src="{{ product.images[0].image_url if product.images else '/static/img/default.png' }}"
+                                 class="product-img"
+                                 alt="{{ product.item_title }}">
+
+                            <div class="product-info p-3 text-center">
+                                <div class="fw-bold text-truncate mb-1">{{ product.item_title }}</div>
+                                <div class="text-muted" style="font-size: 0.9rem;">
+                                    {{ "{:,}원".format(product.item_price) }}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col-12 text-center py-5">
+                    <div class="py-5" style="background-color: #f8f9fa; border-radius: 12px; border: 1px dashed #ccc;">
+                        <p class="text-muted mb-0">등록된 상품이 없습니다.</p>
+                    </div>
+                </div>
+
+                {% endfor %}
             </div>
         </div>
     </div>

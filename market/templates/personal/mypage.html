@@ -2,64 +2,118 @@
 {% block content %}
 
 <style>
+    /* 마이페이지 전체 배경 */
+    /* 배경 색깔 변경 4월15일 */
     body {
-        background-color: #eeeeff;
-    }
-
-    .mypage-section {
-
         background-color: #ffffff;
-        border: 1px solid #e8e8ff;
-        border-radius: 18px;
-        padding: 24px;
-        margin-bottom: 24px;
-        box-shadow: 0 4px 14px rgba(171, 171, 250, 0.08);
+        color: #222;
     }
 
+    /* 너무 넓어보이는 콘텐츠 영역 감소 4월15일 */
+    .container.mt-4 {
+        max-width: 1120px;
+        padding-top: 24px;
+        padding-bottom: 48px;
+    }
+
+
+    /* 공통 섹션 카드 */
+    /* 크기세부조절 4월15일 */
+    .mypage-section {
+        background-color: #ffffff;
+        border: 1px solid #f0f1f7;
+        border-radius: 22px;
+        padding: 28px;
+        margin-bottom: 28px;
+        box-shadow: 0 10px 30px rgba(119, 119, 170, 0.08);
+    }
+
+    /* 섹션 제목 */
+    /* 크기세부조절 4월15일 */
     .section-title {
-        font-weight: 700;
-        font-size: 20px;
-        margin-bottom: 16px;
+        font-weight: 800;
+        font-size: 22px;
+        margin-bottom: 20px;
+        color: #2d2d44;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
+
+
+    /* 프로필 상단 영역 */
+    /* 크기세부조절 4월15일 */
     .profile-top {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 24px;
-        flex-wrap: wrap;
+        gap: 28px;
+        flex-wrap: nowrap;
     }
 
+    /* 프로필 왼쪽 4월15일 생성 */
+    .profile-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        min-width: 0;
+        flex: 1;
+    }
+
+    /* 오른쪽 활동 요약 */
     .profile-summary {
         display: flex;
         gap: 12px;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        margin-left: auto;
+        flex-shrink: 0;
     }
 
+    /* 활동 요약 카드 1개 */
+    /* 크기세부조절 4월15일 */
     .summary-box {
-        min-width: 110px;
-        background-color: #f8f8ff;
-        border: 1px solid #ddddff;
-        border-radius: 14px;
-        padding: 14px 18px;
+        min-width: 120px;
+        background: #ffffff;
+        border: 1px solid #e3dcff;
+        border-radius: 18px;
+        padding: 16px 18px;
         text-align: center;
+        box-shadow: 0 8px 20px rgba(124, 111, 246, 0.08);
+        transition: all 0.2s ease;
+        cursor: pointer;
+        transition: all 0.2s ease;
     }
 
+    .summary-box:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 28px rgba(124, 111, 246, 0.14);
+        border-color: #cfc8ff
+    }
+
+    .summary-box:active {
+        transform: scale(0.97);
+    }
+
+    /* 활동 요약 카드 제목 */
     .summary-label {
-        font-size: 13px;
-        color: #8a8aa8;
-        margin-bottom: 6px;
+        color: #8f89b3;
+        font-weight: 600;
     }
 
+    /* 활동 요약 카드 숫자 */
     .summary-value {
-        font-size: 22px;
-        font-weight: 700;
-        color: #7d7df0;
+        color: #6f61f2;
+        font-weight: 800;
     }
 
+
+    /* 프로필 원형 이미지 */
+    /* 현재는 이미지 대신 이름 첫 글자를 표시 */
+    /* 크기세부조절 4월15일 */
     .avatar-circle {
         background: linear-gradient(135deg, #ababfa, #ccccff);
-        box-shadow: 0 8px 18px rgba(171, 171, 250, 0.25);
+        box-shadow: 0 12px 28px rgba(124, 111, 246, 0.24);
         width: 100px;
         height: 100px;
         border-radius: 50%;
@@ -71,6 +125,7 @@
         font-weight: bold;
     }
 
+    /* 내 정보 수정 버튼  4월15일 명칭 변경으로 인해 수정*/
     .profile-edit-btn {
         background-color: white;
         color: #ababfa;
@@ -87,28 +142,151 @@
         color: #8f8ff7;
     }
 
+
+    /* 상태 메시지 박스 */
+    /* 크기세부조절 4월15일 */
     .profile-status-box {
-        margin-top: 14px;
-        background-color: #f8f8ff;
-        border: 1px solid #ddddff;
-        border-radius: 12px;
-        padding: 10px 14px;
+        margin-top: 16px;
+        background: linear-gradient(180deg, #fbfaff 0%, #f4f2ff 100%);
+        border: 1px solid #ddd6ff;
+        border-radius: 14px;
+        padding: 12px 15px;
         display: inline-block;
-        min-width: 220px;
-        max-width: 320px;
+        min-width: 250px;
+        max-width: 340px;
     }
 
-    .status-label {
-        display: block;
+    /* 상태 메시지 상단 */
+    .status-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+
+    /* 상태 메시지 수정 버튼 */
+    .status-edit-btn {
+        background: transparent;
+        border: none;
         font-size: 12px;
-        color: #8a8aa8;
-        margin-bottom: 4px;
+        font-weight: 600;
+        color: #7c6ff6;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .status-edit-btn:hover {
+        background-color: #f4f2ff;
+        color: #6758ee;
+    }
+
+    .status-edit-btn::after {
+        content: "✏️";
+        margin-left: 4px;
+        font-size: 11px;
+    }
+
+    /* 크기세부조절 4월15일 */
+    .status-label {
+        color: #8b84b7;
+        font-weight: 600;
     }
 
     .status-text {
-        font-size: 15px;
-        color: #555;
+        color: #4b4568;
         font-weight: 500;
+    }
+
+    /* 수정모드 css 4월 15일생성 */
+    .status-edit-mode {
+        display: none;
+        margin-top: 4px;
+    }
+
+    /* 상태 메시지 입력창 */
+    .status-input {
+        width: 100%;
+        border: 1px solid #ddd6ff;
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-size: 14px;
+        color: #4b4568;
+        background-color: #ffffff;
+        outline: none;
+        transition: all 0.2s ease;
+    }
+
+    .status-input:focus {
+        border-color: #7c6ff6;
+        box-shadow: 0 0 0 3px rgba(124, 111, 246, 0.10);
+    }
+
+    /* 저장/취소 버튼 영역 */
+    .status-action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    /* 저장 버튼 */
+    .status-save-btn {
+        background: #7c6ff6;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .status-save-btn:hover {
+        background: #6758ee;
+    }
+
+    /* 취소 버튼 */
+    .status-cancel-btn {
+        background: #f4f2ff;
+        color: #6758ee;
+        border: 1px solid #ddd6ff;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .status-cancel-btn:hover {
+        background: #ebe7ff;
+    }
+
+
+    /* 상품 / 찜 카드 공통 */
+    /* 상품 등록시 나올 디자인 4월15일 */
+    .card.h-100.border-0.shadow-sm {
+        border: 1px solid #f0eefb !important;
+        border-radius: 18px !important;
+        box-shadow: 0 8px 18px rgba(124, 111, 246, 0.06) !important;
+        transition: all 0.2s ease;
+    }
+
+    .card.h-100.border-0.shadow-sm:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 28px rgba(124, 111, 246, 0.12) !important;
+    }
+
+    .card-title a:hover {
+        color: #6f61f2 !important;
+    }
+
+    .card-text.fw-bold.text-primary,
+    .card-text.fw-bold.text-danger {
+        color: #6f61f2 !important;
     }
 
     .mypage-card {
@@ -123,20 +301,28 @@
         box-shadow: 0 8px 18px rgba(171, 171, 250, 0.12);
     }
 
+    /* 찜 취소 버튼 */
+    /* 크기세부조절 4월15일 */
     .favorite-remove-btn {
-        background-color: #eeeeff;
-        color: #7d7df0;
-        border: 1px solid #ccccff;
-        border-radius: 8px;
+        background-color: #f4f2ff;
+        color: #6f61f2;
+        border: 1px solid #ddd6ff;
+        border-radius: 10px;
         font-size: 13px;
-        padding: 4px 10px;
+        font-weight: 700;
+        padding: 6px 12px;
         transition: all 0.2s ease;
     }
 
     .favorite-remove-btn:hover {
-        background-color: #ccccff;
+        background-color: #6f61f2;
         color: white;
+        border-color: #6f61f2;
     }
+
+
+    /* 빈 상태 메시지 박스 */
+    /* 리뷰가 없을 때 사용 */
 
     .empty-box {
         background-color: #f8f8ff;
@@ -148,6 +334,7 @@
         font-size: 15px;
     }
 
+    /* 더미상품 */
     .empty-product-card {
         width: 240px;
         border: 1px dashed #ccccff;
@@ -171,12 +358,22 @@
         line-height: 1.5;
     }
 
+    /* 리뷰 목록 */
+
+    /* 리뷰숫자 4월15일*/
+    .review-count {
+        font-size: 14px;
+        font-weight: 600;
+        color: #8a8aa8;
+    }
+
     .review-list {
         display: flex;
         flex-direction: column;
         gap: 12px;
     }
 
+    /* 리뷰 카드 1개 */
     .review-card {
         display: flex;
         justify-content: space-between;
@@ -194,6 +391,7 @@
         transform: translateY(-2px);
     }
 
+    /* 리뷰 텍스트 영역 */
     .review-text {
         flex: 1;
         min-width: 0;
@@ -211,6 +409,7 @@
         font-size: 13px;
     }
 
+    /* 리뷰 상품 썸네일 */
     .review-thumb img {
         width: 56px;
         height: 56px;
@@ -219,91 +418,175 @@
         border: 1px solid #ddddff;
     }
 
+    /* 리뷰 더보기 버튼 */
+    /* 크기세부조절 4월15일 */
     .more-btn {
         width: 100%;
-        margin-top: 16px;
-        background-color: #eeeeff;
-        color: #6f6ff2;
-        border: none;
-        border-radius: 12px;
-        padding: 12px;
-        font-weight: 600;
+        margin-top: 18px;
+        background: linear-gradient(90deg, #f3f0ff 0%, #ece8ff 100%);
+        color: #6f61f2;
+        border: 1px solid #ddd6ff;
+        border-radius: 14px;
+        padding: 13px;
+        font-weight: 700;
         transition: all 0.2s ease;
     }
 
     .more-btn:hover {
-        background-color: #ccccff;
-        color: white;
+        background: linear-gradient(90deg, #7c6ff6 0%, #695cef 100%);
+        color: #ffffff;
+        border-color: #7c6ff6;
+        box-shadow: 0 12px 24px rgba(124, 111, 246, 0.22);
     }
+
+    /* 더 보기 버튼 기능 4월15일 생성*/
+    /* 6번째 리뷰부터 숨김 */
+    .review-hidden {
+        display: none;
+    }
+
+    /* 펼쳐질 때 */
+    .review-item {
+        animation: fadeInUp 0.25s ease;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 767px) {
+        .profile-top {
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .profile-summary {
+            width: 100%;
+            margin-left: 0;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+    }
+<!--    4월15일 수정함-->
 </style>
+
 <div class="container mt-4">
+
+    <!-- 나의 정보 -->
     <div class="mypage-section">
         <h5 class="section-title">👤 나의 정보</h5>
 
         <div class="profile-top">
+
+            <!-- 프로필 이미지, 사용자 기본 정보 -->
             <div class="profile-left d-flex align-items-center">
+                <!--원형 프로필 -->
                 <div class="avatar-circle">
                     {{ user.username[0] | upper }}
                 </div>
 
                 <div class="ms-4">
+                    <!-- 이름, 편집 버튼 -->
                     <div class="d-flex align-items-center">
                         <h3 class="mb-0 me-2">{{ user.username }}</h3>
-                        <button class="profile-edit-btn">편집</button>
+                        <!-- 회원 정보 수정으로 이동, 역활을 명확하게 하기 위해 편집버튼 이름 변경 4월15일 수정-->
+                        <button class="profile-edit-btn" type="button"
+                            onclick="location.href='{{ url_for('mypage.edit_profile') }}'">내 정보 수정</button>
                     </div>
+
+                    <!-- UID -->
                     <div class="text-muted small">UID: {{ user.id }}</div>
+
+                    <!-- 상태 메시지 수정 버튼 추가 4월 15일-->
                     <div class="profile-status-box mt-3">
-                        <span class="status-label">상태 메시지</span>
-                        <p class="status-text mb-0">마이페이지입니다.</p>
+                        <div class="status-header">
+                            <span class="status-label">상태 메시지</span>
+                            <button class="status-edit-btn" type="button" id="statusEditBtn">수정</button>
+                        </div>
+                        <!--수정버튼 기능 활성화 4월15일 생성-->
+                        <div id="statusViewMode">
+                            <!--상태 메시지 기본상태 설정 4월15일 수정-->
+                            <p class="status-text mb-0" id="statusText">
+                                {{ user.status_message if user.status_message else "상태 메시지를 입력하세요" }}
+                            </p>
+                        </div>
+
+                        <!-- 수정 모드 -->
+                        <div id="statusEditMode" class="status-edit-mode">
+                            <input type="text" id="statusInput" class="status-input" maxlength="50"
+                                value="{{ user.status_message if user.status_message else '' }}"
+                                placeholder="상태 메시지를 입력하세요">
+                            <div class="status-action-buttons">
+                                <button type="button" class="status-save-btn" id="statusSaveBtn">저장</button>
+                                <button type="button" class="status-cancel-btn" id="statusCancelBtn">취소</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="profile-summary">
-                <div class="summary-box">
-                    <div class="summary-label">판매 상품</div>
-                    <div class="summary-value">{{ products|length }}</div>
+                <!--활동 요약 -->
+                <div class="profile-summary">
+                    <!-- 판매 상품 클릭하면 판매 중인 상품 목록으로 스크롤 이동 -->
+                    <div class="summary-box" onclick="scrollToSection('productSection')">
+                        <div class="summary-label">판매 완료</div>
+                        <div class="summary-value">{{ products|length }}</div>
+                    </div>
+                    <!-- 찜한 상품 클릭하면 찜한 상품 목록 스크롤 이동 -->
+                    <div class="summary-box" onclick="scrollToSection('wishSection')">
+                        <div class="summary-label">찜한 상품</div>
+                        <div class="summary-value">{{ wishes|length }}</div>
+                    </div>
+                    <!-- 받은 리뷰를 클릭하면 구매자 리뷰로 스크롤 이동 -->
+                    <div class="summary-box" onclick="scrollToSection('reviewSection')">
+                        <div class="summary-label">받은 리뷰</div>
+                        <div class="summary-value">{{ reviews|length }}</div>
+                    </div>
                 </div>
-                <div class="summary-box">
-                    <div class="summary-label">찜한 상품</div>
-                    <div class="summary-value">{{ wishes|length }}</div>
-                </div>
-                <div class="summary-box">
-                    <div class="summary-label">받은 리뷰</div>
-                    <div class="summary-value">{{ reviews|length }}</div>
-                </div>
-
             </div>
         </div>
     </div>
     <hr class="my-4">
 
-    <div class="mypage-section">
-        <h5 class="section-title">📦 판매 중인 상품</h5>
+    <!-- 판매 중인 상품 -->
+    <div class="mypage-section" id="productSection">
+        <h5 class="section-title">📦 판매 중인 상품<span class="review-count">({{ products|length }})</span></h5>
+
         <div class="row row-cols-1 row-cols-md-2 g-3">
             {% for product in products %}
             <div class="col">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="row g-0">
+                        <!-- 상품 이미지 -->
                         <div class="col-4">
-                            <img src="/static/img/default_product.png" class="img-fluid rounded-start" alt="상품이미지"
-                                style="height: 100px; object-fit: cover;">
+                    <img src="{{ url_for('static', filename='img/default_product.png') }}" class="img-fluid rounded-start" alt="상품이미지"
+                              style="height: 100px; object-fit: cover;">
                         </div>
+
+                        <!-- 상품 정보 -->
                         <div class="col-8">
                             <div class="card-body py-2">
                                 <h6 class="card-title mb-1 text-truncate">
-                                    <a href="{{ url_for('product.detail', id=product.id) }}"
+                                    <a href="{{ url_for('items.product_details', item_id=product.id) }}"
                                         class="text-decoration-none text-dark">
                                         {{ product.item_title }}
                                     </a>
                                 </h6>
-                                <p class="card-text fw-bold text-primary">{{ product.item_price }}원</p>
+                                <p class="card-text fw-bold text-primary">{{ "{:,}원".format(product.item_price) }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             {% else %}
+            <!-- 상품이 없을 때 -->
             <div class="empty-product-card">
                 <div class="empty-product-image"></div>
                 <div class="empty-product-text">등록한 상품이 없습니다.</div>
@@ -312,35 +595,45 @@
         </div>
     </div>
 
-
     <!-- 찜한 물건 목록 -->
-    <div class="mypage-section">
-        <h5 class="section-title">❤️ 찜한 물건 목록</h5>
+    <div class="mypage-section" id="wishSection">
+        <h5 class="section-title">❤️ 찜한 물건 목록<span class="review-count">({{ wishes|length }})</span></h5>
+
         <div class="row row-cols-1 row-cols-md-2 g-3">
             {% for wish in wishes %}
             <div class="col">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="row g-0">
+                        <!-- 찜한 상품 이미지 -->
                         <div class="col-4">
                             <img src="/static/img/default_wish.png" class="img-fluid rounded-start" alt="찜이미지"
                                 style="height: 100px; object-fit: cover;">
                         </div>
+
+                        <!-- 찜한 상품 정보 -->
                         <div class="col-8">
                             <div class="card-body py-2">
                                 <h6 class="card-title mb-1 text-truncate">{{ wish.item.item_title }}</h6>
+                                <p class="card-text fw-bold text-danger">{{ "{:,}원".format(wish.item.item_price) }}</p>
+
+                                <h6 class="card-title mb-1 text-truncate">
+                                    {{ wish.item.item_title }}
+                                </h6>
                                 <p class="card-text fw-bold text-danger">{{ wish.item.item_price }}원</p>
 
+                                <!-- 찜 취소 -->
                                 <form method="post"
-                                    action="{{ url_for('product.remove_favorite', item_id=wish.item.id) }}">
-                                    <button class="btn btn-sm btn-outline-danger">찜 취소</button>
-                                </form>
 
+                                    action="{{ url_for('product.remove_favorite', item_id=wish.item.id) }}">
+                                    <button class="favorite-remove-btn">찜 취소</button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             {% else %}
+            <!-- 찜한 상품이 없을 때 -->
             <div class="empty-product-card">
                 <div class="empty-product-image"></div>
                 <div class="empty-product-text">찜한 상품이 없습니다.</div>
@@ -350,13 +643,16 @@
     </div>
 
     <!-- 구매자 리뷰 -->
+    <!-- 이동을 위해 id부여 -->
+    <div class="mypage-section" id="reviewSection">
+        <!-- 구매자 리뷰 옆에 받은 리뷰수 표시하기 4월15일 -->
+        <h5 class="section-title">💬 구매자 리뷰<span class="review-count">({{ reviews|length }})</span></h5>
 
-    <div class="mypage-section">
-        <h5 class="section-title">💬 구매자 리뷰</h5>
-
-        <div class="review-list">
+        <div class="review-list" id="reviewList">
+            <!--리뷰 5개만 보이기 4월15일 수정-->
             {% for review in reviews %}
-            <div class="review-card">
+            <div class="review-card review-item {% if loop.index > 5 %}review-hidden{% endif %}">
+                <!-- 리뷰 텍스트 -->
                 <div class="review-text">
                     <p class="review-content">{{ review.content }}</p>
                     <small class="review-item-name">
@@ -368,16 +664,104 @@
                         {% endif %}
                     </small>
                 </div>
+
+                <!-- 상품 이미지 -->
                 <div class="review-thumb">
-                    <img src="/static/img/default_product.png" alt="상품 이미지">
+
+                    <img src="{{ url_for('static', filename='img/default_product.png') }}" alt="상품 이미지">
+
 
                 </div>
             </div>
             {% else %}
+            <!-- 리뷰가 없을 때 -->
             <div class="empty-box">아직 받은 리뷰가 없습니다.</div>
             {% endfor %}
         </div>
-        <button class="more-btn">더보기</button>
+
+        <!-- 리뷰 더보기 -->
+        <!-- 리뷰가 5개 초과 했을 경우에만 더 보기 버튼이 나오게 4월15일 -->
+        {% if reviews|length > 5 %}
+        <button class="more-btn" id="toggleReviewBtn" type="button">더 보기</button>
+        {% endif %}
     </div>
-</div>
+</div>>
+
+<!-- 더 보기 버튼을 누르면 펼쳐지게  4월15일 생성-->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.getElementById('toggleReviewBtn');
+        const hiddenReviews = document.querySelectorAll('.review-hidden');
+
+        if (!toggleBtn) return;
+
+        let expanded = false;
+
+        toggleBtn.addEventListener('click', function () {
+            hiddenReviews.forEach(function (review) {
+                review.style.display = expanded ? 'none' : 'flex';
+            });
+
+            expanded = !expanded;
+            toggleBtn.textContent = expanded ? '접기' : '더보기';
+        });
+    });
+    // 받은 리뷰를 클릭하면 구매자 리뷰로 스크롤 이동 4월15일
+    function scrollToSection(id) {
+        const section = document.getElementById(id);
+        if (!section) return;
+
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    //상태메시지 수정버튼 활성화 4월 15일
+    document.addEventListener('DOMContentLoaded', function () {
+        const editBtn = document.getElementById('statusEditBtn');
+        const saveBtn = document.getElementById('statusSaveBtn');
+        const cancelBtn = document.getElementById('statusCancelBtn');
+
+        const viewMode = document.getElementById('statusViewMode');
+        const editMode = document.getElementById('statusEditMode');
+
+        const statusText = document.getElementById('statusText');
+        const statusInput = document.getElementById('statusInput');
+
+        if (!editBtn || !saveBtn || !cancelBtn) return;
+
+        let originalText = statusText.textContent.trim();
+        function getRealValue(text) {
+            return text === "상태 메시지를 입력하세요" ? "" : text;
+        }
+
+        editBtn.addEventListener('click', function () {
+            statusInput.value = getRealValue(originalText);
+            viewMode.style.display = 'none';
+            editMode.style.display = 'block';
+            editBtn.style.display = 'none';
+            statusInput.focus();
+        });
+
+        cancelBtn.addEventListener('click', function () {
+            statusInput.value = getRealValue(originalText);
+            editMode.style.display = 'none';
+            viewMode.style.display = 'block';
+            editBtn.style.display = 'inline-block';
+        });
+
+        saveBtn.addEventListener('click', function () {
+            const newText = statusInput.value.trim();
+
+            if (newText === '') {
+                statusText.textContent = "상태 메시지를 입력하세요";
+                originalText = "상태 메시지를 입력하세요";
+            } else {
+                statusText.textContent = newText;
+                originalText = newText;
+            }
+
+            editMode.style.display = 'none';
+            viewMode.style.display = 'block';
+            editBtn.style.display = 'inline-block';
+        });
+    });
+</script>
 {% endblock %}

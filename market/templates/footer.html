@@ -51,6 +51,87 @@
         color: #999;
         font-size: 0.8rem;
     }
+
+    /* modal 기능 요소 style */
+    .modal_style_pkg {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal_notice_main {
+        width: 690px;
+        height: 350px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 3px;
+        box-shadow: 5px 5px rgba(0,0,0,0.1);
+    }
+
+    .modal_notice_title {
+        width: 580px;
+        height: 100px;
+        margin: 0 auto;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid black;
+    }
+
+    .modal_notice_title p {
+        font-size: 24px;
+        font-weight: 400;
+    }
+
+    .modal_close_btn {
+        background-color: #CCCCFF;
+        color: white !important;
+        border-radius: 8px;
+        padding: 6px 18px;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
+        border: none;
+        font-weight: bold;
+    }
+
+    .modal_close_btn:hover {
+        background-color: #B3B3FF;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(204, 204, 255, 0.4);
+    }
+
+    .modal_notice_content {
+        width: 550px;
+        height: 250px;
+        margin: 0 auto;
+        margin-top: 25px;
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .modal_notice_content p {
+        margin-bottom: 20px;
+        font-size: 14px;
+        color: #6F6F6F;
+    }
+
+    .modal_notice_content li {
+        font-size: 14px;
+        color: #494949;
+        margin-bottom: 5px;
+        list-style: none;
+    }
+
 </style>
 
 <footer class="custom-footer">
@@ -64,12 +145,12 @@
 
         <div class="footer-bottom">
             <ul class="footer-links">
-                <li><a href="#">이용약관</a></li>
-                <li><a href="#" class="fw-bold text-dark">개인정보처리방침</a></li>
-                <li><a href="#">운영정책</a></li>
-                <li><a href="#">위치기반서비스 이용약관</a></li>
-                <li><a href="#">이용자보호 비전과 계획</a></li>
-                <li><a href="#">청소년보호정책</a></li>
+                <li><a href="/" class="modal_open_btn" data-target="rules">이용약관</a></li>
+                <li><a href="/" class="modal_open_btn fw-bold text-dark" data-target="privacy">개인정보처리방침</a></li>
+                <li><a href="/" class="modal_open_btn" data-target="policy">운영정책</a></li>
+                <!-- <li><a href="#">위치기반서비스 이용약관</a></li> -->
+                <li><a href="/" class="modal_open_btn" data-target="vision">이용자보호 비전과 계획</a></li>
+                <li><a href="/" class="modal_open_btn" data-target="youth">청소년보호정책</a></li>
             </ul>
 
             <div class="copyright">
@@ -78,3 +159,53 @@
         </div>
     </div>
 </footer>
+
+{% for modal in footer_modals %}
+<div id="modal_{{ modal.slug }}" class="modal_style_pkg">
+    <div class="modal_notice_main">
+        <div class="modal_notice_title">
+            <p>{{ modal.title }}</p>
+            <button class="modal_close_btn">닫기</button>
+        </div>
+        <div class="modal_notice_content">
+            <ul>
+                <li>{{ modal.content | safe }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+
+// modal_pkg
+const openBtns = document.querySelectorAll('.modal_open_btn');
+const closeBtns = document.querySelectorAll('.modal_close_btn');
+
+// 열기
+openBtns.forEach(btn => {
+    btn.onclick = function(e) {
+        e.preventDefault();
+
+        // 버튼의 data-target 값을 읽어서 해당 id를 가진 모달을 검색
+        const targetId = 'modal_' + this.getAttribute('data-target');
+        const targetModal = document.getElementById(targetId);
+
+        if (targetModal) {
+            // 배경 그림자 영역
+            targetModal.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+            targetModal.style.display = 'flex';
+        }
+    }
+});
+
+// 닫기
+closeBtns.forEach(btn => {
+    btn.onclick = function() {
+        const modal = this.closest('.modal_style_pkg');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+});
+</script>
