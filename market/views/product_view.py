@@ -10,3 +10,13 @@ bp = Blueprint('items', __name__, url_prefix='/items')
 @bp.route('/product-upload/')
 def product_upload():
     return render_template('items/write.html')
+
+#카테고리에 맞는 라우트 생성(4월15일 merge후 categori_id를 찾을 수 없어 임시생성)
+@bp.route('/categories/<int:category_id>')
+def product_categories(category_id):
+    items = Item.query.filter_by(category_id=category_id, is_deleted=False).all()
+    return render_template(
+        'items/product_categories.html',
+        category_id=category_id,
+        items=items
+    )
