@@ -9,6 +9,7 @@
     .pw-container {
         position: relative;
     }
+
     .pw-container i {
         position: absolute;
         right: 15px;
@@ -41,6 +42,25 @@
         overflow: hidden;
     }
 
+    /* 부드럽게 위로 올라오며 나타나는 효과 */
+    .run-fade-in {
+        animation: fadeInUp 0.5s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+            /* 20px 아래에서 시작 */
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+            /* 제자리 위치 */
+        }
+    }
+
     /* 왼쪽 포인트 영역 */
     .brand-section {
         flex: 1;
@@ -66,6 +86,15 @@
         padding: 12px 15px;
     }
 
+    /* 입력창 포커스 시 스타일 */
+    .custom-input:focus {
+        border-color: #CCCCFF !important;
+        background-color: white;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(204, 204, 255, 0.25) !important;
+        transition: all 0.2s ease-in-out;
+    }
+
     /* 일반 로그인 버튼 */
     .login-submit-btn {
         background-color: #CCCCFF;
@@ -82,7 +111,38 @@
     .login-submit-btn:hover {
         background-color: #B3B3FF;
         transform: translateY(-2px);
-}
+    }
+
+    /* 부트스트랩 기본 느낌표 아이콘 지움 */
+    .form-control.is-invalid {
+        background-image: none !important;
+        padding-right: 2.5rem !important;
+        /* 원래 아이콘이 있을 공간 확보 */
+    }
+
+    /* 에러 발생 시 테두리 색상 빨간색으로 */
+    .is-invalid {
+        border: 1.5px solid #dc3545 !important;
+    }
+
+    /* 하단 빨간색 메시지 스타일 */
+    .invalid-feedback-custom {
+        color: #dc3545;
+        font-size: 0.82rem;
+        margin-top: 6px;
+        padding-left: 5px;
+        font-weight: 500;
+        display: block;
+    }
+
+    #togglePassword {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        z-index: 5;
+    }
 
     /* 카카오 로그인 버튼 */
     .kakao-login-btn {
@@ -105,7 +165,7 @@
         background-color: #F7E111;
         transform: translateY(-2px);
         color: #3C1E1E;
-}
+    }
 
     .kakao-icon {
         width: 20px;
@@ -121,7 +181,8 @@
     }
 
     /* 중간 "또는" 구분선 */
-    .divider::before, .divider::after {
+    .divider::before,
+    .divider::after {
         content: "";
         flex: 1;
         height: 1px;
@@ -137,12 +198,12 @@
     <div class="login-card-custom">
         <!-- 왼쪽(또는 상단)에 로고와 커뮤니티 이름을 보여주는 영역-->
         <div class="brand-section d-none d-md-flex">
-            <h2 class="fw-bold">Logo</h2>
+            <h2 class="fw-bold">Login</h2>
             <p class="mt-2 text-center opacity-75">가치의 선순환, REBORN</p>
         </div>
 
         <!--로그인 폼 섹션: 정보를 입력하는 오른쪽 영역-->
-        <div class="form-section">
+        <div class="form-section run-fade-in">
             <h3 class="fw-bold mb-4">로그인</h3>
 
             <!-- CSRF 공격 방지-->
@@ -152,15 +213,30 @@
 
                 <!--Flask-WTF 폼을 사용해 아이디와 비밀번호 칸 생성-->
                 <div class="mb-3">
-                    {{ form.username(class="form-control custom-input", placeholder="아이디") }}
-                </div>
-                <div class="mb-4">
-    <div class="pw-container">
-        {{ form.password(class="form-control custom-input", placeholder="비밀번호", id="login-password") }}
+                    {{ form.username(class="form-control custom-input " + ("is-invalid" if form.username.errors else
+                    ""), placeholder="아이디", autofocus=True) }}
 
-        <i class="bi bi-eye-slash" id="togglePassword"></i>
-    </div>
-</div>
+                    {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                    <div class="invalid-feedback-custom">{{ error }}</div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- 로그인, 비밀번호 폼 + 에러 스타일-->
+                <div class="mb-4">
+                    <div class="pw-container">
+                        {{ form.password(class="form-control custom-input " + ("is-invalid" if form.password.errors else
+                        ""), placeholder="비밀번호", id="login-password") }}
+                        <i class="bi bi-eye-slash" id="togglePassword"></i>
+                    </div>
+
+                    {% if form.password.errors %}
+                    {% for error in form.password.errors %}
+                    <div class="invalid-feedback-custom">{{ error }}</div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
 
                 <!--로그인 버튼: 입력한 정보를 서버로 보냄-->
                 <button type="submit" class="login-submit-btn">로그인</button>
@@ -170,7 +246,8 @@
 
                 <!--카카오 로그인: 카카오 API를 이용해 간편 로그인 페이지로 이동-->
                 <a href="/auth/kakao" class="kakao-login-btn">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111466.png" width="20" style="margin-right: 8px;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111466.png" width="20"
+                        style="margin-right: 8px;">
                     카카오 로그인하기
                 </a>
 
@@ -188,12 +265,12 @@
 <!--비밀번호 보이기/숨기기 JS-->
 <script>
     // 페이지가 로드된 후 실행
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const toggleIcon = document.querySelector('#togglePassword');
         const passwordInput = document.querySelector('#login-password');
 
         if (toggleIcon && passwordInput) {
-            toggleIcon.addEventListener('click', function() {
+            toggleIcon.addEventListener('click', function () {
                 // 비밀번호 보이기/숨기기 토글
                 const isPassword = passwordInput.getAttribute('type') === 'password';
                 passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
