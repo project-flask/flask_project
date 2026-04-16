@@ -102,7 +102,8 @@ def product_details(item_id):
     # DB에서 해당 ID의 상품 하나 가져옴
     product = Item.query.get_or_404(item_id)
     cat = Category.query.get(product.category_id)
-    return render_template('items/PDP.html', product = product, cat = cat)
+    product_list = Item.query.order_by(Item.created_at.desc()).limit(6).all()
+    return render_template('items/PDP.html', product = product, cat = cat, product_list = product_list)
 
 # 카테고리별 페이지
 @bp.route('/product-categories/<int:category_id>')
@@ -158,6 +159,38 @@ def comment_delete(comment_id):
     # 이제 comment.item.id 대신 미리 뽑아둔 item_id를 사용합니다.
     return redirect(url_for('items.product_details', item_id=item_id))
 
+
+
+  # 4월16일 게시글 수정오늘 추가함
+@bp.route('/product/modify/<int:item_id>', methods=('GET', 'POST'))
+@login_required
+def product_modify(item_id):
+    # 1. 수정할 상품 데이터를 DB에서 가져오기
+    product = Item.query.get_or_404(item_id)
+
+    # 2. 권한 확인
+    if g.user.id != product.user_id:
+        return redirect(url_for('items.product_details', item_id=item_id))
+
+    if request.method == 'POST':
+        # 3. [중요] 창환 님의 product_upload 함수에서 쓰는 name 값들과 똑같이 맞춰야 합니다!
+        product.item_title = request.form.get('subject')  # 'item_title' -> 'subject'로 수정
+        product.item_description = request.form.get('content')  # 'item_description' -> 'content'로 수정
+        product.category_id = request.form.get('category')  # 'category_id' -> 'category'로 수정
+
+        # 가격 처리 (위의 upload 함수 로직 참고)
+        price = request.form.get('price')
+        clean_price = str(price).replace(',', '').strip()
+        product.item_price = int(clean_price) if clean_price else 0
+
+        db.session.commit()
+        return redirect(url_for('items.product_details', item_id=item_id))
+
+    else:
+        # 4. [중요] 아까 사진에서 확인한 'items/write.html'로 경로를 바꿉니다!
+        categories = Category.query.all()
+        return render_template('items/write.html', product=product, categories=categories)
+
  # 서버에 게시글 삭제 함수 4월15일 만듬
 @bp.route('/product/delete/<int:item_id>')
 @login_required
@@ -165,7 +198,7 @@ def product_delete(item_id):
     item = Item.query.get_or_404(item_id)
 
     # 보안 체크: 로그인한 사람과 게시글 작성자가 같은지 확인
-    if g.user != item.user:
+    if g.user != item.seller:
         # 본인이 아니면 상세 페이지로 다시 돌려보내기
         return redirect(url_for('items.product_details', item_id=item_id))
 
