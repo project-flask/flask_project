@@ -5,7 +5,7 @@
 
 <style>
     /* 비밀번호 보이기 OR 숨기기 아이콘 스타일 */
-     .pw-container {
+    .pw-container {
         position: relative;
     }
 
@@ -59,6 +59,42 @@
         padding: 40px 50px;
     }
 
+    /* 부트스트랩 자동 아이콘 제거 및 테두리 설정 */
+    .form-control.is-invalid {
+        background-image: none !important;
+        /* 기본 느낌표 제거 */
+        padding-right: 40px !important;
+        border: 1.5px solid #dc3545 !important;
+    }
+
+    /* 빨간색 에러 메시지 스타일 */
+    .invalid-feedback-custom {
+        color: #dc3545;
+        font-size: 0.8rem;
+        margin-top: 5px;
+        padding-left: 5px;
+        font-weight: 500;
+        display: block;
+        animation: fadeInError 0.3s ease-out;
+    }
+
+    @keyframes fadeInError {
+        from {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* 에러 발생 시 입력창 배경색 */
+    .is-invalid:focus {
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.1) !important;
+    }
+
     /* 입력창 디자인 */
     .custom-input {
         border: 2px solid #eeeeff !important;
@@ -66,6 +102,7 @@
         padding: 10px 15px;
     }
 
+    /* 입력창 테두리 보라색 */
     .custom-input:focus {
         border-color: #CCCCFF !important;
         box-shadow: 0 0 0 0.2rem rgba(204, 204, 255, 0.25);
@@ -105,6 +142,23 @@
         gap: 12px;
     }
 
+    /* 부드럽게 위로 올라오며 나타나는 효과 */
+    .form-section {
+        animation: fadeInUp 0.5s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
     .btn-choice {
         display: flex;
         align-items: center;
@@ -119,9 +173,21 @@
         font-size: 0.95rem;
     }
 
-    .btn-choice.kakao { background-color: #FEE500; color: #3c1e1e; }
-    .btn-choice.email { background-color: #f8f8ff; color: #666; border: 2px solid #eeeeff; }
-    .btn-choice:hover { transform: translateY(-2px); filter: brightness(0.95); }
+    .btn-choice.kakao {
+        background-color: #FEE500;
+        color: #3c1e1e;
+    }
+
+    .btn-choice.email {
+        background-color: #f8f8ff;
+        color: #666;
+        border: 2px solid #eeeeff;
+    }
+
+    .btn-choice:hover {
+        transform: translateY(-2px);
+        filter: brightness(0.95);
+    }
 
     /* 폼 전환 애니메이션 */
     #email-form-area {
@@ -130,8 +196,15 @@
     }
 
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 </style>
 
@@ -147,12 +220,13 @@
         <div class="form-section">
             <h3 class="fw-bold mb-4" id="signup-title" style="color: #555;">회원가입</h3>
             <!-- 가입 방식 선택 화면 -->
-            <div id="select-area">
-                <p class="text-muted mb-4" style="font-size: 0.9rem;">반가워요! 가입 방법을 선택해주세요.</p>
+            <div id="select-area"">
+                <p class=" text-muted mb-4" style="font-size: 0.9rem;">반가워요! 가입 방법을 선택해주세요.</p>
                 <div class="btn-select-group">
                     <!-- 카카오 로그인 -->
                     <a href="{{ url_for('auth.kakao_sign_in') }}" class="btn-choice kakao">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111466.png" width="20" style="margin-right: 8px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111466.png" width="20"
+                            style="margin-right: 8px;">
                         카카오로 시작하기
                     </a>
                     <!-- 이메일 가입 (JS로 폼 전환) -->
@@ -165,62 +239,120 @@
             <div id="email-form-area">
                 <form method="post" novalidate>
                     {{ form.csrf_token }}
-                    {% include 'form_errors.html' %}
-                    <!-- 아이디 -->
                     <div class="mb-3">
                         <label class="form-label">아이디</label>
-                        {{ form.user_id(class="form-control custom-input", placeholder="아이디를 입력하세요") }}
+                        {{ form.user_id(class="form-control custom-input " + ("is-invalid" if form.user_id.errors else
+                        ""), placeholder="아이디를 입력하세요") }}
+                        {% if form.user_id.errors %}
+                        {% for error in form.user_id.errors %}
+                        <div class="invalid-feedback-custom">{{ error }}</div>
+                        {% endfor %}
+                        {% endif %}
                     </div>
-                    <!-- 실제 성명 / 닉네임 -->
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">성명</label>
-                            {{ form.username(class="form-control custom-input", placeholder="이름을 입력하세요") }}
+                            {{ form.username(class="form-control custom-input " + ("is-invalid" if form.username.errors
+                            else ""), placeholder="이름을 입력하세요") }}
+                            {% if form.username.errors %}
+                            {% for error in form.username.errors %}
+                            <div class="invalid-feedback-custom">{{ error }}</div>
+                            {% endfor %}
+                            {% endif %}
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">닉네임</label>
-                            {{ form.nickname(class="form-control custom-input", placeholder="닉네임을 입력하세요") }}
+                            {{ form.nickname(class="form-control custom-input " + ("is-invalid" if form.nickname.errors
+                            else ""), placeholder="닉네임을 입력하세요") }}
+                            {% if form.nickname.errors %}
+                            {% for error in form.nickname.errors %}
+                            <div class="invalid-feedback-custom">{{ error }}</div>
+                            {% endfor %}
+                            {% endif %}
                         </div>
                     </div>
-                    <!-- 비밀번호 / 확인 -->
+
                     <div class="row">
-    <div class="col-md-6 mb-3">
-        <label class="form-label">비밀번호</label>
-        <div class="pw-container">
-            {{ form.password1(class="form-control custom-input", placeholder="비밀번호", id="signup-pw1") }}
-            <i class="bi bi-eye-slash toggle-pw" data-target="signup-pw1"></i>
-        </div>
-    </div>
-    <div class="col-md-6 mb-3">
-        <label class="form-label">비밀번호 확인</label>
-        <div class="pw-container">
-            {{ form.password2(class="form-control custom-input", placeholder="비밀번호 확인", id="signup-pw2") }}
-            <i class="bi bi-eye-slash toggle-pw" data-target="signup-pw2"></i>
-        </div>
-    </div>
-</div>
-                    <!-- 이메일 -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">비밀번호</label>
+                            <div class="pw-container">
+                                {{ form.password1(class="form-control custom-input " + ("is-invalid" if
+                                form.password1.errors else ""), placeholder="비밀번호", id="signup-pw1") }}
+                                <i class="bi bi-eye-slash toggle-pw" data-target="signup-pw1"></i>
+                            </div>
+
+                            <div class="progress mt-2"
+                                style="height: 4px; background-color: #f0f0f0; border-radius: 10px;">
+                                <div id="strength-bar" class="progress-bar" role="progressbar"
+                                    style="width: 0%; transition: all 0.4s ease; border-radius: 10px;"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small id="strength-text" style="font-weight: bold; font-size: 0.7rem; color: #999;">보안
+                                    강도</small>
+                            </div>
+
+                            {% if form.password1.errors %}
+                            {% for error in form.password1.errors %}
+                            <div class="invalid-feedback-custom">{{ error }}</div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">비밀번호 확인</label>
+                            <div class="pw-container">
+                                {{ form.password2(class="form-control custom-input " + ("is-invalid" if
+                                form.password2.errors else ""), placeholder="비밀번호 확인", id="signup-pw2") }}
+                                <i class="bi bi-eye-slash toggle-pw" data-target="signup-pw2"></i>
+                            </div>
+                            {% if form.password2.errors %}
+                            {% for error in form.password2.errors %}
+                            <div class="invalid-feedback-custom">{{ error }}</div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">이메일</label>
-                        {{ form.email(class="form-control custom-input", placeholder="example@email.com") }}
+                        {{ form.email(class="form-control custom-input " + ("is-invalid" if form.email.errors else ""),
+                        placeholder="example@email.com") }}
+                        {% if form.email.errors %}
+                        {% for error in form.email.errors %}
+                        <div class="invalid-feedback-custom">{{ error }}</div>
+                        {% endfor %}
+                        {% endif %}
                     </div>
-                    <!-- 전화번호 -->
+
                     <div class="mb-4">
-                        <label class="form-label">전화번호</label>
-                        {{ form.phone(class="form-control custom-input", placeholder="010-0000-0000") }}
+                        <label class="form-label">전화번호 <span
+                                style="font-size: 0.8rem; color: #999; font-weight: normal;">(선택)</span></label>
+
+                        {{ form.phone(class="form-control custom-input " + ("is-invalid" if form.phone.errors else ""),
+                        placeholder="010-0000-0000",
+                        required=False) }}
+
+                        {% if form.phone.errors %}
+                        {% for error in form.phone.errors %}
+                        <div class="invalid-feedback-custom">{{ error }}</div>
+                        {% endfor %}
+                        {% endif %}
                     </div>
-                    <!-- 제출 -->
+
                     <button type="submit" class="signup-submit-btn">가입 완료하기</button>
-                    <!-- 이전으로 -->
                     <div class="text-center mt-3">
-                        <button type="button" class="btn btn-sm text-muted" style="font-size: 0.8rem; text-decoration: underline;" onclick="toggleForm()">이전으로 돌아가기</button>
+                        <button type="button" class="btn btn-sm text-muted"
+                            style="font-size: 0.8rem; text-decoration: underline;" onclick="toggleForm()">이전으로
+                            돌아가기</button>
                     </div>
                 </form>
             </div>
             <!--로그인 이동 링크-->
             <div class="text-center mt-4" style="font-size: 0.85rem;">
                 <span class="text-muted">이미 계정이 있으신가요?</span>
-                <a href="{{ url_for('auth.login') }}" style="color: #ababfa; text-decoration: none; font-weight: bold;">로그인</a>
+                <a href="{{ url_for('auth.login') }}"
+                    style="color: #ababfa; text-decoration: none; font-weight: bold;">로그인</a>
             </div>
         </div>
     </div>
@@ -230,35 +362,35 @@
 <script>
     // 화면 전환 함수(이메일로 시작하기 - 이메일 회원가입)
     function toggleForm() {
-    const selectArea = document.getElementById('select-area');
-    const formArea = document.getElementById('email-form-area');
-    const title = document.getElementById('signup-title');
-    const card = document.querySelector('.signup-card-custom');
+        const selectArea = document.getElementById('select-area');
+        const formArea = document.getElementById('email-form-area');
+        const title = document.getElementById('signup-title');
+        const card = document.querySelector('.signup-card-custom');
 
-    if (!card) return;
+        if (!card) return;
 
-    if (formArea.style.display === 'none' || formArea.style.display === '') {
-        selectArea.style.display = 'none';
-        formArea.style.display = 'block';
-        title.innerText = '회원가입';
+        // 폼이 닫혀있다가 열릴 때 (이메일 입력 화면)
+        if (formArea.style.display === 'none' || formArea.style.display === '') {
+            selectArea.style.display = 'none';
+            formArea.style.display = 'block';
+            card.style.setProperty('max-width', '1000px', 'important');
+            document.querySelector('input[name="user_id"]').focus();
+        }
+        // 폼이 열려있다가 닫힐 때 (선택 화면으로 돌아갈 때)
+        else {
+            selectArea.style.display = 'block';
+            formArea.style.display = 'none';
 
-        card.style.setProperty('max-width', '1000px', 'important');
-    } else {
-        selectArea.style.display = 'block';
-        formArea.style.display = 'none';
-        title.innerText = '정보 입력';
-
-        card.style.setProperty('max-width', '850px', 'important');
+            card.style.setProperty('max-width', '850px', 'important');
+        }
     }
-}
-
     // 페이지 로드 시 실행될 로직들
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
 
         // [비밀번호 보이기 숨기기 토글 기능]
         const pwToggles = document.querySelectorAll('.toggle-pw');
         pwToggles.forEach(icon => {
-            icon.addEventListener('click', function() {
+            icon.addEventListener('click', function () {
                 const targetId = this.getAttribute('data-target');
                 const passwordInput = document.getElementById(targetId);
 
@@ -273,10 +405,53 @@
             });
         });
 
-        // [에러 발생 시 처리]
+        // 에러 발생 시 처리
         {% if form.errors %}
-            toggleForm();
+        toggleForm();
         {% endif %}
+    });
+
+    <!--비밀번호 입력창 보안 막대바-->
+    document.addEventListener('DOMContentLoaded', function () {
+        const pwInput = document.getElementById('signup-pw1');
+        const strengthBar = document.getElementById('strength-bar');
+        const strengthText = document.getElementById('strength-text');
+
+        if (pwInput) {
+            pwInput.addEventListener('input', function () {
+                const val = pwInput.value;
+
+                if (val.length === 0) {
+                    updateUI(0, '보안 강도', '#999', '0%');
+                    return;
+                }
+
+                const hasLetter = /[a-zA-Z]/.test(val);
+                const hasNumber = /[0-9]/.test(val);
+                const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(val);
+                const len = val.length;
+
+                // 1. 높음: 문자 + 숫자 + 특수문자 모두 포함,  8자 이상
+                if (hasLetter && hasNumber && hasSpecial && len >= 8) {
+                    updateUI(3, '높음 (안전한 비밀번호입니다)', '#CCCCFF', '100%');
+                }
+                // 2. 보통: 문자 + 숫자 혼합, 6자 이상
+                else if (hasLetter && hasNumber && len >= 6) {
+                    updateUI(2, '보통 (특수문자를 섞어보세요)', '#ffcc00', '66%');
+                }
+                // 3. 낮음: 그 외 (숫자만 있거나, 문자만 있거나, 너무 짧을 때)
+                else {
+                    updateUI(1, '낮음 (보안이 약해요)', '#ff6b6b', '33%');
+                }
+            });
+        }
+
+        function updateUI(level, text, color, width) {
+            strengthBar.style.width = width;
+            strengthBar.style.backgroundColor = color;
+            strengthText.innerText = text;
+            strengthText.style.color = color;
+        }
     });
 </script>
 

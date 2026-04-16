@@ -5,86 +5,107 @@
 <style>
     /* 계정 찾기 전체 배경 레이아웃 */
     .find-wrapper {
-    background-color: #fcfcff;
-    min-height: 85vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
+        background-color: #fcfcff;
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
     }
 
     /* 흰색 카드 박스 디자인 (그림자 포함) */
     .find-card {
-    width: 100%; max-width: 480px;
-    background: white;
-    border-radius: 28px;
-    box-shadow: 0 25px 50px rgba(204, 204, 255, 0.2);
-    padding: 45px 35px;
+        width: 100%;
+        max-width: 480px;
+        background: white;
+        border-radius: 28px;
+        box-shadow: 0 25px 50px rgba(204, 204, 255, 0.2);
+        padding: 45px 35px;
     }
 
     /* 아이디|비밀번호 전환용 탭 메뉴 배경 */
     .nav-pills {
-    background-color: #f3f3ff;
-    border-radius: 16px;
-    padding: 6px;
-    margin-bottom: 35px;
+        background-color: #f3f3ff;
+        border-radius: 16px;
+        padding: 6px;
+        margin-bottom: 35px;
+    }
+
+    /* 폼 내용 애니메이션 효과 */
+    .find-entrance {
+        animation: findFadeInUp 0.5s ease-out forwards;
+    }
+
+    @keyframes findFadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* 개별 탭 버튼 스타일 */
     .nav-pills .nav-link {
-    border-radius: 12px;
-    color: #888 !important;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    padding: 12px;
+        border-radius: 12px;
+        color: #888 !important;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        padding: 12px;
     }
 
     /* 선택된 활성화 탭 스타일 (연보라색 텍스트, 흰색 배경) */
     .nav-pills .nav-link.active {
-    background-color: white !important;
-    color: #CCCCFF !important;
-    box-shadow: 0 4px 12px rgba(204, 204, 255, 0.2);
+        background-color: white !important;
+        color: #CCCCFF !important;
+        box-shadow: 0 4px 12px rgba(204, 204, 255, 0.2);
     }
 
     /* 입력창(Input) 기본 스타일 및 포커스 효과 */
     .custom-input {
-    border: 2px solid #f0f0ff !important;
-    border-radius: 14px !important;
-    padding: 13px 18px;
-    background-color: #fcfcff;
-    margin-bottom: 15px;
+        border: 2px solid #f0f0ff !important;
+        border-radius: 14px !important;
+        padding: 13px 18px;
+        background-color: #fcfcff;
+        margin-bottom: 15px;
     }
 
     /* 확인 버튼 스타일 */
     .custom-input:focus {
-    border-color: #CCCCFF !important;
-    background-color: white;
-    box-shadow: 0 5px 15px rgba(204, 204, 255, 0.1);
-    outline: none;
+        border-color: #CCCCFF !important;
+        background-color: white;
+        box-shadow: 0 5px 15px rgba(204, 204, 255, 0.1);
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(204, 204, 255, 0.25) !important;
+        transition: all 0.2s ease-in-out;
     }
 
     .find-btn {
-    background-color: #CCCCFF;
-    color: white; border: none;
-    border-radius: 14px;
-    padding: 15px;
-    font-weight: bold;
-    width: 100%;
-    margin-top: 10px;
-    transition: all 0.3s ease;
+        background-color: #CCCCFF;
+        color: white;
+        border: none;
+        border-radius: 14px;
+        padding: 15px;
+        font-weight: bold;
+        width: 100%;
+        margin-top: 10px;
+        transition: all 0.3s ease;
     }
 
     .find-btn:hover {
-    background-color: #B3B3FF;
-    transform: translateY(-2px);
+        background-color: #B3B3FF;
+        transform: translateY(-2px);
     }
 
     /* 입력 안내 문구 스타일 */
     .info-text {
-    color: #999;
-    font-size: 0.85rem;
-    margin-bottom: 20px;
-    line-height: 1.5;
+        color: #999;
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+        line-height: 1.5;
     }
 </style>
 
@@ -100,33 +121,34 @@
         <ul class="nav nav-pills nav-justified" id="findTab" role="tablist">
             <!-- 아이디 찾기 탭 -->
             <li class="nav-item">
-                <button class="nav-link active" id="id-tab" data-bs-toggle="pill" data-bs-target="#find-id" type="button">아이디 찾기</button>
+                <button class="nav-link active" id="id-tab" data-bs-toggle="pill" data-bs-target="#find-id"
+                    type="button">아이디 찾기</button>
             </li>
             <!-- 비밀번호 찾기 탭-->
             <li class="nav-item">
-                <button class="nav-link" id="pw-tab" data-bs-toggle="pill" data-bs-target="#find-pw" type="button">비밀번호 찾기</button>
+                <button class="nav-link" id="pw-tab" data-bs-toggle="pill" data-bs-target="#find-pw" type="button">비밀번호
+                    찾기</button>
             </li>
         </ul>
         <div class="tab-content" id="findTabContent">
 
-<!-- ===== 아이디 찾기 ===== -->
+            <!-- ===== 아이디 찾기 ===== -->
 
-            <div class="tab-pane fade show active" id="find-id" role="tabpanel">
+            <div class="tab-pane fade show active find-entrance" id="find-id" role="tabpanel">
                 <!-- 안내 문구-->
                 <p class="info-text">가입 시 등록한 <b>이름</b>과 <b>이메일</b>을 입력해 주세요.</p>
 
                 <!-- flash 메시지 출력-->
                 {% with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                    {% for category, message in messages %}
-                      <div class="alert alert-{{ category }} mb-4"
-                           style="border-radius: 14px; border: none; font-size: 0.9rem; font-weight: bold;
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} mb-4" style="border-radius: 14px; border: none; font-size: 0.9rem; font-weight: bold;
                            background-color: {% if category == 'success' %}#eef2ff{% else %}#fff0f0{% endif %};
                            color: {% if category == 'success' %}#6c6cff{% else %}#ff6b6b{% endif %};">
-                        {{ message }}
-                      </div>
-                    {% endfor %}
-                  {% endif %}
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
                 {% endwith %}
 
                 <!-- 아이디 찾기 폼 -->
@@ -145,19 +167,24 @@
             </div>
 
 
-<!-- ===== 비밀번호 찾기 ===== -->
+            <!-- ===== 비밀번호 찾기 ===== -->
 
-            <div class="tab-pane fade" id="find-pw" role="tabpanel">
+            <div class="tab-pane fade find-entrance" id="find-pw" role="tabpanel">
                 <p class="info-text"><b>아이디</b>와 <b>이메일</b>을 입력하시면<br>비밀번호 재설정 안내를 도와드립니다.</p>
                 {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            {% if '비밀번호' in message or '회원 정보' in message %}
-                                <div class="alert alert-{{ category }}"> {{ message|safe }} </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
+                {% if messages %}
+                {% for category, message in messages %}
+                {% if '비밀번호' in message or '회원 정보' in message %}
+                <div class="alert alert-{{ category }} mb-4" style="border-radius: 14px; border: none; font-size: 0.9rem; font-weight: bold;
+                                background-color: {% if category == 'success' %}#eef2ff{% else %}#fff0f0{% endif %};
+                                color: {% if category == 'success' %}#6c6cff{% else %}#ff6b6b{% endif %};">
+                    {{ message|safe }}
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
                 {% endwith %}
+
                 <!-- 비밀번호 찾기 폼 -->
                 <form action="{{ url_for('auth.find_account') }}" method="POST" novalidate>
                     {{ form.csrf_token }}
@@ -176,23 +203,61 @@
         </div>
 
         <!-- 로그인 페이지로 이동 -->
-
         <div class="mt-4">
-            <a href="{{ url_for('auth.login') }}" style="color: #ababfa; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
+            <a href="{{ url_for('auth.login') }}"
+                style="color: #ababfa; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
                 로그인 화면으로 돌아가기
             </a>
         </div>
     </div>
 </div>
 
-<!--JS: 탭 유지-->
+
+<!--JS: 아이디찾기/비번찾기 탭, 오토포커스-->
 <script>
-    window.onload = function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        const idTabBtn = document.getElementById('id-tab');
+        const pwTabBtn = document.getElementById('pw-tab');
+
+        // 포커스 함수
+        function setFocus(selector) {
+            setTimeout(() => {
+                const input = document.querySelector(selector);
+                if (input) input.focus();
+            }, 0);
+        }
+
+        function clearFindData() {
+            document.querySelectorAll('.custom-input').forEach(input => input.value = '');
+            document.querySelectorAll('.alert').forEach(alert => alert.remove());
+        }
+
         {% if form.user_id.data or form.email_for_pw.data %}
-            var pwTab = new bootstrap.Tab(document.querySelector('#pw-tab'));
-            pwTab.show();
+        // 비밀번호 찾기 시도 중 에러 발생 시 비번 탭 유지
+        const pwTab = new bootstrap.Tab(pwTabBtn);
+        pwTab.show();
+        setFocus('#find-pw input[name="user_id"]');
+        {% else %}
+        // 일반 진입 혹은 아이디 찾기 에러 시 기본 아이디 탭
+        setFocus('#find-id input[name="username"]');
         {% endif %}
-    }
+
+        // 아이디 찾기 탭 클릭 시
+        if (idTabBtn) {
+            idTabBtn.addEventListener('shown.bs.tab', function () {
+                clearFindData();
+                setFocus('#find-id input[name="username"]');
+            });
+        }
+
+        // 비밀번호 찾기 탭 클릭 시
+        if (pwTabBtn) {
+            pwTabBtn.addEventListener('shown.bs.tab', function () {
+                clearFindData();
+                setFocus('#find-pw input[name="user_id"]');
+            });
+        }
+    });
 </script>
 
 {% endblock %}

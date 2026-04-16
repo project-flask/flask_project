@@ -41,16 +41,16 @@
 
             <!--기능 3: 구매 희망자가 판매자에게 연락을 시도하는 댓글/채팅 버튼-->
             {% if g.user %}
-    <button type="button" onclick="document.getElementById('content').focus();"
-        style="width: 100%; background-color: #6c5ce7; color: white; border: none; padding: 16px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px;">
-        댓글달기
-    </button>
-{% else %}
-    <a href="{{ url_for('auth.login') }}" style="text-decoration: none;">
-        <button type="button"
-            style="width: 100%; background-color: #d1d1ff; color: white; border: none; padding: 16px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px;">
-            로그인 후 댓글달기
-        </button>
+                <button type="button" onclick="document.getElementById('content').focus();"
+                    style="width: 100%; background-color: #6c5ce7; color: white; border: none; padding: 16px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px;">
+                            댓글달기
+                </button>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" style="text-decoration: none;">
+                <button type="button"
+                style="width: 100%; background-color: #d1d1ff; color: white; border: none; padding: 16px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px;">
+                    로그인 후 댓글달기
+                </button>
     </a>
 {% endif %}
         </div>
@@ -129,7 +129,7 @@
         <div class="other-products" style="margin-top: 40px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h4 style="font-size: 18px; font-weight: bold; margin: 0;">판매자의 판매상품</h4>
-                <a href="{{ url_for('items.user_items', user_id=item.user_id) }}"
+                <a href="{{ url_for('items.user_items', user_id=product.user_id) }}"
                   style="font-size: 14px; color: #868e96; text-decoration: none;">
                   판매상품 더 보기 >
                 </a>
@@ -137,9 +137,9 @@
           
             <!--[로직] Jinja2 반복문을 사용하여 동일한 규격의 상품 카드 6개를 자동 생성( 오늘수정함 4월14일)-->
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
-                {% for item in item_list %}
+                {% for product in product_list %}
                 <div class="product-card col h-100" style="cursor: pointer;"
-                    onclick="location.href=`{{ url_for('items.product_details', item_id=item.id) }}`">
+                    onclick="location.href=`{{ url_for('items.product_details', item_id=product.id) }}`">
 
                     <div
                         style="width: 100%; margin-bottom: 10px; border-radius: 8px; overflow: hidden; background-color: #eee; border: 1px solid #f1f1f1;">
