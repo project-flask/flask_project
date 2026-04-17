@@ -1,5 +1,3 @@
-<!-- 상품 등록하기 페이지 -->
-
 {% extends 'base.html' %}
 {% block content %}
 <style>
@@ -10,7 +8,7 @@
         padding: 6px 18px;
         transition: all 0.3s ease;
         display: inline-block;
-        text-decoration:none;
+        text-decoration: none;
         border: none;
         font-weight: bold;
         cursor: pointer;
@@ -32,50 +30,30 @@
         border-radius: 12px;
     }
 
-    /* 가격 입력창 화살표(스피너) 제거 */
+    /* 가격 입력창 화살표 제거 */
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }
 
-    {# 상품 업로드 구간 #}
-    .upload-area {
-        border: 2px dashed #CCCCFF;
-        background-color: #fcfcff;
-        border-radius: 12px;
-        padding: 40px;
-        text-align: center;
-        cursor: pointer;
-        margin-bottom: 15px;
-    }
-
-    {# 상품 업로드 이미지 프리뷰 #}
-    .preview-box {
-        position: relative;
-        width: 100px;
-        height: 100px;
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1px solid #ddd;
-    }
-
-    .preview-box img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    {# 좌우 분할 레이아웃 #}
+    /* 레이아웃 분할 */
     .upload-main-layout {
         display: flex;
         gap: 40px;
     }
 
-    .photo-section { flex: 1.2; }
-    .info-section { flex: 1; border-left: 1px solid #eee; padding-left: 40px; }
+    .photo-section {
+        flex: 1.2;
+    }
 
-    {# 메인 업로드 박스 #}
+    .info-section {
+        flex: 1;
+        border-left: 1px solid #eee;
+        padding-left: 40px;
+    }
+
+    /* 업로드 영역 스타일 */
     .main-upload-area {
         width: 100%;
         aspect-ratio: 1/1;
@@ -91,7 +69,6 @@
         transition: 0.3s;
     }
 
-    {# 미리보기 그리드 #}
     .preview-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -105,20 +82,17 @@
         border-radius: 12px;
         overflow: hidden;
         background-color: #fafafa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .preview-item img {
-        width: 100%; height: 100%; object-fit: cover;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
-    {# 입력창 포커스 시 테두리 색상 변경 #}
-    .form-control:focus, .form-select:focus {
-        border-color: #CCCCFF;
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(204, 204, 255, 0.25);
-    }
-
-    {# 입력 필드 스타일 #}
     .custom-input {
         background-color: #f0f0ff;
         border: none;
@@ -127,52 +101,70 @@
         margin-bottom: 5px;
     }
 
-    .custom-label { font-weight: bold; margin-bottom: 8px; display: block; }
+    .custom-label {
+        font-weight: bold;
+        margin-bottom: 8px;
+        display: block;
+    }
 
-    {# 삭제 버튼 #}
     .btn-remove {
-        position: absolute; top: 5px; right: 5px;
-        background: rgba(0,0,0,0.5); color: white; border: none;
-        border-radius: 50%; width: 22px; height: 22px; cursor: pointer;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        cursor: pointer;
+    }
+
+    .empty-slot {
+        color: #ccc;
+        font-size: 20px;
     }
 </style>
 
-<!-- 4월16일 코드수정함-->
 <main class="container">
     <div class="form-container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold m-0">상품 등록하기</h2>
-            <a href="{{ url_for('main.index') }}" class="btn btn-danger mb-4" style="font-weight: bold;">취소</a>
+            <h2 class="fw-bold m-0">{{ '상품 수정하기' if product else '상품 등록하기' }}</h2>
+            <a href="{{ url_for('main.index') }}" class="btn btn-danger" style="font-weight: bold;">취소</a>
         </div>
 
-        <form action="{{ url_for('items.product_upload') }}" method="post" enctype="multipart/form-data">
+        <form
+            action="{{ url_for('items.product_modify', item_id=product.id) if product else url_for('items.product_upload') }}"
+            method="post" enctype="multipart/form-data">
+
             <div class="upload-main-layout">
                 <div class="photo-section">
                     <p class="custom-label">사진 업로드</p>
                     <div class="main-upload-area" onclick="document.getElementById('images-input').click()">
                         <i class="fas fa-camera mb-2" style="font-size: 40px; color: #CCCCFF;"></i>
                         <span class="text-muted">사진 등록 (최대 10장)</span>
-                        <input type="file" id="images-input" name="images" multiple accept="image/*" style="display: none;">
+                        <input type="file" id="images-input" name="images" multiple accept="image/*"
+                            style="display: none;">
                     </div>
-
-        <form
-            action="{{ url_for('items.product_modify', item_id=product.id) if product else url_for('items.product_upload') }}"
-            method="post" enctype="multipart/form-data">
-
                     <div id="preview-container" class="preview-grid"></div>
                 </div>
 
                 <div class="info-section">
                     <div class="mb-4">
                         <label class="custom-label">상품명</label>
-                        <input type="text" class="form-control custom-input" name="title" placeholder="상품명 입력" required>
+                        <input type="text" class="form-control custom-input" name="title" placeholder="상품명 입력"
+                            value="{{ product.item_title if product else '' }}" required>
                     </div>
 
                     <div class="mb-4">
                         <label class="custom-label">카테고리 선택</label>
                         <select class="form-select custom-input" name="category">
+                            <option selected disabled>카테고리 선택</option>
                             {% for cat in categories %}
-                                <option value="{{ cat.id }}">{{ cat.category_name }}</option>
+                            <option value="{{ cat.id }}" {% if product and cat.id==product.category_id %}selected{%
+                                endif %}>
+                                {{ cat.category_name }}
+                            </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -180,92 +172,55 @@
                     <div class="mb-4">
                         <label class="custom-label">가격</label>
                         <div class="input-group">
-                            <input type="number" class="form-control custom-input" name="price" placeholder="가격 입력">
-                            <span class="input-group-text custom-input" style="background: none; border-left: none;">원</span>
+                            <input type="number" class="form-control custom-input" name="price" placeholder="가격 입력"
+                                value="{{ product.item_price if product else '' }}">
+                            <span class="input-group-text custom-input"
+                                style="background: none; border-left: none;">원</span>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="custom-label">내용 입력</label>
-                        <textarea class="form-control custom-input" name="content" rows="8" placeholder="간단한 상품 설명을 입력해주세요"></textarea>
+                        <textarea class="form-control custom-input" name="content" rows="8"
+                            placeholder="간단한 상품 설명을 입력해주세요">{{ product.item_description if product else '' }}</textarea>
                     </div>
                 </div>
             </div>
 
             <div class="text-center mt-5">
-                <button class="custom-btn" type="submit" style="border-radius: 15px;">상품 등록</button>
-              
-            <div class="mb-4">
-                <label class="form-label fw-bold">상품명</label>
-                <input type="text" class="form-control" name="subject" placeholder="상품명 입력"
-                    value="{{ product.item_title if product else '' }}">
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label fw-bold">카테고리 선택</label>
-                <select class="form-select" name="category">
-                    <option selected disabled>카테고리</option>
-                    {% for cat in categories %}
-                    <option value="{{ cat.id }}" {% if product and cat.id==product.category_id %}selected{% endif %}>
-                        {{ cat.category_name }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label fw-bold">가격</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" name="price" placeholder="가격 입력"
-                        value="{{ product.item_price if product else '' }}">
-                    <span class="input-group-text">원</span>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label fw-bold">내용 입력</label>
-                <textarea class="form-control" name="content" rows="10"
-                    placeholder="간단한 상품 설명을 입력해주세요">{{ product.item_description if product else '' }}</textarea>
-            </div>
-
-            <div class="text-center mt-5">
-                <button class="upload-btn" type="submit">
+                <button class="custom-btn" type="submit" style="border-radius: 15px; width: 200px; height: 50px;">
                     {{ '수정 완료' if product else '상품 등록' }}
                 </button>
             </div>
         </form>
     </div>
 </main>
-
 {% endblock %}
 
 {% block script %}
-
 <script>
     const input = document.getElementById('images-input');
     const container = document.getElementById('preview-container');
     let selectedFiles = [];
 
-
-    {# 사진 업로드 최대 10장 제한 #}
+    // 사진 업로드 이벤트
     input.addEventListener('change', (e) => {
         const files = Array.from(e.target.files);
         selectedFiles = [...selectedFiles, ...files].slice(0, 10);
+        updateInputFiles();
         render();
     });
 
-    {# input.files 동기화 함수 #}
+    // input.files 동기화
     function updateInputFiles() {
         const dt = new DataTransfer();
         selectedFiles.forEach(file => dt.items.add(file));
         input.files = dt.files;
     }
 
-    {# 사진 업로드 구간 프리뷰 디자인 #}
+    // 프리뷰 렌더링
     function render() {
         container.innerHTML = '';
-        const dt = new DataTransfer();
-
         let loadedImages = 0;
 
         if (selectedFiles.length === 0) {
@@ -274,7 +229,6 @@
         }
 
         selectedFiles.forEach((file, i) => {
-            {#dt.items.add(file);#}
             const reader = new FileReader();
             reader.onload = (e) => {
                 const div = document.createElement('div');
@@ -293,10 +247,9 @@
             }
             reader.readAsDataURL(file);
         });
-        {#input.files = dt.files;#}
     }
 
-    {# 빈자리에 + 표시 #}
+    // 빈 슬롯 채우기
     function fillEmptySlots() {
         const currentCount = container.querySelectorAll('.preview-item').length;
         for (let i = currentCount; i < 9; i++) {
@@ -307,14 +260,13 @@
         }
     }
 
-    {# 잘못 업로드한 사진 제거 #}
+    // 사진 삭제
     function remove(i) {
         selectedFiles.splice(i, 1);
         updateInputFiles();
         render();
     }
 
-    {# 초기 실행 (빈 칸 9개) #}
     window.onload = fillEmptySlots;
 </script>
 {% endblock %}

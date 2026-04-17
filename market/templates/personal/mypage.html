@@ -15,18 +15,6 @@
     /* 마이페이지 전체 배경 */
     /* 배경 색깔 삭제 4월16일 */
 
-    /* flash 메세지 4월16일 생성 */
-    .alert-box {
-        margin-bottom: 20px;
-        padding: 12px 14px;
-        border-radius: 12px;
-        background-color: #f4f2ff;
-        border: 1px solid #ddd6ff;
-        color: #5f52d9;
-        font-size: 14px;
-        font-weight: 600;
-    }
-
     /* 너무 넓어보이는 콘텐츠 영역 감소 4월15일 */
     .container.mt-4 {
         max-width: 1120px;
@@ -497,7 +485,7 @@
 
     /* 빈 상태 메시지 박스 */
     /* 리뷰가 없을 때 사용 */
-  
+
     /* 빈 박스 크기조절 4월16일 */
     .empty-box {
         background-color: #f8f8ff;
@@ -646,13 +634,7 @@
             transform: translateY(0);
         }
     }
-        .profile-summary {
-            width: 100%;
-            margin-left: 0;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-        }
-    }
+       /* merge 후 중복삭제 4월17일 */
 
     /* 팝업 스타일 */
     .save-toast {
@@ -677,14 +659,8 @@
 </style>
 
 <div class="container mt-4">
-    <!--상태메시지 수정 flash, 4월 16일 생성-->
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <div class="alert-box">
-        {{ messages[0] }}
-    </div>
-    {% endif %}
-    {% endwith %}
+    <!--상태메시지 수정 flash, 4월 17일 flash 중복으로 삭제-->
+
     <!-- 나의 정보, 상품등록 버튼 추가 4월16일-->
     <div class="mypage-section">
         <div class="mypage-topbar">
