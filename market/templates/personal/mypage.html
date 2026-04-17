@@ -4,28 +4,16 @@
 
 <!-- 마이페이지 토스트 팝업 -->
 {% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <div id="saveToast" class="save-toast">
-            {{ messages[0] }}
-        </div>
-    {% endif %}
+{% if messages %}
+<div id="saveToast" class="save-toast">
+    {{ messages[0] }}
+</div>
+{% endif %}
 {% endwith %}
 
 <style>
     /* 마이페이지 전체 배경 */
     /* 배경 색깔 삭제 4월16일 */
-
-    /* flash 메세지 4월16일 생성 */
-    .alert-box {
-        margin-bottom: 20px;
-        padding: 12px 14px;
-        border-radius: 12px;
-        background-color: #f4f2ff;
-        border: 1px solid #ddd6ff;
-        color: #5f52d9;
-        font-size: 14px;
-        font-weight: 600;
-    }
 
     /* 너무 넓어보이는 콘텐츠 영역 감소 4월15일 */
     .container.mt-4 {
@@ -125,6 +113,12 @@
         flex: 1;
     }
 
+    /* nickname css 4월17일 */
+    .nickname-text{
+        color: #6C5CE7;
+        font-weight: 700;
+    }
+
     /* 오른쪽 활동 요약 */
     .profile-summary {
         display: flex;
@@ -186,6 +180,14 @@
         font-size: 2.5rem;
         font-weight: bold;
     }
+    /* 프로필이미지 4월17일 */
+    .avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
 
     /* 내 정보 수정 버튼  4월15일 명칭 변경으로 인해 수정*/
     .profile-edit-btn {
@@ -363,7 +365,12 @@
     }
 
     /* 상품 이미지 박스 */
-    /* 임시 이미지와 실제 이미지 크기 통일 4월16일 수정 */
+    /* 상품 a태그 css 추가 4월17일 수정 */
+    .product-card-link {
+        display: block;
+        color: inherit;
+    }
+
     .product-thumb {
         width: 100%;
         height: 180px;
@@ -495,9 +502,33 @@
         border-color: #6f61f2;
     }
 
-    /* 빈 상태 메시지 박스 */
+    /* 빈 상태 메시지 박스 4월17일*/
+
+    .empty-product-link {
+        display: inline-block;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .empty-product-link:hover .empty-product-card {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(124, 111, 246, 0.12);
+        border-color: #bdb7ff;
+    }
+
+    .empty-product-card {
+        width: 240px;
+        border: 1px dashed #ccccff;
+        border-radius: 16px;
+        background-color: #f8f8ff;
+        padding: 14px;
+        text-align: center;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
     /* 리뷰가 없을 때 사용 */
-  
+
     /* 빈 박스 크기조절 4월16일 */
     .empty-box {
         background-color: #f8f8ff;
@@ -646,13 +677,8 @@
             transform: translateY(0);
         }
     }
-        .profile-summary {
-            width: 100%;
-            margin-left: 0;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-        }
-    }
+
+    /* merge 후 중복삭제 4월17일 */
 
     /* 팝업 스타일 */
     .save-toast {
@@ -673,18 +699,11 @@
 
 
     /* 4월15일 수정함 */
-
 </style>
 
 <div class="container mt-4">
-    <!--상태메시지 수정 flash, 4월 16일 생성-->
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <div class="alert-box">
-        {{ messages[0] }}
-    </div>
-    {% endif %}
-    {% endwith %}
+    <!--상태메시지 수정 flash, 4월 17일 flash 중복으로 삭제-->
+
     <!-- 나의 정보, 상품등록 버튼 추가 4월16일-->
     <div class="mypage-section">
         <div class="mypage-topbar">
@@ -700,15 +719,20 @@
 
             <!-- 프로필 이미지, 사용자 기본 정보 -->
             <div class="profile-left d-flex align-items-center">
-                <!--원형 프로필, 첫 글자가 공란일 경우 U가 나오게 수정 4월16일 -->
+                <!--원형 프로필, 프로필이미지 변경하면 출력되게 수정4월17일 -->
                 <div class="avatar-circle">
+                    {% if user.profile_image %}
+                    <img src="{{ url_for('static', filename='uploads/profiles/' + user.profile_image) }}"
+                        class="avatar-img" alt="사용자 프로필 이미지">
+                    {% else %}
                     {{ (user.nickname or "U")[0] | upper }}
+                    {% endif %}
                 </div>
 
                 <div class="ms-4">
                     <!-- 이름, 편집 버튼 -->
                     <div class="d-flex align-items-center">
-                        <h3 class="mb-0 me-2">{{ user.nickname }}</h3>
+                        <h3 class="nickname-text mb-0 me-2">{{ user.nickname }}</h3>
                         <!-- 회원 정보 수정으로 이동, 경로 수정 4월16일 수정-->
                         <button class="profile-edit-btn" type="button"
                             onclick="location.href='{{ url_for('personal.edit_profile') }}'">내 정보 수정</button>
@@ -749,7 +773,8 @@
             <div class="profile-summary">
                 <!-- 판매 상품 클릭하면 판매 중인 상품 목록으로 스크롤 이동 -->
                 <div class="summary-box" onclick="scrollToSection('productSection')">
-                    <div class="summary-label">판매 완료</div>
+                    <!--디자인적 요인으로 인한 수정 4월17일-->
+                    <div class="summary-label">판매 중</div>
                     <div class="summary-value">{{ products|length }}</div>
                 </div>
                 <!-- 찜한 상품 클릭하면 찜한 상품 목록 스크롤 이동 -->
@@ -787,38 +812,47 @@
             <div class="product-slider-track" id="productSliderTrack">
                 {% for product in products %}
                 <div class="product-slide">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body">
-                            <!-- 상품 이미지 -->
-                            <!-- 임시 이미지와 실제 이미지 크기 통일 4월16일 수정 -->
-                            <div class="product-thumb">
-                                <img src="{{ url_for('static', filename='img/default_product.png') }}"
-                                    class="product-thumb-img" alt="상품이미지">
-                            </div>
+                    <!--상품카드 전체 클릭가능 4월 17일 수정-->
+                    <a href="{{ url_for('items.product_details', item_id=product.id) }}"
+                        class="product-card-link text-decoration-none">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <!-- 상품 이미지 -->
+                                <!-- 임시 이미지와 실제 이미지 크기 통일 4월16일 수정 -->
+                                <div class="product-thumb">
+                                    <img src="{{ url_for('static', filename='img/default_product.png') }}"
+                                        class="product-thumb-img" alt="상품이미지">
+                                </div>
 
-                            <!-- 상품 정보 -->
-                            <div class="product-info">
-                                <h6 class="card-title mb-1 text-truncate">
-                                    <a href="{{ url_for('items.product_details', item_id=product.id) }}"
-                                        class="text-decoration-none text-dark">
+                                <!-- 상품 정보 -->
+                                <div class="product-info">
+                                    <h6 class="card-title mb-1 text-truncate">
+
                                         {{ product.item_title }}
-                                    </a>
-                                </h6>
-                                <p class="card-text fw-bold text-primary mb-0">{{ "{:,}원".format(product.item_price) }}
-                                </p>
+
+                                    </h6>
+                                    <p class="card-text fw-bold text-primary mb-0">{{ "{:,}원".format(product.item_price)
+                                        }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 {% endfor %}
             </div>
         </div>
         {% else %}
-        <!-- 상품이 없을 때 -->
-        <div class="empty-product-card">
-            <div class="empty-product-image"></div>
-            <div class="empty-product-text">등록한 상품이 없습니다.</div>
-        </div>
+        <!-- 상품이 없을 때 4월17일 수정-->
+        <a href="{{ url_for('items.product_upload') }}" class="empty-product-link">
+            <div class="empty-product-card">
+                <div class="empty-product-image"></div>
+                <div class="empty-product-text">
+                    현재 판매 중인 상품이 없습니다.<br>
+                    <strong>새 상품을 등록해보세요.</strong>
+                </div>
+            </div>
+        </a>
         {% endif %}
     </div>
 
@@ -868,11 +902,16 @@
             </div>
         </div>
         {% else %}
-        <!-- 찜한 상품이 없을 때 -->
-        <div class="empty-product-card">
-            <div class="empty-product-image"></div>
-            <div class="empty-product-text">찜한 상품이 없습니다.</div>
-        </div>
+        <!-- 찜한 상품이 없을 때 빈 박스 클릭시 메인으로 이동 4월17일 수정-->
+        <a href="{{ url_for('main.index') }}" class="empty-product-link">
+            <div class="empty-product-card">
+                <div class="empty-product-image"></div>
+                <div class="empty-product-text">
+                    찜한 상품이 없습니다.<br>
+                    <strong>메인에서 상품을 둘러보세요</strong>
+                </div>
+            </div>
+        </a>
         {% endif %}
     </div>
 
@@ -1041,14 +1080,14 @@
     });
 
     // 토스트 팝업 JS
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const toast = document.getElementById('saveToast');
         if (toast) {
             // 1.5초 동안 보여준 뒤에
-            setTimeout(function() {
+            setTimeout(function () {
                 toast.style.opacity = '0'; // 서서히 투명하게
                 // 애니메이션 끝나면 아예 제거
-                setTimeout(function() {
+                setTimeout(function () {
                     toast.remove();
                 }, 500);
             }, 1500);

@@ -1,14 +1,16 @@
-# import 추가 4월15일 수정
-from flask import Blueprint, render_template, g, request, flash, redirect, url_for
-from werkzeug.security import check_password_hash, generate_password_hash
+# import 추가 4월17일 수정
+import os
+import uuid
 
+from flask import Blueprint, render_template, g, request, flash, redirect, url_for, current_app
+from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 from market import db
 from market.views.auth_view import login_required
 from market.models import Item, Favorite, Review, User
 
 # 경로 수정으로 인해 삭제 4월16일
 bp = Blueprint('personal', __name__, url_prefix='/personal')
-
 
 # 마이페이지
 @bp.route('/mypage/')
@@ -43,9 +45,8 @@ def edit_profile():
     if request.method == 'POST':
         action = request.form.get('action')
 
-        user.username = request.form['username']
-        user.email = request.form['email']
-        user.phone = request.form['phone']
+        # username을 읽기전용으로 바꾸고 삭제 나머지는 아래로 이동 4월 17일
+
 
         new_nickname = request.form.get('nickname', '').strip()
 
@@ -72,6 +73,44 @@ def edit_profile():
             return redirect(url_for('personal.my_page'))
 
         elif action == 'save':
+            # 프로필 이미지 처리 4월17일
+            file = request.files.get('profile_image')
+
+            if file and file.filename != '':
+                filename = secure_filename(file.filename)
+
+                # 확장자 추출
+                name, ext = os.path.splitext(filename)
+                ext = ext.lower()
+
+                allowed_ext = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+                if ext not in allowed_ext:
+                    flash('이미지 파일만 업로드할 수 있습니다.')
+                    return render_template('personal/edit_profile.html', user=user)
+
+                # 파일명 랜덤 생성
+                new_filename = f"{uuid.uuid4().hex}{ext}"
+
+                # 프로필이미지 저장 폴더 4월17일
+                upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'profiles')
+                # static에 폴더가 없으면 생성 4월17일
+                os.makedirs(upload_folder, exist_ok=True)
+
+                # 기존 프로필 이미지 삭제 4월17일
+                if user.profile_image:
+                    old_file_path = os.path.join(upload_folder, user.profile_image)
+                    if os.path.exists(old_file_path):
+                        os.remove(old_file_path)
+
+                # 저장 경로
+                file_path = os.path.join(upload_folder, new_filename)
+
+                # 파일 저장
+                file.save(file_path)
+
+                # DB에 파일명 저장
+                user.profile_image = new_filename
+
             db.session.commit()
             flash('회원정보가 저장되었습니다.')
             return redirect(url_for('personal.my_page'))
