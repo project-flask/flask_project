@@ -24,13 +24,17 @@ class UserCreateForm(FlaskForm):
     password2 = PasswordField('비밀번호확인', validators=[
         DataRequired(message='비밀번호를 한 번 더 입력해주세요.')
     ])
+    # 이메일 형식 정규표현식으로 변경(4/17)
     email = EmailField('이메일', validators=[
         DataRequired(message='이메일을 입력해주세요.'),
-        Email(message='유효한 이메일 형식이 아닙니다.')
+        Regexp(
+            r'^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$',
+            message="올바른 이메일 형식이 아닙니다."
+        )
     ])
     phone = StringField('전화번호', validators=[
         Optional(),  # 전화번호는 선택사항
-        Regexp(r'^\d{3}-\d{3,4}-\d{4}$', message="올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)")
+        Regexp(r'^\d{10,11}$', message="숫자만 10~11자리로 입력해 주세요.")
     ])
 
     # --- 여기서부터 중복 체크 함수 ---

@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <style>
-    /* 2. 아이콘 위치를 잡기 위한 전용 스타일 */
+    /* 아이콘 위치를 잡기 위한 전용 스타일 */
     .pw-container {
         position: relative;
     }
@@ -217,9 +217,9 @@
                     ""), placeholder="아이디", autofocus=True) }}
 
                     {% if form.username.errors %}
-                    {% for error in form.username.errors %}
-                    <div class="invalid-feedback-custom">{{ error }}</div>
-                    {% endfor %}
+                        {% for error in form.username.errors %}
+                            <div class="invalid-feedback-custom">{{ error }}</div>
+                        {% endfor %}
                     {% endif %}
                 </div>
 
@@ -232,9 +232,9 @@
                     </div>
 
                     {% if form.password.errors %}
-                    {% for error in form.password.errors %}
-                    <div class="invalid-feedback-custom">{{ error }}</div>
-                    {% endfor %}
+                        {% for error in form.password.errors %}
+                            <div class="invalid-feedback-custom">{{ error }}</div>
+                        {% endfor %}
                     {% endif %}
                 </div>
 

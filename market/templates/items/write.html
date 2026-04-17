@@ -155,10 +155,6 @@
                         <input type="file" id="images-input" name="images" multiple accept="image/*" style="display: none;">
                     </div>
 
-        <form
-            action="{{ url_for('items.product_modify', item_id=product.id) if product else url_for('items.product_upload') }}"
-            method="post" enctype="multipart/form-data">
-
                     <div id="preview-container" class="preview-grid"></div>
                 </div>
 
@@ -194,44 +190,6 @@
 
             <div class="text-center mt-5">
                 <button class="custom-btn" type="submit" style="border-radius: 15px;">상품 등록</button>
-              
-            <div class="mb-4">
-                <label class="form-label fw-bold">상품명</label>
-                <input type="text" class="form-control" name="subject" placeholder="상품명 입력"
-                    value="{{ product.item_title if product else '' }}">
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label fw-bold">카테고리 선택</label>
-                <select class="form-select" name="category">
-                    <option selected disabled>카테고리</option>
-                    {% for cat in categories %}
-                    <option value="{{ cat.id }}" {% if product and cat.id==product.category_id %}selected{% endif %}>
-                        {{ cat.category_name }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label fw-bold">가격</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" name="price" placeholder="가격 입력"
-                        value="{{ product.item_price if product else '' }}">
-                    <span class="input-group-text">원</span>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label fw-bold">내용 입력</label>
-                <textarea class="form-control" name="content" rows="10"
-                    placeholder="간단한 상품 설명을 입력해주세요">{{ product.item_description if product else '' }}</textarea>
-            </div>
-
-            <div class="text-center mt-5">
-                <button class="upload-btn" type="submit">
-                    {{ '수정 완료' if product else '상품 등록' }}
-                </button>
             </div>
         </form>
     </div>
