@@ -10,9 +10,10 @@
         padding: 6px 18px;
         transition: all 0.3s ease;
         display: inline-block;
-        text-decoration: none;
+        text-decoration:none;
         border: none;
         font-weight: bold;
+        cursor: pointer;
     }
 
     .custom-btn:hover {
@@ -23,9 +24,12 @@
 
     /* 전체 폼 컨테이너 */
     .form-container {
-        max-width: 750px;
-        margin: 60px auto;
-        padding: 20px;
+        max-width: 950px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border: 1px solid #eeeeee;
+        border-radius: 12px;
     }
 
     /* 가격 입력창 화살표(스피너) 제거 */
@@ -35,51 +39,162 @@
         margin: 0;
     }
 
-    /* 등록 버튼 스타일 */
-    .upload-btn {
-        background-color: #CCCCFF;
-        color: white !important;
-        border: none;
-        padding: 12px 40px;
+    {# 상품 업로드 구간 #}
+    .upload-area {
+        border: 2px dashed #CCCCFF;
+        background-color: #fcfcff;
+        border-radius: 12px;
+        padding: 40px;
+        text-align: center;
+        cursor: pointer;
+        margin-bottom: 15px;
+    }
+
+    {# 상품 업로드 이미지 프리뷰 #}
+    .preview-box {
+        position: relative;
+        width: 100px;
+        height: 100px;
         border-radius: 8px;
-        font-weight: bold;
-        transition: all 0.3s ease;
+        overflow: hidden;
+        border: 1px solid #ddd;
     }
 
-    .upload-btn:hover {
-        background-color: #B3B3FF;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(204, 204, 255, 0.4);
+    .preview-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
-    /* 입력창 포커스 시 테두리 색상 변경 */
-    .form-control:focus,
-    .form-select:focus {
+    {# 좌우 분할 레이아웃 #}
+    .upload-main-layout {
+        display: flex;
+        gap: 40px;
+    }
+
+    .photo-section { flex: 1.2; }
+    .info-section { flex: 1; border-left: 1px solid #eee; padding-left: 40px; }
+
+    {# 메인 업로드 박스 #}
+    .main-upload-area {
+        width: 100%;
+        aspect-ratio: 1/1;
+        border: 2px dashed #CCCCFF;
+        background-color: #f9f9ff;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        margin-bottom: 20px;
+        transition: 0.3s;
+    }
+
+    {# 미리보기 그리드 #}
+    .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .preview-item {
+        position: relative;
+        aspect-ratio: 1/1;
+        border: 1px dashed #ccc;
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: #fafafa;
+    }
+
+    .preview-item img {
+        width: 100%; height: 100%; object-fit: cover;
+    }
+
+    {# 입력창 포커스 시 테두리 색상 변경 #}
+    .form-control:focus, .form-select:focus {
         border-color: #CCCCFF;
         outline: 0;
         box-shadow: 0 0 0 0.25rem rgba(204, 204, 255, 0.25);
+    }
+
+    {# 입력 필드 스타일 #}
+    .custom-input {
+        background-color: #f0f0ff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 15px;
+        margin-bottom: 5px;
+    }
+
+    .custom-label { font-weight: bold; margin-bottom: 8px; display: block; }
+
+    {# 삭제 버튼 #}
+    .btn-remove {
+        position: absolute; top: 5px; right: 5px;
+        background: rgba(0,0,0,0.5); color: white; border: none;
+        border-radius: 50%; width: 22px; height: 22px; cursor: pointer;
     }
 </style>
 
 <!-- 4월16일 코드수정함-->
 <main class="container">
     <div class="form-container">
-        <h2 class="fw-bold mb-5 text-center">상품 등록하기</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold m-0">상품 등록하기</h2>
+            <a href="{{ url_for('main.index') }}" class="btn btn-danger mb-4" style="font-weight: bold;">취소</a>
+        </div>
+
+        <form action="{{ url_for('items.product_upload') }}" method="post" enctype="multipart/form-data">
+            <div class="upload-main-layout">
+                <div class="photo-section">
+                    <p class="custom-label">사진 업로드</p>
+                    <div class="main-upload-area" onclick="document.getElementById('images-input').click()">
+                        <i class="fas fa-camera mb-2" style="font-size: 40px; color: #CCCCFF;"></i>
+                        <span class="text-muted">사진 등록 (최대 10장)</span>
+                        <input type="file" id="images-input" name="images" multiple accept="image/*" style="display: none;">
+                    </div>
 
         <form
             action="{{ url_for('items.product_modify', item_id=product.id) if product else url_for('items.product_upload') }}"
             method="post" enctype="multipart/form-data">
 
-            <div class="d-flex justify-content-end">
-                <a href="{{ url_for('main.index') }}" class="custom-btn mb-4">등록 취소하기</a>
+                    <div id="preview-container" class="preview-grid"></div>
+                </div>
+
+                <div class="info-section">
+                    <div class="mb-4">
+                        <label class="custom-label">상품명</label>
+                        <input type="text" class="form-control custom-input" name="title" placeholder="상품명 입력" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="custom-label">카테고리 선택</label>
+                        <select class="form-select custom-input" name="category">
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.category_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="custom-label">가격</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control custom-input" name="price" placeholder="가격 입력">
+                            <span class="input-group-text custom-input" style="background: none; border-left: none;">원</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="custom-label">내용 입력</label>
+                        <textarea class="form-control custom-input" name="content" rows="8" placeholder="간단한 상품 설명을 입력해주세요"></textarea>
+                    </div>
+                </div>
             </div>
 
-            <div class="mb-4">
-                <label class="form-label fw-bold">사진 업로드</label>
-                <input type="file" class="form-control" name="file" multiple>
-                <div class="text-muted mb-2" style="font-size: 12px;">* 여러장 업로드 가능</div>
-            </div>
-
+            <div class="text-center mt-5">
+                <button class="custom-btn" type="submit" style="border-radius: 15px;">상품 등록</button>
+              
             <div class="mb-4">
                 <label class="form-label fw-bold">상품명</label>
                 <input type="text" class="form-control" name="subject" placeholder="상품명 입력"
@@ -121,4 +236,85 @@
         </form>
     </div>
 </main>
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+    const input = document.getElementById('images-input');
+    const container = document.getElementById('preview-container');
+    let selectedFiles = [];
+
+
+    {# 사진 업로드 최대 10장 제한 #}
+    input.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        selectedFiles = [...selectedFiles, ...files].slice(0, 10);
+        render();
+    });
+
+    {# input.files 동기화 함수 #}
+    function updateInputFiles() {
+        const dt = new DataTransfer();
+        selectedFiles.forEach(file => dt.items.add(file));
+        input.files = dt.files;
+    }
+
+    {# 사진 업로드 구간 프리뷰 디자인 #}
+    function render() {
+        container.innerHTML = '';
+        const dt = new DataTransfer();
+
+        let loadedImages = 0;
+
+        if (selectedFiles.length === 0) {
+            fillEmptySlots();
+            return;
+        }
+
+        selectedFiles.forEach((file, i) => {
+            {#dt.items.add(file);#}
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                div.innerHTML = `
+                    <img src="${e.target.result}">
+                    <button type="button" class="btn-remove" onclick="remove(${i})">×</button>
+                    ${i === 0 ? '<div style="position:absolute; bottom:0; width:100%; background:rgba(204,204,255,0.8); color:white; font-size:10px; text-align:center;">메인 이미지</div>' : ''}
+                `;
+                container.appendChild(div);
+
+                loadedImages++;
+                if (loadedImages === selectedFiles.length) {
+                    fillEmptySlots();
+                }
+            }
+            reader.readAsDataURL(file);
+        });
+        {#input.files = dt.files;#}
+    }
+
+    {# 빈자리에 + 표시 #}
+    function fillEmptySlots() {
+        const currentCount = container.querySelectorAll('.preview-item').length;
+        for (let i = currentCount; i < 9; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'preview-item empty-slot';
+            empty.innerHTML = '<i class="fas fa-plus"></i>';
+            container.appendChild(empty);
+        }
+    }
+
+    {# 잘못 업로드한 사진 제거 #}
+    function remove(i) {
+        selectedFiles.splice(i, 1);
+        updateInputFiles();
+        render();
+    }
+
+    {# 초기 실행 (빈 칸 9개) #}
+    window.onload = fillEmptySlots;
+</script>
 {% endblock %}

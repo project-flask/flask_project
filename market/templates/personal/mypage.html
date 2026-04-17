@@ -1,12 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
 
+
+<!-- 마이페이지 토스트 팝업 -->
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div id="saveToast" class="save-toast">
+            {{ messages[0] }}
+        </div>
+    {% endif %}
+{% endwith %}
+
 <style>
     /* 마이페이지 전체 배경 */
-    /* 배경 색깔 변경 4월15일 */
-    body {
-        background-color: #ffffff;
-        color: #222;
+    /* 배경 색깔 삭제 4월16일 */
+
+    /* flash 메세지 4월16일 생성 */
+    .alert-box {
+        margin-bottom: 20px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background-color: #f4f2ff;
+        border: 1px solid #ddd6ff;
+        color: #5f52d9;
+        font-size: 14px;
+        font-weight: 600;
     }
 
     /* 너무 넓어보이는 콘텐츠 영역 감소 4월15일 */
@@ -15,7 +33,6 @@
         padding-top: 24px;
         padding-bottom: 48px;
     }
-
 
     /* 공통 섹션 카드 */
     /* 크기세부조절 4월15일 */
@@ -40,8 +57,6 @@
         gap: 8px;
     }
 
-
-
     /* 프로필 상단 영역 */
     /* 크기세부조절 4월15일 */
     .profile-top {
@@ -50,6 +65,55 @@
         align-items: center;
         gap: 28px;
         flex-wrap: nowrap;
+    }
+
+    /* 나의 정보 상단 바 4월16일 추가*/
+    .mypage-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    /* 마이페이지 상품 등록 버튼 4월16일 추가*/
+    .mypage-upload-btn {
+        background: linear-gradient(90deg, #c3bcff 0%, #aca3ff 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        padding: 11px 20px;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1;
+        box-shadow: 0 8px 18px rgba(124, 111, 246, 0.18);
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        transform: translateY(3px);
+        margin-right: 4px;
+    }
+
+    .mypage-upload-btn:hover {
+        filter: brightness(1.03);
+        box-shadow: 0 12px 24px rgba(124, 111, 246, 0.24);
+        background: linear-gradient(90deg, #b8b0ff 0%, #9e94ff 100%);
+    }
+
+    .mypage-upload-btn:active {
+        transform: translateY(0);
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 767px) {
+        .mypage-topbar {
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .mypage-upload-btn {
+            width: 100%;
+            justify-content: center;
+        }
     }
 
     /* 프로필 왼쪽 4월15일 생성 */
@@ -71,7 +135,7 @@
     }
 
     /* 활동 요약 카드 1개 */
-    /* 크기세부조절 4월15일 */
+    /* 세부수정 4월16일 */
     .summary-box {
         min-width: 120px;
         background: #ffffff;
@@ -82,7 +146,6 @@
         box-shadow: 0 8px 20px rgba(124, 111, 246, 0.08);
         transition: all 0.2s ease;
         cursor: pointer;
-        transition: all 0.2s ease;
     }
 
     .summary-box:hover {
@@ -106,7 +169,6 @@
         color: #6f61f2;
         font-weight: 800;
     }
-
 
     /* 프로필 원형 이미지 */
     /* 현재는 이미지 대신 이름 첫 글자를 표시 */
@@ -141,7 +203,6 @@
         border-color: #b3b3ff;
         color: #8f8ff7;
     }
-
 
     /* 상태 메시지 박스 */
     /* 크기세부조절 4월15일 */
@@ -265,7 +326,6 @@
         background: #ebe7ff;
     }
 
-
     /* 상품 / 찜 카드 공통 */
     /* 상품 등록시 나올 디자인 4월15일 */
     .card.h-100.border-0.shadow-sm {
@@ -273,6 +333,7 @@
         border-radius: 18px !important;
         box-shadow: 0 8px 18px rgba(124, 111, 246, 0.06) !important;
         transition: all 0.2s ease;
+        overflow: hidden;
     }
 
     .card.h-100.border-0.shadow-sm:hover {
@@ -301,6 +362,120 @@
         box-shadow: 0 8px 18px rgba(171, 171, 250, 0.12);
     }
 
+    /* 상품 이미지 박스 */
+    /* 임시 이미지와 실제 이미지 크기 통일 4월16일 수정 */
+    .product-thumb {
+        width: 100%;
+        height: 180px;
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: #eeeeff;
+    }
+
+    .product-thumb-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* 섹션 제목 + 슬라이드 버튼 */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    /* 슬라이드 버튼 영역 */
+    .slide-controls {
+        display: flex;
+        gap: 8px;
+    }
+
+    /* 슬라이드 버튼 */
+    .slide-btn {
+        width: 36px;
+        height: 36px;
+        border: 1px solid #ddd6ff;
+        background-color: #ffffff;
+        color: #6f61f2;
+        border-radius: 10px;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .slide-btn:hover {
+        background-color: #f4f2ff;
+        border-color: #cfc8ff;
+    }
+
+    .slide-btn:disabled {
+        opacity: 0.45;
+        cursor: default;
+        background-color: #fafaff;
+    }
+
+    /* 슬라이드 바깥 영역 */
+    .product-slider-wrapper {
+        overflow: hidden;
+        width: 100%;
+    }
+
+    /* 슬라이드 트랙 */
+    .product-slider-track {
+        display: flex;
+        gap: 16px;
+        transition: transform 0.35s ease;
+        will-change: transform;
+    }
+
+    /* 카드 4개씩 보이도록 */
+    .product-slide {
+        flex: 0 0 calc((100% - 48px) / 4);
+        min-width: calc((100% - 48px) / 4);
+    }
+
+    /* 반응형 */
+    @media (max-width: 991px) {
+        .product-slide {
+            flex: 0 0 calc((100% - 16px) / 2);
+            min-width: calc((100% - 16px) / 2);
+        }
+    }
+
+    @media (max-width: 767px) {
+
+        .section-header,
+        .profile-top {
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .product-slide {
+            flex: 0 0 100%;
+            min-width: 100%;
+        }
+
+        .profile-summary {
+            width: 100%;
+            margin-left: 0;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+    }
+
+
+    /* 상품 정보 영역 */
+    /* 이미지 아래 정보 정렬용 4월16일 수정 */
+    .product-info {
+        padding-top: 14px;
+    }
+
     /* 찜 취소 버튼 */
     /* 크기세부조절 4월15일 */
     .favorite-remove-btn {
@@ -320,10 +495,10 @@
         border-color: #6f61f2;
     }
 
-
     /* 빈 상태 메시지 박스 */
     /* 리뷰가 없을 때 사용 */
-
+  
+    /* 빈 박스 크기조절 4월16일 */
     .empty-box {
         background-color: #f8f8ff;
         border: 1px dashed #ccccff;
@@ -332,6 +507,10 @@
         padding: 28px 16px;
         color: #8a8aa8;
         font-size: 15px;
+        min-height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     /* 더미상품 */
@@ -359,7 +538,6 @@
     }
 
     /* 리뷰 목록 */
-
     /* 리뷰숫자 4월15일*/
     .review-count {
         font-size: 14px;
@@ -373,7 +551,7 @@
         gap: 12px;
     }
 
-    /* 리뷰 카드 1개 */
+    /* 리뷰 카드 1개 최소높이 추가 4월16일*/
     .review-card {
         display: flex;
         justify-content: space-between;
@@ -384,6 +562,7 @@
         border-radius: 14px;
         padding: 14px 16px;
         transition: all 0.2s ease;
+        min-height: 80px;
     }
 
     .review-card:hover {
@@ -397,11 +576,17 @@
         min-width: 0;
     }
 
+    /* 리뷰 영역 최대 2줄만 표시되게 수정 4월 16일 */
     .review-content {
         margin-bottom: 6px;
         font-size: 15px;
         color: #333;
         word-break: break-word;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        /* 최대 2줄 */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .review-item-name {
@@ -461,13 +646,6 @@
             transform: translateY(0);
         }
     }
-
-    @media (max-width: 767px) {
-        .profile-top {
-            flex-wrap: wrap;
-            align-items: flex-start;
-        }
-
         .profile-summary {
             width: 100%;
             margin-left: 0;
@@ -475,29 +653,63 @@
             justify-content: flex-start;
         }
     }
-<!--    4월15일 수정함-->
+
+    /* 팝업 스타일 */
+    .save-toast {
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #CCCCFF;
+        color: white;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-weight: bold;
+        box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+        opacity: 1;
+    }
+
+
+    /* 4월15일 수정함 */
+
 </style>
 
 <div class="container mt-4">
-
-    <!-- 나의 정보 -->
+    <!--상태메시지 수정 flash, 4월 16일 생성-->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert-box">
+        {{ messages[0] }}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <!-- 나의 정보, 상품등록 버튼 추가 4월16일-->
     <div class="mypage-section">
-        <h5 class="section-title">👤 나의 정보</h5>
+        <div class="mypage-topbar">
+            <h5 class="section-title mb-0">👤 나의 정보</h5>
+
+            <button class="mypage-upload-btn" type="button"
+                onclick="location.href='{{ url_for('items.product_upload') }}'">
+                상품 등록
+            </button>
+        </div>
 
         <div class="profile-top">
 
             <!-- 프로필 이미지, 사용자 기본 정보 -->
             <div class="profile-left d-flex align-items-center">
-                <!--원형 프로필 -->
+                <!--원형 프로필, 첫 글자가 공란일 경우 U가 나오게 수정 4월16일 -->
                 <div class="avatar-circle">
-                    {{ user.username[0] | upper }}
+                    {{ (user.nickname or "U")[0] | upper }}
                 </div>
 
                 <div class="ms-4">
                     <!-- 이름, 편집 버튼 -->
                     <div class="d-flex align-items-center">
-                        <h3 class="mb-0 me-2">{{ user.username }}</h3>
-                        <!-- 회원 정보 수정으로 이동, 역활을 명확하게 하기 위해 편집버튼 이름 변경 4월15일 수정-->
+                        <h3 class="mb-0 me-2">{{ user.nickname }}</h3>
+                        <!-- 회원 정보 수정으로 이동, 경로 수정 4월16일 수정-->
                         <button class="profile-edit-btn" type="button"
                             onclick="location.href='{{ url_for('personal.edit_profile') }}'">내 정보 수정</button>
                     </div>
@@ -520,126 +732,148 @@
                         </div>
 
                         <!-- 수정 모드 -->
-                        <div id="statusEditMode" class="status-edit-mode">
-                            <input type="text" id="statusInput" class="status-input" maxlength="50"
-                                value="{{ user.status_message if user.status_message else '' }}"
+                        <form method="post" action="{{ url_for('personal.update_status_message') }}" id="statusEditMode"
+                            class="status-edit-mode">
+                            <input type="text" name="status_message" id="statusInput" class="status-input"
+                                maxlength="50" value="{{ user.status_message if user.status_message else '' }}"
                                 placeholder="상태 메시지를 입력하세요">
                             <div class="status-action-buttons">
-                                <button type="button" class="status-save-btn" id="statusSaveBtn">저장</button>
+                                <button type="submit" class="status-save-btn">저장</button>
                                 <button type="button" class="status-cancel-btn" id="statusCancelBtn">취소</button>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!--활동 요약 -->
-                <div class="profile-summary">
-                    <!-- 판매 상품 클릭하면 판매 중인 상품 목록으로 스크롤 이동 -->
-                    <div class="summary-box" onclick="scrollToSection('productSection')">
-                        <div class="summary-label">판매 완료</div>
-                        <div class="summary-value">{{ products|length }}</div>
-                    </div>
-                    <!-- 찜한 상품 클릭하면 찜한 상품 목록 스크롤 이동 -->
-                    <div class="summary-box" onclick="scrollToSection('wishSection')">
-                        <div class="summary-label">찜한 상품</div>
-                        <div class="summary-value">{{ wishes|length }}</div>
-                    </div>
-                    <!-- 받은 리뷰를 클릭하면 구매자 리뷰로 스크롤 이동 -->
-                    <div class="summary-box" onclick="scrollToSection('reviewSection')">
-                        <div class="summary-label">받은 리뷰</div>
-                        <div class="summary-value">{{ reviews|length }}</div>
+                        </form>
                     </div>
                 </div>
             </div>
+            <!--활동 요약, 구조 수정 4월16일-->
+            <div class="profile-summary">
+                <!-- 판매 상품 클릭하면 판매 중인 상품 목록으로 스크롤 이동 -->
+                <div class="summary-box" onclick="scrollToSection('productSection')">
+                    <div class="summary-label">판매 완료</div>
+                    <div class="summary-value">{{ products|length }}</div>
+                </div>
+                <!-- 찜한 상품 클릭하면 찜한 상품 목록 스크롤 이동 -->
+                <div class="summary-box" onclick="scrollToSection('wishSection')">
+                    <div class="summary-label">찜한 상품</div>
+                    <div class="summary-value">{{ wishes|length }}</div>
+                </div>
+                <!-- 받은 리뷰를 클릭하면 구매자 리뷰로 스크롤 이동 -->
+                <div class="summary-box" onclick="scrollToSection('reviewSection')">
+                    <div class="summary-label">받은 리뷰</div>
+                    <div class="summary-value">{{ reviews|length }}</div>
+                </div>
+            </div>
         </div>
+
     </div>
     <hr class="my-4">
 
     <!-- 판매 중인 상품 -->
     <div class="mypage-section" id="productSection">
-        <h5 class="section-title">📦 판매 중인 상품<span class="review-count">({{ products|length }})</span></h5>
+        <div class="section-header">
+            <h5 class="section-title">📦 판매 중인 상품<span class="review-count">({{ products|length }})</span></h5>
 
-        <div class="row row-cols-1 row-cols-md-2 g-3">
-            {% for product in products %}
-            <div class="col">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="row g-0">
-                        <!-- 상품 이미지 -->
-                        <div class="col-4">
-                    <img src="{{ url_for('static', filename='img/default_product.png') }}" class="img-fluid rounded-start" alt="상품이미지"
-                              style="height: 100px; object-fit: cover;">
-                        </div>
+            <!-- 상품이 4개 초과일 때만 슬라이드 버튼 표시, 4월15일 수정 -->
+            {% if products|length > 4 %}
+            <div class="slide-controls">
+                <button type="button" class="slide-btn" id="productPrevBtn">‹</button>
+                <button type="button" class="slide-btn" id="productNextBtn">›</button>
+            </div>
+            {% endif %}
+        </div>
 
-                        <!-- 상품 정보 -->
-                        <div class="col-8">
-                            <div class="card-body py-2">
+        {% if products %}
+        <div class="product-slider-wrapper">
+            <div class="product-slider-track" id="productSliderTrack">
+                {% for product in products %}
+                <div class="product-slide">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <!-- 상품 이미지 -->
+                            <!-- 임시 이미지와 실제 이미지 크기 통일 4월16일 수정 -->
+                            <div class="product-thumb">
+                                <img src="{{ url_for('static', filename='img/default_product.png') }}"
+                                    class="product-thumb-img" alt="상품이미지">
+                            </div>
+
+                            <!-- 상품 정보 -->
+                            <div class="product-info">
                                 <h6 class="card-title mb-1 text-truncate">
                                     <a href="{{ url_for('items.product_details', item_id=product.id) }}"
                                         class="text-decoration-none text-dark">
                                         {{ product.item_title }}
                                     </a>
                                 </h6>
-                                <p class="card-text fw-bold text-primary">{{ "{:,}원".format(product.item_price) }}</p>
+                                <p class="card-text fw-bold text-primary mb-0">{{ "{:,}원".format(product.item_price) }}
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% else %}
-            <!-- 상품이 없을 때 -->
-            <div class="empty-product-card">
-                <div class="empty-product-image"></div>
-                <div class="empty-product-text">등록한 상품이 없습니다.</div>
-            </div>
-            {% endfor %}
         </div>
+        {% else %}
+        <!-- 상품이 없을 때 -->
+        <div class="empty-product-card">
+            <div class="empty-product-image"></div>
+            <div class="empty-product-text">등록한 상품이 없습니다.</div>
+        </div>
+        {% endif %}
     </div>
 
     <!-- 찜한 물건 목록 -->
     <div class="mypage-section" id="wishSection">
-        <h5 class="section-title">❤️ 찜한 물건 목록<span class="review-count">({{ wishes|length }})</span></h5>
+        <div class="section-header">
+            <h5 class="section-title">❤️ 찜한 물건 목록<span class="review-count">({{ wishes|length }})</span></h5>
 
-        <div class="row row-cols-1 row-cols-md-2 g-3">
-            {% for wish in wishes %}
-            <div class="col">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="row g-0">
-                        <!-- 찜한 상품 이미지 -->
-                        <div class="col-4">
-                            <img src="/static/img/default_wish.png" class="img-fluid rounded-start" alt="찜이미지"
-                                style="height: 100px; object-fit: cover;">
-                        </div>
+            <!-- 찜한 상품이 4개 초과일 때만 슬라이드 버튼 표시 -->
+            {% if wishes|length > 4 %}
+            <div class="slide-controls">
+                <button type="button" class="slide-btn" id="wishPrevBtn">‹</button>
+                <button type="button" class="slide-btn" id="wishNextBtn">›</button>
+            </div>
+            {% endif %}
+        </div>
 
-                        <!-- 찜한 상품 정보 -->
-                        <div class="col-8">
-                            <div class="card-body py-2">
+        {% if wishes %}
+        <div class="product-slider-wrapper">
+            <div class="product-slider-track" id="wishSliderTrack">
+                {% for wish in wishes %}
+                <div class="product-slide">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <!-- 찜한 상품 이미지 -->
+                            <!-- 임시 이미지와 실제 이미지 크기 통일 4월16일 수정 -->
+                            <div class="product-thumb">
+                                <img src="{{ url_for('static', filename='img/default_wish.png') }}"
+                                    class="product-thumb-img" alt="찜이미지">
+                            </div>
+
+                            <!-- 찜한 상품 정보 -->
+                            <div class="product-info">
                                 <h6 class="card-title mb-1 text-truncate">{{ wish.item.item_title }}</h6>
                                 <p class="card-text fw-bold text-danger">{{ "{:,}원".format(wish.item.item_price) }}</p>
 
-                                <h6 class="card-title mb-1 text-truncate">
-                                    {{ wish.item.item_title }}
-                                </h6>
-                                <p class="card-text fw-bold text-danger">{{ wish.item.item_price }}원</p>
-
                                 <!-- 찜 취소 -->
                                 <form method="post"
-
                                     action="{{ url_for('product.remove_favorite', item_id=wish.item.id) }}">
-                                    <button class="favorite-remove-btn">찜 취소</button>
+                                    <button class="favorite-remove-btn" type="submit">찜 취소</button>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% else %}
-            <!-- 찜한 상품이 없을 때 -->
-            <div class="empty-product-card">
-                <div class="empty-product-image"></div>
-                <div class="empty-product-text">찜한 상품이 없습니다.</div>
-            </div>
-            {% endfor %}
         </div>
+        {% else %}
+        <!-- 찜한 상품이 없을 때 -->
+        <div class="empty-product-card">
+            <div class="empty-product-image"></div>
+            <div class="empty-product-text">찜한 상품이 없습니다.</div>
+        </div>
+        {% endif %}
     </div>
 
     <!-- 구매자 리뷰 -->
@@ -667,10 +901,7 @@
 
                 <!-- 상품 이미지 -->
                 <div class="review-thumb">
-
                     <img src="{{ url_for('static', filename='img/default_product.png') }}" alt="상품 이미지">
-
-
                 </div>
             </div>
             {% else %}
@@ -685,7 +916,7 @@
         <button class="more-btn" id="toggleReviewBtn" type="button">더 보기</button>
         {% endif %}
     </div>
-</div>>
+</div>
 
 <!-- 더 보기 버튼을 누르면 펼쳐지게  4월15일 생성-->
 <script>
@@ -706,6 +937,7 @@
             toggleBtn.textContent = expanded ? '접기' : '더보기';
         });
     });
+
     // 받은 리뷰를 클릭하면 구매자 리뷰로 스크롤 이동 4월15일
     function scrollToSection(id) {
         const section = document.getElementById(id);
@@ -713,27 +945,25 @@
 
         section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-    //상태메시지 수정버튼 활성화 4월 15일
+
+    //상태메시지 수정버튼 활성화 4월16일 수정
     document.addEventListener('DOMContentLoaded', function () {
         const editBtn = document.getElementById('statusEditBtn');
-        const saveBtn = document.getElementById('statusSaveBtn');
         const cancelBtn = document.getElementById('statusCancelBtn');
 
         const viewMode = document.getElementById('statusViewMode');
         const editMode = document.getElementById('statusEditMode');
-
-        const statusText = document.getElementById('statusText');
         const statusInput = document.getElementById('statusInput');
+        const statusText = document.getElementById('statusText');
 
-        if (!editBtn || !saveBtn || !cancelBtn) return;
+        if (!editBtn || !cancelBtn || !viewMode || !editMode) return;
 
-        let originalText = statusText.textContent.trim();
         function getRealValue(text) {
             return text === "상태 메시지를 입력하세요" ? "" : text;
         }
 
         editBtn.addEventListener('click', function () {
-            statusInput.value = getRealValue(originalText);
+            statusInput.value = getRealValue(statusText.textContent.trim());
             viewMode.style.display = 'none';
             editMode.style.display = 'block';
             editBtn.style.display = 'none';
@@ -741,27 +971,88 @@
         });
 
         cancelBtn.addEventListener('click', function () {
-            statusInput.value = getRealValue(originalText);
             editMode.style.display = 'none';
             viewMode.style.display = 'block';
             editBtn.style.display = 'inline-block';
         });
+    });
+    // 공통 슬라이드 함수 4월16일 정리
+    function initSlider(trackId, prevBtnId, nextBtnId) {
+        const track = document.getElementById(trackId);
+        const prevBtn = document.getElementById(prevBtnId);
+        const nextBtn = document.getElementById(nextBtnId);
 
-        saveBtn.addEventListener('click', function () {
-            const newText = statusInput.value.trim();
+        if (!track || !prevBtn || !nextBtn) return;
 
-            if (newText === '') {
-                statusText.textContent = "상태 메시지를 입력하세요";
-                originalText = "상태 메시지를 입력하세요";
-            } else {
-                statusText.textContent = newText;
-                originalText = newText;
+        const slides = track.querySelectorAll('.product-slide');
+        if (!slides.length) return;
+
+        let currentIndex = 0;
+
+        function getVisibleCount() {
+            if (window.innerWidth <= 767) return 1;
+            if (window.innerWidth <= 991) return 2;
+            return 4;
+        }
+
+        function getGap() {
+            return 16;
+        }
+
+        function updateSlider() {
+            const visibleCount = getVisibleCount();
+            const maxIndex = Math.max(0, slides.length - visibleCount);
+
+            if (currentIndex > maxIndex) {
+                currentIndex = maxIndex;
             }
 
-            editMode.style.display = 'none';
-            viewMode.style.display = 'block';
-            editBtn.style.display = 'inline-block';
+            const slideWidth = slides[0].offsetWidth;
+            const moveX = currentIndex * (slideWidth + getGap());
+
+            track.style.transform = `translateX(-${moveX}px)`;
+
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex >= maxIndex;
+        }
+
+        prevBtn.addEventListener('click', function () {
+            const visibleCount = getVisibleCount();
+            currentIndex = Math.max(0, currentIndex - visibleCount);
+            updateSlider();
         });
+
+        nextBtn.addEventListener('click', function () {
+            const visibleCount = getVisibleCount();
+            const maxIndex = Math.max(0, slides.length - visibleCount);
+            currentIndex = Math.min(maxIndex, currentIndex + visibleCount);
+            updateSlider();
+        });
+
+        window.addEventListener('resize', updateSlider);
+
+        updateSlider();
+    }
+
+    // 판매 중인 상품 / 찜한 물건 목록 슬라이드 공통 적용 4월16일 정리
+    document.addEventListener('DOMContentLoaded', function () {
+        initSlider('productSliderTrack', 'productPrevBtn', 'productNextBtn');
+        initSlider('wishSliderTrack', 'wishPrevBtn', 'wishNextBtn');
+    });
+
+    // 토스트 팝업 JS
+    document.addEventListener('DOMContentLoaded', function() {
+        const toast = document.getElementById('saveToast');
+        if (toast) {
+            // 1.5초 동안 보여준 뒤에
+            setTimeout(function() {
+                toast.style.opacity = '0'; // 서서히 투명하게
+                // 애니메이션 끝나면 아예 제거
+                setTimeout(function() {
+                    toast.remove();
+                }, 500);
+            }, 1500);
+        }
     });
 </script>
 {% endblock %}

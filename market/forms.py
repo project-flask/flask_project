@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms.fields.simple import StringField, TextAreaField, PasswordField, EmailField
-from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError
+from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, Optional, Regexp
 from market.models import User
 
 
@@ -29,7 +29,8 @@ class UserCreateForm(FlaskForm):
         Email(message='유효한 이메일 형식이 아닙니다.')
     ])
     phone = StringField('전화번호', validators=[
-        DataRequired(message='전화번호를 입력해주세요.')
+        Optional(),  # 전화번호는 선택사항
+        Regexp(r'^\d{3}-\d{3,4}-\d{4}$', message="올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)")
     ])
 
     # --- 여기서부터 중복 체크 함수 ---
@@ -42,6 +43,16 @@ class UserCreateForm(FlaskForm):
     def validate_nickname(self, field):
         if User.query.filter_by(nickname=field.data).first():
             raise ValidationError('이미 사용 중인 닉네임입니다.')
+
+    # 이메일 중복 체크 (DB에 unique=True가 있으므로 추가 권장)
+    def validate_email(self, field):
+        if User.query.filter_by(email=field.data).first():
+            raise ValidationError('이미 등록된 이메일입니다.')
+
+    # 전화번호 중복 체크 (DB에 unique=True가 있으므로 추가 권장)
+    def validate_phone(self, field):
+        if User.query.filter_by(phone=field.data).first():
+            raise ValidationError('이미 등록된 전화번호입니다.')
 
 
 # 로그인 폼

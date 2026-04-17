@@ -1,12 +1,10 @@
 from functools import wraps
 
-import requests  # 주석 해제됨 (pip install requests 하셨으니 사용 가능)
 from flask import Blueprint, request, redirect, url_for, flash, render_template, session, g
 from werkzeug.security import generate_password_hash, check_password_hash
 import functools
 
 import requests
-
 
 from market import db
 from market.models import User
@@ -14,10 +12,11 @@ from market.forms import UserCreateForm, UserLoginForm, FindAccountForm
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+
 # [일반 회원가입]
 @bp.route('/signup/', methods=['GET', 'POST'])
-# 일반 아이디 회원가입
 
+# 일반 아이디 회원가입
 def signup():
     form = UserCreateForm()
     if request.method == 'POST' and form.validate_on_submit():
@@ -38,23 +37,29 @@ def signup():
             flash('이미 존재하는 아이디입니다.')
     return render_template('auth/signup.html', form=form)
 
+
 # [일반 로그인]
 @bp.route('/login/', methods=['GET', 'POST'])
 def login():
     form = UserLoginForm()
     if request.method == 'POST' and form.validate_on_submit():
-        error = None
         user = User.query.filter_by(login_id=form.username.data).first()
+
         if not user:
-            error = '존재하지 않는 사용자입니다.'
+            form.username.errors.append('존재하지 않는 사용자입니다.')
+
         elif not check_password_hash(user.password, form.password.data):
-            error = '비밀번호가 올바르지 않습니다.'
-        if error is None:
+            form.password.errors.append('비밀번호가 올바르지 않습니다.')
+
+        else:
+            # 에러가 없을 때만 로그인 처리
             session.clear()
             session['user_id'] = user.id
             return redirect(url_for('main.index'))
-        flash(error)
+
+    # 에러가 append된 상태로 템플릿을 넘기면 HTML이 알아서 빨갛게 그려줌
     return render_template('auth/login.html', form=form)
+
 
 # [로그인 유지 처리]
 @bp.before_app_request
@@ -65,11 +70,13 @@ def load_logged_in_user():
     else:
         g.user = User.query.get(user_id)
 
-# 로그아웃 - 세션 정보를 모두 삭제
 
+# 로그아웃 - 세션 정보를 모두 삭제
 @bp.route('/logout/')
 def logout():
     session.clear()
+    # 토스트 팝업용 플래시
+    flash('로그아웃이 완료되었습니다.', 'success')
     return redirect(url_for('main.index'))
 
 
@@ -92,7 +99,7 @@ def find_account():
             ).first()
 
             # 비밀번호 찾고 reset_password.html에서 그대로 확인
-            
+
             if user:
                 session['temp_reset_user_id'] = user.id
                 return redirect(url_for('auth.reset_password'))
@@ -100,13 +107,15 @@ def find_account():
                 flash("일치하는 회원 정보가 없습니다.", "danger")
     return render_template('auth/find_account.html', form=form)
 
-# [카카오 로그인 시작]
+
+# 카카오 로그인 시작
 
 # 카카오 로그인 설정값
 CLIENT_ID = "e17055a5c7eb91012c7140978ae7788a"
 CLIENT_SECRET = "pBLVBBvlQebKOiGfJxZWa0h9VxRPRcTu"
 REDIRECT_URI = "http://localhost:5000/auth/kakao/callback/"
 SIGNOUT_REDIRECT_URI = "http://127.0.0.1:5000/auth/logout/callback/"
+
 
 # 카카오 서버와 직접 통신하는 클래스
 class Oauth:
@@ -118,7 +127,7 @@ class Oauth:
             "Cache-Control": "no-cache",
         }
 
-   # 유저의 프로필 정보 요청
+    # 유저의 프로필 정보 요청
     def auth(self, code):
         return requests.post(
             url=self.auth_server % "/oauth/token",
@@ -138,16 +147,16 @@ class Oauth:
             headers={**self.default_header, **{"Authorization": bearer_token}}
         ).json()
 
-# 카카오 로그인 라우팅
 
+# 카카오 로그인 라우팅
 @bp.route('/kakao/')
 def kakao_sign_in():
     kakao_oauth_url = f"https://kauth.kakao.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&prompt=login"
     return redirect(kakao_oauth_url)
 
+
 # [카카오 콜백]
 @bp.route('/kakao/callback/')
-
 def callback():
     # 1. 카카오로부터 전달받은 인증 코드 확인
     code = request.args.get("code")
@@ -155,7 +164,6 @@ def callback():
         return redirect(url_for('auth.login'))
 
     # 2. 인증 코드로 카카오 토큰 요청
-
     oauth = Oauth()
     auth_info = oauth.auth(code)
     if "error" in auth_info:
@@ -174,7 +182,6 @@ def callback():
 
     kakao_account = user_data.get("kakao_account", {})
     profile = kakao_account.get("profile", {})
-
 
     # 닉네임: 카카오 닉네임을 가져옴. 없으면 ID 기반으로 생성
     nickname = profile.get("nickname")
@@ -235,10 +242,6 @@ def reset_password():
     return render_template('auth/reset_password.html', form=form)
 
 
-    session.clear() # 세션의 모든 정보(user_id 등) 삭제
-    return redirect(url_for('main.index')) # 로그아웃 후 메인 페이지로 이동
-
-
 # 데코레이션 함수
 def login_required(view):
     @functools.wraps(view)
@@ -246,5 +249,6 @@ def login_required(view):
         if g.user is None:
             return redirect(url_for('auth.login', next=request.url if request.method == 'GET' else ''))
         return view(*args, **kwargs)
+
     return wrapped_view
 

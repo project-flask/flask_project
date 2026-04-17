@@ -81,6 +81,7 @@
         background-color: #f8f8ff;
         color: #8a8aa3;
     }
+
     /* 비밀번호 변경 버튼 */
     .password-link-box {
         margin-top: 10px;
@@ -177,13 +178,13 @@
         {% endif %}
         {% endwith %}
 
-        <!-- 프로필 -->
+        <!-- 프로필, 맨 첫 글자가 공란일 경우 U가 출력되도록 수정 4월16일 -->
         <div class="profile-box">
             <div class="avatar-circle">
-                {{ user.username[0] | upper }}
+                {{ (user.nickname or "U")[0] | upper }}
             </div>
             <div>
-                <strong>{{ user.username }}</strong><br>
+                <strong>{{ user.nickname }}</strong><br>
                 <small class="text-muted">프로필 이미지 변경은 추후 지원 예정</small>
             </div>
         </div>
@@ -197,7 +198,13 @@
 
             <div class="form-group">
                 <label class="form-label">이름</label>
-                <input type="text" name="username" class="form-control" value="{{ user.username }}">
+                <input type="text" class="form-control" value="{{ user.username }}" readonly>
+            </div>
+            <!--닉네임칸 생성 4월16일-->
+            <div class="form-group">
+                <label class="form-label">닉네임</label>
+                <input type="text" name="nickname" class="form-control" value="{{ user.nickname }}"
+                    maxlength="10" placeholder="닉네임 입력 (최대 10자까지)">
             </div>
 
             <div class="form-group">
@@ -212,7 +219,7 @@
                     placeholder="전화번호 입력">
             </div>
 
-            <!-- 비밀번호 변경 이동 -->
+            <!-- 비밀번호 변경 이동, 경로 수정 4월16일-->
             <div class="password-link-box">
                 <span class="password-link-text">비밀번호를 변경하시겠어요?</span>
                 <button type="button" class="btn-password-link"
@@ -221,11 +228,16 @@
                 </button>
             </div>
 
-            <!-- 저장 버튼 -->
+            <!-- 저장 버튼, 경로 수정 4월16일 -->
             <div class="button-row">
+
+                <button type="submit" class="btn-cancel" name="action" value="cancel">취소</button>
+                <button type="submit" class="btn-save" name="action" value="save">저장하기</button>
+
                 <button type="button" class="btn-cancel"
                     onclick="location.href='{{ url_for('personal.my_page') }}'">취소</button>
                 <button type="submit" class="btn-save">저장하기</button>
+
             </div>
         </form>
 

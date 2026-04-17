@@ -1,16 +1,4 @@
-{% if form.errors %}
-<div class="alert alert-danger" role="alert">
-  {% for field, errors in form.errors.items() %}
-  <strong>{{ form[field].label }}</strong>
-  <ul>
-    {% for error in errors %}
-    <li>{{ error }}</li>
-    {% endfor %}
-  </ul>
-  {% endfor %}
-</div>
-{% endif %}
-
+<!--로그인/비번 찾기용(플래시 메시지 스타일 보라색으로 변경)-->
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     {% for category, message in messages %}
