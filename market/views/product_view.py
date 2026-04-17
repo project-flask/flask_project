@@ -50,7 +50,6 @@ def _list():
 def product_upload():
 
     if request.method == 'POST':
-        # HTML 폼에서 보낸 데이터 읽어옴
         title = request.form.get('title')
         price = request.form.get('price')
         content = request.form.get('content')
@@ -59,7 +58,6 @@ def product_upload():
 
         # 가격 예외처리
         try:
-            # 콤마(,)가 포함되어 있을 수도 있으니 제거하고 숫자로 변환
             clean_price = str(price).replace(',', '').strip()
             item_price = int(clean_price) if clean_price else 0
         except ValueError:
@@ -106,8 +104,8 @@ def product_upload():
                         # 실제 서버 폴더에 저장
                         file.save(os.path.join(upload_path, filename))
 
-                        # DB에 이미지 경로 기록 (ItemImage 모델 활용)
-                        web_path = f'/static/uploads/user_{g.user.id}/item_{new_item.id}/{filename}'
+                        # DB에 이미지 경로 기록 (ItemImage 모델 활용 4월17일 수정함)
+                        web_path = f'uploads/user_{g.user.id}/item_{new_item.id}/{filename}'
                         new_img = ItemImage(item_id=new_item.id, image_url=web_path)
                         db.session.add(new_img)
 
@@ -120,14 +118,19 @@ def product_upload():
     categories = Category.query.all()
     return render_template('items/write.html', categories = categories)
 
-# 상품 상세페이지
+# 상품 상세페이지 (4월17일 product_list 추가함)
 @bp.route('/product-details/<int:item_id>')
 def product_details(item_id):
     # DB에서 해당 ID의 상품 하나 가져옴
     product = Item.query.get_or_404(item_id)
     cat = Category.query.get(product.category_id)
     status_list = ItemStatus.query.all()
-    return render_template('items/PDP.html', product = product, cat = cat, status_list=status_list)
+    product_list = Item.query.filter(
+        Item.user_id == product.user_id,
+        Item.id != item_id,
+        Item.is_deleted == False  # 삭제되지 않은 상품만
+    ).limit(6).all()
+    return render_template('items/PDP.html', product = product, cat = cat, status_list=status_list,product_list=product_list)
 
 # PDP.html 상품 상태 게시글 업로드 유저만 수정 가능하고 이외의 유저는 수정 불가능 함수
 @bp.route('/modify-status/<int:item_id>', methods=['POST'])
@@ -151,16 +154,27 @@ def modify_status(item_id):
 # 카테고리별 페이지
 @bp.route('/product-categories/<int:category_id>')
 def product_categories(category_id):
+
     cat = Category.query.get_or_404(category_id)
-    # DB에서 해당 카테고리 상품만 필터링해서 가져옴
-    category_items = Item.query.filter_by(category_id=category_id).all()
-    return render_template('items/CP.html', category_id = category_id, title = cat.category_name, product_list = category_items)
+    # 판매중 기준 우선 및 최신순 정렬
+    category_items = Item.query.filter_by(category_id=category_id, is_deleted=False)\
+                    .order_by(Item.status_id.asc(), Item.created_at.desc()).all()
+
+    all_categories = Category.query.all()
+
+    return render_template('items/CP.html',
+                           category_id = category_id, title = cat.category_name, product_list = category_items, all_categories=all_categories)
 
 # 필터링 (거래 가능한 상품만 보기) 페이지
 @bp.route('/product-status/<int:item_status_id>')
 def product_statuses(item_status_id):
-    item_statuses = Item.query.filter_by(status_id=item_status_id).all()
-    return render_template('items/CP.html', items = item_statuses, title = "거래 가능 상품")
+    items = Item.query.filter_by(status_id=item_status_id, is_deleted=False)\
+            .order_by(Item.created_at.desc()).all()
+
+    all_categories = Category.query.all()
+
+    return render_template('items/CP.html',
+                           item_status_id = item_status_id, title = "거래 가능 상품", product_list=items, all_categories=all_categories)
 
 
 @bp.route('/comment/create/<int:item_id>', methods=('POST',))
@@ -170,31 +184,30 @@ def comment_create(item_id):
     content = request.form.get('content')
 
     if content:
-        # 모델 설계도와 똑같이 'create_date'를 사용합니다.
         comment = Comment(
             content=content,
-            create_date=datetime.now(),  # 확인하신 모델 변수명과 일치시켰습니다!
-            item=product,
+            create_date=datetime.now(),
+            items=product,
             user=g.user
         )
+
         db.session.add(comment)
         db.session.commit()
 
         print(f"--- 댓글 저장 성공: {content[:10]}... ---")
 
-    return redirect(url_for('items.product_details', item_id=item_id, item=product))
+    return redirect(url_for('items.product_details', item_id=item_id))
 
-# 서버에 삭제 함수 만들기 4월15일 만듬
+# 4월17일 수정함
 @bp.route('/comment/delete/<int:comment_id>')
 @login_required
 def comment_delete(comment_id):
     comment = Comment.query.get_or_404(comment_id)
 
     if g.user != comment.user:
-        return redirect(url_for('items.product_details', item_id=comment.item.id))
+        return redirect(url_for('items.product_details', item_id=comment.items.id))
 
-    # ★ 핵심: 삭제하기 전에 돌아갈 상품의 ID를 미리 변수에 저장해둡니다.
-    product_id = comment.item.id
+    product_id = comment.items.id
 
     db.session.delete(comment)
     db.session.commit()
@@ -204,7 +217,7 @@ def comment_delete(comment_id):
 
 
 
-  # 4월16일 게시글 수정오늘 추가함
+  # 4월17일 게시글 수정함
 @bp.route('/product/modify/<int:item_id>', methods=('GET', 'POST'))
 @login_required
 def product_modify(item_id):
@@ -216,12 +229,11 @@ def product_modify(item_id):
         return redirect(url_for('items.product_details', item_id=item_id))
 
     if request.method == 'POST':
-        # 3. [중요] 창환 님의 product_upload 함수에서 쓰는 name 값들과 똑같이 맞춰야 합니다!
-        product.item_title = request.form.get('subject')  # 'item_title' -> 'subject'로 수정
-        product.item_description = request.form.get('content')  # 'item_description' -> 'content'로 수정
-        product.category_id = request.form.get('category')  # 'category_id' -> 'category'로 수정
+        product.item_title = request.form.get('title')  # 'subject'를 'title'로 변경
+        product.item_description = request.form.get('content')
+        product.category_id = request.form.get('category')
 
-        # 가격 처리 (위의 upload 함수 로직 참고)
+        # 가격 처리
         price = request.form.get('price')
         clean_price = str(price).replace(',', '').strip()
         product.item_price = int(clean_price) if clean_price else 0
@@ -230,11 +242,10 @@ def product_modify(item_id):
         return redirect(url_for('items.product_details', item_id=item_id))
 
     else:
-        # 4. [중요] 아까 사진에서 확인한 'items/write.html'로 경로를 바꿉니다!
         categories = Category.query.all()
         return render_template('items/write.html', product=product, categories=categories)
 
- # 서버에 게시글 삭제 함수 4월15일 만듬
+
 @bp.route('/product/delete/<int:item_id>')
 @login_required
 def product_delete(item_id):
@@ -254,7 +265,6 @@ def product_delete(item_id):
 
 @bp.route('/user/items/<int:user_id>/')
 def user_items(user_id):
-    # Item.created_at으로 변경 완료!
     item_list = Item.query.filter_by(user_id=user_id).order_by(Item.created_at.desc()).all()
     return render_template('main.html', item_list=item_list)
 

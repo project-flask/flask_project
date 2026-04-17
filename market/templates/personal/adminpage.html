@@ -1,6 +1,55 @@
 <!-- 관리자 페이지 -->
 
-{% extends 'base.html' %}
-{% block content %}
+{% extends "base.html" %}
 
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold" style="color: #555;">REBORN 관리자 센터</h2>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
+        <div class="card-body p-4">
+            <form action="{{ url_for('admin.index') }}" method="GET" class="row g-3">
+                <div class="col-md-10">
+                    <input type="text" name="search" class="form-control form-control-lg border-0 bg-light"
+                           placeholder="신고된 유저 닉네임 검색..." value="{{ search }}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-lg w-100 fw-bold" style="background-color: #CCCCFF; color: #555;">검색</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">ID</th>
+                            <th>닉네임</th>
+                            <th class="text-center">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td class="ps-4">{{ user.login_id }}</td>
+                            <td>{{ user.nickname }}</td>
+                            <td class="text-center">
+                                <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="POST"
+                                      onsubmit="return confirm('정말 탈퇴시키겠습니까?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">강제 탈퇴</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
