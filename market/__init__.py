@@ -1,4 +1,5 @@
 from flask import Flask
+from datetime import timedelta   # 로그인 세션 1시간 유지용(4/17)
 from flask_migrate import Migrate
 
 from flask_sqlalchemy import SQLAlchemy
@@ -34,6 +35,9 @@ def create_app():
     # csrf 방지용 SECRET_KEY 지정
     SECRET_KEY = 'dev'
     app.config['SECRET_KEY'] = SECRET_KEY
+
+    # 로그인 세션 유지 1시간 (4/17)
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
 
     # Category 정보 DB에서 꺼내옴
     from market.models import Category, ItemStatus
