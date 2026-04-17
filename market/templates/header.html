@@ -185,58 +185,25 @@
 
 <!--=== 로그아웃 완료창 토스트 팝업 ===-->
 <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 3000; margin-top: 20px;">
-    <div id="logoutToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true" style="background-color: #CCCCFF; border-radius: 12px; min-width: 250px;">
-        <div class="d-flex">
-            <div class="toast-body text-center w-100">
-                <i class="bi bi-check-circle-fill me-2"></i>
-                <span id="toastMessage"></span>
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if '로그아웃' in message %}
+                <div id="logoutToast"
+                     class="toast align-items-center text-white border-0"
+                     role="alert"
+                     data-message="{{ message }}"
+                     style="background-color: #CCCCFF; border-radius: 12px; min-width: 250px; transition: opacity 0.5s ease;">
+                    <div class="d-flex">
+                        <div class="toast-body text-center w-100">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const headerFixed = document.querySelector('.hfixed');
-        // nav 높이 미리 측정
-        const navHeight = headerFixed.offsetHeight;
-
-        window.addEventListener('scroll', function() {
-            let scrollTop = window.scrollY;
-
-            if (scrollTop >= 40) {
-                headerFixed.classList.add('active');
-                // 네비가 뜬 만큼 body에 패딩 부여해서 버튼 요소 겹치는 이슈 제거
-                document.body.style.paddingTop = navHeight + 'px';
-            } else {
-                headerFixed.classList.remove('active');
-                // 고정 풀리면 다시 패딩 0
-                document.body.style.paddingTop = '0';
-            }
-        });
-    });
-
-    // 로그아웃 토스트 팝업 JS
-      document.addEventListener('DOMContentLoaded', function() {
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    {% if '로그아웃' in message %}
-                        const toastElement = document.getElementById('logoutToast');
-                        const toastMessage = document.getElementById('toastMessage');
-
-                        if (toastElement) {
-                            toastMessage.innerText = "{{ message }}";
-                            const toast = new bootstrap.Toast(toastElement, {
-                                delay: 1800 // 1.8초 노출
-                            });
-                            toast.show();
-                        }
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-    });
-</script>
-

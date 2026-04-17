@@ -43,35 +43,29 @@ def edit_profile():
     if request.method == 'POST':
         action = request.form.get('action')
 
-        user.username = request.form['username']
-        user.email = request.form['email']
-        user.phone = request.form['phone']
-
-        new_nickname = request.form.get('nickname', '').strip()
-
-        if not new_nickname:
-            flash('닉네임을 입력해주세요.')
-            return render_template('personal/edit_profile.html', user=user)
-
-        if len(new_nickname) > 10:
-            flash('닉네임은 10자 이하로 입력해주세요.')
-            return render_template('personal/edit_profile.html', user=user)
-
-        #중복체크 4월16일 생성
-        existing_user = User.query.filter_by(nickname=new_nickname).first()
-        if existing_user and existing_user.id != user.id:
-            flash('이미 사용 중인 닉네임입니다.')
-            return render_template('personal/edit_profile.html', user=user)
-
-        user.nickname = new_nickname
-        user.email = request.form.get('email', '').strip()
-        user.phone = request.form.get('phone', '').strip()
-
         if action == 'cancel':
             flash('수정이 취소되었습니다.')
             return redirect(url_for('personal.my_page'))
 
         elif action == 'save':
+            new_nickname = request.form.get('nickname', '').strip()
+            user.email = request.form.get('email', '').strip()
+            user.phone = request.form.get('phone', '').strip()
+
+            if not new_nickname:
+                flash('닉네임을 입력해주세요.')
+                return render_template('personal/edit_profile.html', user=user)
+
+            if len(new_nickname) > 10:
+                flash('닉네임은 10자 이하로 입력해주세요.')
+                return render_template('personal/edit_profile.html', user=user)
+
+            # 중복체크 4월16일 생성
+            existing_user = User.query.filter_by(nickname=new_nickname).first()
+            if existing_user and existing_user.id != user.id:
+                flash('이미 사용 중인 닉네임입니다.')
+                return render_template('personal/edit_profile.html', user=user)
+
             db.session.commit()
             flash('회원정보가 저장되었습니다.')
             return redirect(url_for('personal.my_page'))
@@ -143,6 +137,7 @@ def seller_profile(user_id):
         products=products,
         reviews=reviews
     )
+
 # 상태메시지 저장 4월16일 생성
 @bp.route('/status-message', methods=['POST'])
 @login_required

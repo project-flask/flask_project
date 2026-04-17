@@ -261,27 +261,4 @@
         </div>
     </div>
 </div>
-
-<!--비밀번호 보이기/숨기기 JS-->
-<script>
-    // 페이지가 로드된 후 실행
-    document.addEventListener('DOMContentLoaded', function () {
-        const toggleIcon = document.querySelector('#togglePassword');
-        const passwordInput = document.querySelector('#login-password');
-
-        if (toggleIcon && passwordInput) {
-            toggleIcon.addEventListener('click', function () {
-                // 비밀번호 보이기/숨기기 토글
-                const isPassword = passwordInput.getAttribute('type') === 'password';
-                passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-
-                // 아이콘 모양 바꾸기
-                this.classList.toggle('bi-eye');
-                this.classList.toggle('bi-eye-slash');
-            });
-        }
-    });
-</script>
-
-
 {% endblock %}

@@ -4,7 +4,7 @@ from flask import Blueprint, request, redirect, url_for, flash, render_template,
 from werkzeug.security import generate_password_hash, check_password_hash
 import functools
 
-import requests
+#import requests
 
 from market import db
 from market.models import User

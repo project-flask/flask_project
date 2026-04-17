@@ -109,12 +109,11 @@
     }
 </style>
 
-
-<div class="find-wrapper">
+{# find-container 추가 (기존 jinja템플릿 코드 삽입) -> 서버가 에러 판단 후 JS에 전달 #}
+<div class="find-wrapper" id="find-container" data-is-pw-error="{% if form.user_id.data or form.email_for_pw.data %}true{% else %}false{% endif %}">>
     <div class="find-card text-center">
         <!-- 페이지 제목-->
         <h2 class="fw-bold mb-4" style="color: #444; letter-spacing: -1px;">계정 찾기</h2>
-
 
         <!-- 탭 메뉴 (아이디 / 비밀번호)-->
 
@@ -130,6 +129,7 @@
                     찾기</button>
             </li>
         </ul>
+
         <div class="tab-content" id="findTabContent">
 
             <!-- ===== 아이디 찾기 ===== -->
@@ -211,53 +211,4 @@
         </div>
     </div>
 </div>
-
-
-<!--JS: 아이디찾기/비번찾기 탭, 오토포커스-->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const idTabBtn = document.getElementById('id-tab');
-        const pwTabBtn = document.getElementById('pw-tab');
-
-        // 포커스 함수
-        function setFocus(selector) {
-            setTimeout(() => {
-                const input = document.querySelector(selector);
-                if (input) input.focus();
-            }, 0);
-        }
-
-        function clearFindData() {
-            document.querySelectorAll('.custom-input').forEach(input => input.value = '');
-            document.querySelectorAll('.alert').forEach(alert => alert.remove());
-        }
-
-        {% if form.user_id.data or form.email_for_pw.data %}
-        // 비밀번호 찾기 시도 중 에러 발생 시 비번 탭 유지
-        const pwTab = new bootstrap.Tab(pwTabBtn);
-        pwTab.show();
-        setFocus('#find-pw input[name="user_id"]');
-        {% else %}
-        // 일반 진입 혹은 아이디 찾기 에러 시 기본 아이디 탭
-        setFocus('#find-id input[name="username"]');
-        {% endif %}
-
-        // 아이디 찾기 탭 클릭 시
-        if (idTabBtn) {
-            idTabBtn.addEventListener('shown.bs.tab', function () {
-                clearFindData();
-                setFocus('#find-id input[name="username"]');
-            });
-        }
-
-        // 비밀번호 찾기 탭 클릭 시
-        if (pwTabBtn) {
-            pwTabBtn.addEventListener('shown.bs.tab', function () {
-                clearFindData();
-                setFocus('#find-pw input[name="user_id"]');
-            });
-        }
-    });
-</script>
-
 {% endblock %}

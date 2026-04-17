@@ -208,7 +208,8 @@
     }
 </style>
 
-<div class="signup-container">
+{# JS로 에러 보내는 역할 추가  #}
+<div class="signup-container" id="signup-container" data-has-errors="{% if form.errors %}true{% else %}false{% endif %}">
     <div class="signup-card-custom">
         <!--왼쪽 브랜드 영역-->
         <div class="brand-section d-none d-md-flex">
@@ -357,102 +358,4 @@
         </div>
     </div>
 </div>
-
-<!--JS: 화면 전환-->
-<script>
-    // 화면 전환 함수(이메일로 시작하기 - 이메일 회원가입)
-    function toggleForm() {
-        const selectArea = document.getElementById('select-area');
-        const formArea = document.getElementById('email-form-area');
-        const title = document.getElementById('signup-title');
-        const card = document.querySelector('.signup-card-custom');
-
-        if (!card) return;
-
-        // 폼이 닫혀있다가 열릴 때 (이메일 입력 화면)
-        if (formArea.style.display === 'none' || formArea.style.display === '') {
-            selectArea.style.display = 'none';
-            formArea.style.display = 'block';
-            card.style.setProperty('max-width', '1000px', 'important');
-            document.querySelector('input[name="user_id"]').focus();
-        }
-        // 폼이 열려있다가 닫힐 때 (선택 화면으로 돌아갈 때)
-        else {
-            selectArea.style.display = 'block';
-            formArea.style.display = 'none';
-
-            card.style.setProperty('max-width', '850px', 'important');
-        }
-    }
-    // 페이지 로드 시 실행될 로직들
-    document.addEventListener('DOMContentLoaded', function () {
-
-        // [비밀번호 보이기 숨기기 토글 기능]
-        const pwToggles = document.querySelectorAll('.toggle-pw');
-        pwToggles.forEach(icon => {
-            icon.addEventListener('click', function () {
-                const targetId = this.getAttribute('data-target');
-                const passwordInput = document.getElementById(targetId);
-
-                if (passwordInput) {
-                    const isPassword = passwordInput.getAttribute('type') === 'password';
-                    passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-
-                    // 아이콘 클래스 토글
-                    this.classList.toggle('bi-eye');
-                    this.classList.toggle('bi-eye-slash');
-                }
-            });
-        });
-
-        // 에러 발생 시 처리
-        {% if form.errors %}
-        toggleForm();
-        {% endif %}
-    });
-
-    <!--비밀번호 입력창 보안 막대바-->
-    document.addEventListener('DOMContentLoaded', function () {
-        const pwInput = document.getElementById('signup-pw1');
-        const strengthBar = document.getElementById('strength-bar');
-        const strengthText = document.getElementById('strength-text');
-
-        if (pwInput) {
-            pwInput.addEventListener('input', function () {
-                const val = pwInput.value;
-
-                if (val.length === 0) {
-                    updateUI(0, '보안 강도', '#999', '0%');
-                    return;
-                }
-
-                const hasLetter = /[a-zA-Z]/.test(val);
-                const hasNumber = /[0-9]/.test(val);
-                const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(val);
-                const len = val.length;
-
-                // 1. 높음: 문자 + 숫자 + 특수문자 모두 포함,  8자 이상
-                if (hasLetter && hasNumber && hasSpecial && len >= 8) {
-                    updateUI(3, '높음 (안전한 비밀번호입니다)', '#CCCCFF', '100%');
-                }
-                // 2. 보통: 문자 + 숫자 혼합, 6자 이상
-                else if (hasLetter && hasNumber && len >= 6) {
-                    updateUI(2, '보통 (특수문자를 섞어보세요)', '#ffcc00', '66%');
-                }
-                // 3. 낮음: 그 외 (숫자만 있거나, 문자만 있거나, 너무 짧을 때)
-                else {
-                    updateUI(1, '낮음 (보안이 약해요)', '#ff6b6b', '33%');
-                }
-            });
-        }
-
-        function updateUI(level, text, color, width) {
-            strengthBar.style.width = width;
-            strengthBar.style.backgroundColor = color;
-            strengthText.innerText = text;
-            strengthText.style.color = color;
-        }
-    });
-</script>
-
 {% endblock %}
