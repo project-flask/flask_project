@@ -170,8 +170,7 @@
             <div style="width: 50px; height: 50px; background-color: #eee; border-radius: 50%; margin-right: 12px;">
             </div>
             <div>
-                <div style="font-weight: bold; font-size: 16px;">{{ product.user.username if product.user else '판매자 정보
-                    없음' }}</div>
+                <div style="font-weight: bold; font-size: 16px;">{{ product.user.username if product.user else '판매자 정보 없음' }}</div>
             </div>
         </div>
 
@@ -190,7 +189,7 @@
                     onclick="location.href=`{{ url_for('items.product_details', item_id=product.id) }}`">
                     <div
                         style="width: 100%; margin-bottom: 10px; border-radius: 8px; overflow: hidden; background-color: #eee; border: 1px solid #f1f1f1;">
-                        <img src="{{ url_for('static', filename='uploads/' + (product.image_file if product.image_file else 'iphone.jpg')) }}"
+                        <img src="{{ url_for('static', filename='uploads/' + (product.image_file if product.image_file else '')) }}"
                             style="width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block;">
                     </div>
                     <div
@@ -212,30 +211,4 @@
     </section>
 </div>
 
-{% endblock %}
-
-{% block script %}
-<script type='text/javascript'>
-    {# 페이지네이션 #}
-    let slideIdx = 0;
-    const slides = document.querySelectorAll('.p-detail-img');
-    const slideNum = document.getElementById('slideNum');
-
-    function moveSlide(n) {
-        if (slides.length <= 1) return;
-        slides[slideIdx].style.display = 'none';
-        slideIdx = (slideIdx + n + slides.length) % slides.length;
-        slides[slideIdx].style.display = 'block';
-        if (slideNum) slideNum.innerText = slideIdx + 1;
-    }
-    const delete_elements = document.getElementsByClassName("delete");
-    Array.from(delete_elements).forEach(function (element) {
-        element.addEventListener('click', function () {
-            if (confirm("정말로 삭제하시겠습니까? 다시 되돌릴 수 없습니다.")) {
-                location.href = this.dataset.uri;
-            };
-        });
-    });
-
-</script>
 {% endblock %}

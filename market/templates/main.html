@@ -44,6 +44,7 @@
 
         .product-img {
             width: 100%;
+            height: 100%;
             aspect-ratio: 1 / 1;
             background-color: #f8f9fa;
             object-fit: cover;
@@ -70,28 +71,53 @@
         }
 
         .category-link:hover { color: #CCCCFF; }
+
+        {# 예약중, 판매완료 상태 시 이미지 위에 안내 문구 #}
+       .img-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1/1; /* 정사각형 유지 */
+            overflow: hidden;
+            border-radius: 12px 12px 0 0; /* product-card의 상단 모서리랑 맞춤 */
+       }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: #f8f9fa;
+            transition: transform 0.3s ease;
+        }
+
+        /* 상태 표시 오버레이 (판매완료/예약중 공통) */
+        .product-status-overlay {
+            position: absolute; /* .img-wrapper를 기준으로 배치 */
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #FFFFFF;
+            font-weight: bold; font-size: 18px;
+            display: flex; justify-content: center; align-items: center; /* 글자를 중앙 배치 */
+            opacity: 1; /* 평소에도 보이게 */
+            z-index: 5; /* 이미지보다 위에 */
+        }
     </style>
 
     <main class="container main-container">
         <div class="row">
 	        <!--   사이드 메뉴, 필터, 카테고리     -->
             <aside class="col-md-2">
-                <div style="margin-bottom: 20px;">
-                    <h6 class="fw-bold mb-3">필터</h6>
-                    <a href="{{ url_for('items.product_statuses', item_status_id=1) }}" class="category-link">
-                        거래 가능만 보기
-                    </a>
+                <h6 class="fw-bold mb-3">필터</h6>
+                <div class="form-check form-switch mb-4">
+                    <input class="form-check-input" type="checkbox" id="sellOnlyCheck">
+                    <label class="form-check-label small fw-bold" for="sellOnlyCheck">판매 중만 보기</label>
                 </div>
 
-                <!-- 카테고리 별 번호 부여 -->
-                <div>
-                    <h6 class="fw-bold mb-3">카테고리</h6>
-                    {% for cat in all_categories %}
+                <h6 class="fw-bold mb-3">카테고리</h6>
+                {% for cat in all_categories %}
                     <a href="{{ url_for('items.product_categories', category_id=cat.id) }}" class="category-link">
                         {{ cat.category_name }}
                     </a>
-                    {% endfor %}
-                </div>
+                {% endfor %}
             </aside>
 
 	        <!-- 상품 등록하기 버튼  -->
@@ -100,31 +126,42 @@
                     <h3 class="fw-bold mb-4 d-flex justify-content-start">
                         전체 상품
                     </h3>
-                <div class="d-flex justify-content-end">
-                    <!-- product_upload -> items/write.html -->
-                    <a href="{{ url_for('items.product_upload') }}" class="custom-btn">상품 등록하기</a>
+                    <div class="d-flex justify-content-end">
+                        <!-- product_upload -> items/write.html -->
+                        <a href="{{ url_for('items.product_upload') }}" class="custom-btn">상품 등록하기</a>
+                    </div>
                 </div>
-                </div>
-
 		        <!--    상품 출력될 페이지    -->
                 <div class="row">
                     {% for product in product_list %}
-                    <div class="col-md-3 col-6">
-                        <a href="{{ url_for('items.product_details', item_id=product.id) }}" class="text-decoration-none text-dark">
-                            <div class="product-card">
-
-                                <img src="{{ product.images[0].image_url if product.images else url_for('static', filename='img/default.png') }}"
-                                     class="product-img"
-                                     alt="{{ product.item_title }}">
-
-                                <div class="product-info p-2 text-center">
-                                    <div class="fw-bold text-truncate">{{ product.item_title }}</div>
-
-                                    <div class="text-muted">{{ "{:,}원".format(product.item_price) }}</div>
+                        <div class="col-md-3 col-6 mb-4 product-item" data-status="{{ product.status_id }}">
+                            <a href="{{ url_for('items.product_details', item_id=product.id) }}" class="text-decoration-none text-dark">
+                                <div class="product-card">
+                                    <div class="img-wrapper">
+                                        <img src="{{ product.images[0].image_url if product.images else '/static/img/default.png' }}"
+                                             class="product-img"
+                                             alt="{{ product.item_title }}">
+                                        {% if product.status_id == 2 %}
+                                            <div class="product-status-overlay">예약중</div>
+                                        {% elif product.status_id == 3%}
+                                            <div class="product-status-overlay">판매완료</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="product-info p-3 text-center">
+                                        <div class="fw-bold text-truncate mb-1">{{ product.item_title }}</div>
+                                        <div class="text-muted" style="font-size: 0.9rem;">
+                                            {{ "{:,}원".format(product.item_price) }}
+                                        </div>
+                                    </div>
                                 </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="col-12 text-center py-5">
+                            <div class="py-5" style="background-color: #f8f9fa; border-radius: 12px; border: 1px dashed #ccc;">
+                                <p class="text-muted mb-0">등록된 상품이 없습니다.</p>
                             </div>
-                        </a>
-                    </div>
+                        </div>
                     {% endfor %}
                 </div>
             </div>

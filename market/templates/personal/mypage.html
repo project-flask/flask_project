@@ -15,18 +15,6 @@
     /* 마이페이지 전체 배경 */
     /* 배경 색깔 삭제 4월16일 */
 
-    /* flash 메세지 4월16일 생성 */
-    .alert-box {
-        margin-bottom: 20px;
-        padding: 12px 14px;
-        border-radius: 12px;
-        background-color: #f4f2ff;
-        border: 1px solid #ddd6ff;
-        color: #5f52d9;
-        font-size: 14px;
-        font-weight: 600;
-    }
-
     /* 너무 넓어보이는 콘텐츠 영역 감소 4월15일 */
     .container.mt-4 {
         max-width: 1120px;
@@ -497,7 +485,7 @@
 
     /* 빈 상태 메시지 박스 */
     /* 리뷰가 없을 때 사용 */
-  
+
     /* 빈 박스 크기조절 4월16일 */
     .empty-box {
         background-color: #f8f8ff;
@@ -646,13 +634,6 @@
             transform: translateY(0);
         }
     }
-        .profile-summary {
-            width: 100%;
-            margin-left: 0;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-        }
-    }
 
     /* 팝업 스타일 */
     .save-toast {
@@ -667,24 +648,13 @@
         font-weight: bold;
         box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
         z-index: 9999;
-        transition: opacity 0.5s ease;
+        transition: opacity 0.5s ease, transform 0.5s ease;
         opacity: 1;
+        pointer-events: none; {# 토스트로 클릭 안 되는 현상 방지 #}
     }
-
-
-    /* 4월15일 수정함 */
-
 </style>
 
 <div class="container mt-4">
-    <!--상태메시지 수정 flash, 4월 16일 생성-->
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <div class="alert-box">
-        {{ messages[0] }}
-    </div>
-    {% endif %}
-    {% endwith %}
     <!-- 나의 정보, 상품등록 버튼 추가 4월16일-->
     <div class="mypage-section">
         <div class="mypage-topbar">
@@ -913,146 +883,8 @@
         <!-- 리뷰 더보기 -->
         <!-- 리뷰가 5개 초과 했을 경우에만 더 보기 버튼이 나오게 4월15일 -->
         {% if reviews|length > 5 %}
-        <button class="more-btn" id="toggleReviewBtn" type="button">더 보기</button>
+            <button class="more-btn" id="toggleReviewBtn" type="button">더 보기</button>
         {% endif %}
     </div>
 </div>
-
-<!-- 더 보기 버튼을 누르면 펼쳐지게  4월15일 생성-->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const toggleBtn = document.getElementById('toggleReviewBtn');
-        const hiddenReviews = document.querySelectorAll('.review-hidden');
-
-        if (!toggleBtn) return;
-
-        let expanded = false;
-
-        toggleBtn.addEventListener('click', function () {
-            hiddenReviews.forEach(function (review) {
-                review.style.display = expanded ? 'none' : 'flex';
-            });
-
-            expanded = !expanded;
-            toggleBtn.textContent = expanded ? '접기' : '더보기';
-        });
-    });
-
-    // 받은 리뷰를 클릭하면 구매자 리뷰로 스크롤 이동 4월15일
-    function scrollToSection(id) {
-        const section = document.getElementById(id);
-        if (!section) return;
-
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    //상태메시지 수정버튼 활성화 4월16일 수정
-    document.addEventListener('DOMContentLoaded', function () {
-        const editBtn = document.getElementById('statusEditBtn');
-        const cancelBtn = document.getElementById('statusCancelBtn');
-
-        const viewMode = document.getElementById('statusViewMode');
-        const editMode = document.getElementById('statusEditMode');
-        const statusInput = document.getElementById('statusInput');
-        const statusText = document.getElementById('statusText');
-
-        if (!editBtn || !cancelBtn || !viewMode || !editMode) return;
-
-        function getRealValue(text) {
-            return text === "상태 메시지를 입력하세요" ? "" : text;
-        }
-
-        editBtn.addEventListener('click', function () {
-            statusInput.value = getRealValue(statusText.textContent.trim());
-            viewMode.style.display = 'none';
-            editMode.style.display = 'block';
-            editBtn.style.display = 'none';
-            statusInput.focus();
-        });
-
-        cancelBtn.addEventListener('click', function () {
-            editMode.style.display = 'none';
-            viewMode.style.display = 'block';
-            editBtn.style.display = 'inline-block';
-        });
-    });
-    // 공통 슬라이드 함수 4월16일 정리
-    function initSlider(trackId, prevBtnId, nextBtnId) {
-        const track = document.getElementById(trackId);
-        const prevBtn = document.getElementById(prevBtnId);
-        const nextBtn = document.getElementById(nextBtnId);
-
-        if (!track || !prevBtn || !nextBtn) return;
-
-        const slides = track.querySelectorAll('.product-slide');
-        if (!slides.length) return;
-
-        let currentIndex = 0;
-
-        function getVisibleCount() {
-            if (window.innerWidth <= 767) return 1;
-            if (window.innerWidth <= 991) return 2;
-            return 4;
-        }
-
-        function getGap() {
-            return 16;
-        }
-
-        function updateSlider() {
-            const visibleCount = getVisibleCount();
-            const maxIndex = Math.max(0, slides.length - visibleCount);
-
-            if (currentIndex > maxIndex) {
-                currentIndex = maxIndex;
-            }
-
-            const slideWidth = slides[0].offsetWidth;
-            const moveX = currentIndex * (slideWidth + getGap());
-
-            track.style.transform = `translateX(-${moveX}px)`;
-
-            prevBtn.disabled = currentIndex === 0;
-            nextBtn.disabled = currentIndex >= maxIndex;
-        }
-
-        prevBtn.addEventListener('click', function () {
-            const visibleCount = getVisibleCount();
-            currentIndex = Math.max(0, currentIndex - visibleCount);
-            updateSlider();
-        });
-
-        nextBtn.addEventListener('click', function () {
-            const visibleCount = getVisibleCount();
-            const maxIndex = Math.max(0, slides.length - visibleCount);
-            currentIndex = Math.min(maxIndex, currentIndex + visibleCount);
-            updateSlider();
-        });
-
-        window.addEventListener('resize', updateSlider);
-
-        updateSlider();
-    }
-
-    // 판매 중인 상품 / 찜한 물건 목록 슬라이드 공통 적용 4월16일 정리
-    document.addEventListener('DOMContentLoaded', function () {
-        initSlider('productSliderTrack', 'productPrevBtn', 'productNextBtn');
-        initSlider('wishSliderTrack', 'wishPrevBtn', 'wishNextBtn');
-    });
-
-    // 토스트 팝업 JS
-    document.addEventListener('DOMContentLoaded', function() {
-        const toast = document.getElementById('saveToast');
-        if (toast) {
-            // 1.5초 동안 보여준 뒤에
-            setTimeout(function() {
-                toast.style.opacity = '0'; // 서서히 투명하게
-                // 애니메이션 끝나면 아예 제거
-                setTimeout(function() {
-                    toast.remove();
-                }, 500);
-            }, 1500);
-        }
-    });
-</script>
 {% endblock %}

@@ -151,16 +151,27 @@ def modify_status(item_id):
 # 카테고리별 페이지
 @bp.route('/product-categories/<int:category_id>')
 def product_categories(category_id):
+
     cat = Category.query.get_or_404(category_id)
-    # DB에서 해당 카테고리 상품만 필터링해서 가져옴
-    category_items = Item.query.filter_by(category_id=category_id).all()
-    return render_template('items/CP.html', category_id = category_id, title = cat.category_name, product_list = category_items)
+    # 판매중 기준 우선 및 최신순 정렬
+    category_items = Item.query.filter_by(category_id=category_id, is_deleted=False)\
+                    .order_by(Item.status_id.asc(), Item.created_at.desc()).all()
+
+    all_categories = Category.query.all()
+
+    return render_template('items/CP.html',
+                           category_id = category_id, title = cat.category_name, product_list = category_items, all_categories=all_categories)
 
 # 필터링 (거래 가능한 상품만 보기) 페이지
 @bp.route('/product-status/<int:item_status_id>')
 def product_statuses(item_status_id):
-    item_statuses = Item.query.filter_by(status_id=item_status_id).all()
-    return render_template('items/CP.html', items = item_statuses, title = "거래 가능 상품")
+    items = Item.query.filter_by(status_id=item_status_id, is_deleted=False)\
+            .order_by(Item.created_at.desc()).all()
+
+    all_categories = Category.query.all()
+
+    return render_template('items/CP.html',
+                           item_status_id = item_status_id, title = "거래 가능 상품", product_list=items, all_categories=all_categories)
 
 
 @bp.route('/comment/create/<int:item_id>', methods=('POST',))
@@ -177,6 +188,7 @@ def comment_create(item_id):
             item=product,
             user=g.user
         )
+
         db.session.add(comment)
         db.session.commit()
 
