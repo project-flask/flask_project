@@ -1,10 +1,10 @@
 from functools import wraps
 
-from flask import Blueprint, request, redirect, url_for, flash, render_template, session, g
+from flask import Blueprint, request, redirect, url_for, flash, render_template, session, g, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 import functools
 
-import requests
+#import requests
 
 from market import db
 from market.models import User
@@ -38,6 +38,33 @@ def signup():
     return render_template('auth/signup.html', form=form)
 
 
+# 실시간 아이디 중복 체크
+@bp.route('/check_id_duplicate/', methods=['POST'])
+def check_id_duplicate():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    user = User.query.filter_by(login_id=user_id).first()
+    return jsonify({'exists': bool(user)})
+
+
+# 실시간 닉네임 중복 체크
+@bp.route('/check_nickname_duplicate/', methods=['POST'])
+def check_nickname_duplicate():
+    data = request.get_json()
+    nickname = data.get('nickname')
+    user = User.query.filter_by(nickname=nickname).first()
+    return jsonify({'exists': bool(user)})
+
+
+# 실시간 이메일 중복 체크
+@bp.route('/check_email_duplicate/', methods=['POST'])
+def check_email_duplicate():
+    data = request.get_json()
+    email = data.get('email')
+    user = User.query.filter_by(email=email).first()
+    return jsonify({'exists': bool(user)})
+
+
 # [일반 로그인]
 @bp.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -55,9 +82,11 @@ def login():
             # 에러가 없을 때만 로그인 처리
             session.clear()
             session['user_id'] = user.id
+
+            session.permanent = True  #로그인 1시간 유지
+
             return redirect(url_for('main.index'))
 
-    # 에러가 append된 상태로 템플릿을 넘기면 HTML이 알아서 빨갛게 그려줌
     return render_template('auth/login.html', form=form)
 
 

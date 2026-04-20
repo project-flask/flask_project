@@ -83,11 +83,20 @@
         flex-shrink: 0;
     }
 
-    /* 판매자 이름 */
+    /* 프로필 이미지 4월17일 */
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        display: block;
+    }
+
+    /* 판매자 이름 css수정 4월17일 */
     .profile-name {
         font-size: 32px;
-        font-weight: 800;
-        color: #2d2d44;
+        font-weight: 700;
+        color: #6C5CE7;
         margin-bottom: 6px;
         line-height: 1.1;
     }
@@ -397,13 +406,18 @@
 
             <!-- 프로필 이미지, 판매자 기본 정보 -->
             <div class="profile-left">
-                <!--원형 프로필 -->
+                <!--원형 프로필, 프로필이미지 변경하면 출력, 명칭 수정 4월17일 -->
                 <div class="avatar-circle">
-                    {{ seller.nickname[0] | upper }}
+                    {% if seller.profile_image %}
+                    <img src="{{ url_for('static', filename='uploads/profiles/' + seller.profile_image) }}"
+                        class="avatar-img" alt="판매자 프로필 이미지">
+                    {% else %}
+                    {{ (seller.nickname or "U")[0] | upper }}
+                    {% endif %}
                 </div>
 
                 <div>
-                    <!-- 이름 -->
+                    <!-- 닉네임 css위해 속성 추가 4월17일 -->
                     <div class="profile-name">{{ seller.nickname }}</div>
 
                     <!-- 상태 메시지 -->
@@ -418,18 +432,17 @@
 
             <!--활동 요약 -->
             <div class="profile-summary">
-                <!-- 판매 완료 -->
-                <div class="summary-box">
-                    <div class="summary-label">판매 완료</div>
-                    <div class="summary-value">0</div>
-                </div>
 
                 <!-- 판매 중 -->
                 <div class="summary-box">
                     <div class="summary-label">판매 중</div>
                     <div class="summary-value">{{ products|length }}</div>
                 </div>
-
+                <!-- 판매 완료 -->
+                <div class="summary-box">
+                    <div class="summary-label">판매 완료</div>
+                    <div class="summary-value">0</div>
+                </div>
                 <!-- 받은 리뷰 -->
                 <div class="summary-box">
                     <div class="summary-label">받은 리뷰</div>
@@ -458,28 +471,32 @@
             <div class="product-slider-track" id="sellerProductSliderTrack">
                 {% for product in products %}
                 <div class="product-slide">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body">
-                            <!-- 상품 이미지 -->
-                            <!-- 임시 이미지와 실제 이미지 크기 통일 4월16일 수정 -->
-                            <div class="product-thumb">
-                                <img src="{{ url_for('static', filename='img/default_product.png') }}"
-                                    class="product-thumb-img" alt="상품이미지">
-                            </div>
+                    <!--상품 클릭시 상품페이지로 이동하게 수정 4월17일-->
+                    <a href="{{ url_for('items.product_details', item_id=product.id) }}"
+                        class="product-card-link text-decoration-none">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <!-- 상품 이미지 -->
+                                <!-- 임시 이미지와 실제 이미지 크기 통일 4월16일 수정 -->
+                                <div class="product-thumb">
+                                    <img src="{{ url_for('static', filename='img/default_product.png') }}"
+                                        class="product-thumb-img" alt="상품이미지">
+                                </div>
 
-                            <!-- 상품 정보 -->
-                            <div class="product-info">
-                                <h6 class="card-title mb-1 text-truncate">
-                                    <a href="{{ url_for('items.product_details', item_id=product.id) }}"
-                                        class="text-decoration-none text-dark">
+                                <!-- 상품 정보 -->
+                                <div class="product-info">
+                                    <h6 class="card-title mb-1 text-truncate">
+
                                         {{ product.item_title }}
-                                    </a>
-                                </h6>
-                                <p class="card-text fw-bold text-primary mb-0">{{ "{:,}원".format(product.item_price) }}
-                                </p>
+
+                                    </h6>
+                                    <p class="card-text fw-bold text-primary mb-0">{{ "{:,}원".format(product.item_price)
+                                        }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 {% endfor %}
             </div>
@@ -526,60 +543,4 @@
     </div>
 
 </div>
-
-<script>
-    // 판매자 페이지 판매 중인 상품 슬라이드 4개씩 이동 4월16일 생성
-    function initSlider(trackId, prevBtnId, nextBtnId) {
-        const track = document.getElementById(trackId);
-        const prevBtn = document.getElementById(prevBtnId);
-        const nextBtn = document.getElementById(nextBtnId);
-
-        if (!track || !prevBtn || !nextBtn) return;
-
-        const slides = track.querySelectorAll('.product-slide');
-        if (!slides.length) return;
-
-        let currentIndex = 0;
-
-        function getVisibleCount() {
-            if (window.innerWidth <= 767) return 1;
-            if (window.innerWidth <= 991) return 2;
-            return 4;
-        }
-
-        function updateSlider() {
-            const visibleCount = getVisibleCount();
-            const maxIndex = Math.max(0, slides.length - visibleCount);
-
-            if (currentIndex > maxIndex) currentIndex = maxIndex;
-
-            const slideWidth = slides[0].offsetWidth;
-            const moveX = currentIndex * (slideWidth + 16);
-
-            track.style.transform = `translateX(-${moveX}px)`;
-
-            prevBtn.disabled = currentIndex === 0;
-            nextBtn.disabled = currentIndex >= maxIndex;
-        }
-
-        prevBtn.addEventListener('click', () => {
-            currentIndex = Math.max(0, currentIndex - getVisibleCount());
-            updateSlider();
-        });
-
-        nextBtn.addEventListener('click', () => {
-            const maxIndex = Math.max(0, slides.length - getVisibleCount());
-            currentIndex = Math.min(maxIndex, currentIndex + getVisibleCount());
-            updateSlider();
-        });
-
-        window.addEventListener('resize', updateSlider);
-        updateSlider();
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        initSlider('sellerProductSliderTrack', 'sellerProductPrevBtn', 'sellerProductNextBtn');
-    });
-</script>
-
 {% endblock %}

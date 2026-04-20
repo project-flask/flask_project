@@ -60,7 +60,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 9999;
+        z-index: 99999;
         justify-content: center;
         align-items: center;
     }
@@ -148,7 +148,6 @@
                 <li><a href="/" class="modal_open_btn" data-target="rules">이용약관</a></li>
                 <li><a href="/" class="modal_open_btn fw-bold text-dark" data-target="privacy">개인정보처리방침</a></li>
                 <li><a href="/" class="modal_open_btn" data-target="policy">운영정책</a></li>
-                <!-- <li><a href="#">위치기반서비스 이용약관</a></li> -->
                 <li><a href="/" class="modal_open_btn" data-target="vision">이용자보호 비전과 계획</a></li>
                 <li><a href="/" class="modal_open_btn" data-target="youth">청소년보호정책</a></li>
             </ul>
@@ -175,37 +174,3 @@
     </div>
 </div>
 {% endfor %}
-
-<script>
-
-// modal_pkg
-const openBtns = document.querySelectorAll('.modal_open_btn');
-const closeBtns = document.querySelectorAll('.modal_close_btn');
-
-// 열기
-openBtns.forEach(btn => {
-    btn.onclick = function(e) {
-        e.preventDefault();
-
-        // 버튼의 data-target 값을 읽어서 해당 id를 가진 모달을 검색
-        const targetId = 'modal_' + this.getAttribute('data-target');
-        const targetModal = document.getElementById(targetId);
-
-        if (targetModal) {
-            // 배경 그림자 영역
-            targetModal.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-            targetModal.style.display = 'flex';
-        }
-    }
-});
-
-// 닫기
-closeBtns.forEach(btn => {
-    btn.onclick = function() {
-        const modal = this.closest('.modal_style_pkg');
-        if (modal) {
-            modal.style.display = 'none';
-        }
-    }
-});
-</script>

@@ -23,7 +23,7 @@
         padding: 45px 35px;
     }
 
-    /* 아이디|비밀번호 전환용 탭 메뉴 배경 */
+    /* 아이디 찾기, 비밀번호 찾기 전환용 탭 메뉴 배경 */
     .nav-pills {
         background-color: #f3f3ff;
         border-radius: 16px;
@@ -109,12 +109,11 @@
     }
 </style>
 
-
-<div class="find-wrapper">
+{# find-container 추가 (기존 jinja템플릿 코드 삽입) -> 서버가 에러 판단 후 JS에 전달 #}
+<div class="find-wrapper" id="find-container" data-is-pw-error="{% if form.user_id.data or form.email_for_pw.data %}true{% else %}false{% endif %}">>
     <div class="find-card text-center">
         <!-- 페이지 제목-->
         <h2 class="fw-bold mb-4" style="color: #444; letter-spacing: -1px;">계정 찾기</h2>
-
 
         <!-- 탭 메뉴 (아이디 / 비밀번호)-->
 
@@ -130,6 +129,7 @@
                     찾기</button>
             </li>
         </ul>
+
         <div class="tab-content" id="findTabContent">
 
             <!-- ===== 아이디 찾기 ===== -->
@@ -140,15 +140,15 @@
 
                 <!-- flash 메시지 출력-->
                 {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                {% for category, message in messages %}
-                <div class="alert alert-{{ category }} mb-4" style="border-radius: 14px; border: none; font-size: 0.9rem; font-weight: bold;
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} mb-4" style="border-radius: 14px; border: none; font-size: 0.9rem; font-weight: bold;
                            background-color: {% if category == 'success' %}#eef2ff{% else %}#fff0f0{% endif %};
                            color: {% if category == 'success' %}#6c6cff{% else %}#ff6b6b{% endif %};">
-                    {{ message }}
-                </div>
-                {% endfor %}
-                {% endif %}
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                 {% endwith %}
 
                 <!-- 아이디 찾기 폼 -->
@@ -171,18 +171,19 @@
 
             <div class="tab-pane fade find-entrance" id="find-pw" role="tabpanel">
                 <p class="info-text"><b>아이디</b>와 <b>이메일</b>을 입력하시면<br>비밀번호 재설정 안내를 도와드립니다.</p>
+
                 {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                {% for category, message in messages %}
-                {% if '비밀번호' in message or '회원 정보' in message %}
-                <div class="alert alert-{{ category }} mb-4" style="border-radius: 14px; border: none; font-size: 0.9rem; font-weight: bold;
-                                background-color: {% if category == 'success' %}#eef2ff{% else %}#fff0f0{% endif %};
-                                color: {% if category == 'success' %}#6c6cff{% else %}#ff6b6b{% endif %};">
-                    {{ message|safe }}
-                </div>
-                {% endif %}
-                {% endfor %}
-                {% endif %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            {% if '비밀번호' in message or '회원 정보' in message %}
+                                <div class="alert alert-{{ category }} mb-4" style="border-radius: 14px; border: none; font-size: 0.9rem; font-weight: bold;
+                                        background-color: {% if category == 'success' %}#eef2ff{% else %}#fff0f0{% endif %};
+                                        color: {% if category == 'success' %}#6c6cff{% else %}#ff6b6b{% endif %};">
+                                    {{ message|safe }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                 {% endwith %}
 
                 <!-- 비밀번호 찾기 폼 -->
@@ -212,7 +213,6 @@
     </div>
 </div>
 
-
 <!--JS: 아이디찾기/비번찾기 탭, 오토포커스-->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -233,13 +233,13 @@
         }
 
         {% if form.user_id.data or form.email_for_pw.data %}
-        // 비밀번호 찾기 시도 중 에러 발생 시 비번 탭 유지
-        const pwTab = new bootstrap.Tab(pwTabBtn);
-        pwTab.show();
-        setFocus('#find-pw input[name="user_id"]');
+            // 비밀번호 찾기 시도 중 에러 발생 시 비번 탭 유지
+            const pwTab = new bootstrap.Tab(pwTabBtn);
+            pwTab.show();
+            setFocus('#find-pw input[name="user_id"]');
         {% else %}
-        // 일반 진입 혹은 아이디 찾기 에러 시 기본 아이디 탭
-        setFocus('#find-id input[name="username"]');
+            // 일반 진입 혹은 아이디 찾기 에러 시 기본 아이디 탭
+            setFocus('#find-id input[name="username"]');
         {% endif %}
 
         // 아이디 찾기 탭 클릭 시
@@ -259,5 +259,4 @@
         }
     });
 </script>
-
 {% endblock %}
