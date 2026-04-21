@@ -10,11 +10,9 @@
         <h3 class="section-title">회원정보 수정</h3>
         <!-- 저장완료 메시지 -->
         {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="alert-box">
-            {{ messages[0] }}
-        </div>
-        {% endif %}
+            {% if messages %}
+                <input type="hidden" id="flask-message" value="{{ messages[0] }}">
+            {% endif %}
         {% endwith %}
 
         <!-- 프로필, 프로필이미지 수정 4월17일 -->
@@ -114,7 +112,11 @@
             if (!file) return;
 
             if (!file.type.startsWith('image/')) {
-                alert('이미지 파일만 선택할 수 있습니다.');
+                if (typeof showToast === 'function') {
+                    showToast('이미지 파일만 선택할 수 있습니다');
+                } else {
+                    alert('이미지 파일만 선택할 수 있습니다.');
+                }
                 imageInput.value = '';
                 return;
             }

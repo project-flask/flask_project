@@ -1,27 +1,32 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     // toast 모든 페이지 기능 공유
-    const toastList = ['saveToast', 'logoutToast'];
-    toastList.forEach(id => {
-        const toast = document.getElementById(id);
-        if (toast) {
-            if (toast.classList.contains('toast') && typeof bootstrap !== 'undefined') {
-                const bsToast = new bootstrap.Toast(toast, { autohide: false });
-                bsToast.show();
-            }
-            setTimeout(function () {
-                toast.style.opacity = '0';
-                setTimeout(() => { if (toast.parentNode) toast.remove(); }, 500);
-            }, 1500);
-        }
-    });
+    const flaskMsg = document.getElementById("flask-message");
+    if (flaskMsg && flaskMsg.value) {
+        showToast(flaskMsg.value);
+    }
+
+    // const toastList = ['saveToast', 'logoutToast', 'statusToast'];
+    // toastList.forEach(id => {
+    //     const toast = document.getElementById(id);
+    //     if (toast) {
+    //         if (toast.classList.contains('toast') && typeof bootstrap !== 'undefined') {
+    //             const bsToast = new bootstrap.Toast(toast, { autohide: false });
+    //             bsToast.show();
+    //         }
+    //         setTimeout(function () {
+    //             toast.style.opacity = '0';
+    //             setTimeout(() => { if (toast.parentNode) toast.remove(); }, 300);
+    //         }, 1500);
+    //     }
+    // });
 
     // 상단 header 고정 ( header.html )
     const headerFixed = document.querySelector('.hfixed');
     if (headerFixed) {
         const navHeight = headerFixed.offsetHeight;
         window.addEventListener('scroll', function () {
-            if (window.scrollY >= 40) {
+            if (window.scrollY >= 30) {
                 headerFixed.classList.add('active');
                 document.body.style.paddingTop = navHeight + 'px';
             } else {
@@ -345,14 +350,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (input && container) {
         input.addEventListener('change', e => {
+            const newFiles = Array.from(e.target.files);
+
+            if (selectedFiles.length + newFiles.length > 10) {
+                showToast("사진은 최대 10장만 업로드 가능합니다.");
+            }
+
             selectedFiles = [...selectedFiles, ...Array.from(e.target.files)].slice(0, 10);
+
+            const dt = new DataTransfer();
+            selectedFiles.forEach(f => dt.items.add(f));
+            input.files = dt.files;
+
             render();
         });
 
         window.remove = function (i) {
             selectedFiles.splice(i, 1);
-            const dt = new DataTransfer(); selectedFiles.forEach(f => dt.items.add(f));
+            const dt = new DataTransfer();
+            selectedFiles.forEach(f => dt.items.add(f));
             input.files = dt.files; render();
+            render();
         };
 
         function render() {
@@ -362,7 +380,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 const reader = new FileReader();
                 reader.onload = e => {
                     const div = document.createElement('div'); div.className = 'preview-item';
-                    div.innerHTML = `<img src="${e.target.result}"><button type="button" class="btn-remove" onclick="remove(${i})">×</button>
+                    div.innerHTML = `
+                        <img src="${e.target.result}">
+                        <button type="button" class="btn-remove" onclick="remove(${i})">×</button>
                         ${i === 0 ? '<div style="position:absolute; bottom:0; width:100%; background:rgba(204,204,255,0.8); color:white; font-size:10px; text-align:center;">메인 이미지</div>' : ''}`;
                     container.appendChild(div);
                     if (i === selectedFiles.length - 1)
@@ -374,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function fillEmptySlots() {
             const currentCount = container.querySelectorAll('.preview-item').length;
-            for (let i = currentCount; i < 9; i++) {
+            for (let i = currentCount; i < 10; i++) {
                 const empty = document.createElement('div');
                 empty.className = 'preview-item empty-slot';
                 empty.innerHTML = '<i class="fas fa-plus"></i>';
@@ -382,6 +402,91 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         fillEmptySlots();
+    }
+
+    // 상품 등록 시 가격 입력 칸에서 스크롤 작동하면 가격 변동되던 에러 방지
+    const priceInput = document.querySelector('input[name="price"]');
+    if (priceInput) {
+        priceInput.addEventListener('wheel', function() {
+            this.blur();
+        });
+    }
+
+    const uploadForm = document.querySelector('form[action*="product_upload"], form[action*="product_modify"]');
+
+    if (uploadForm) {
+        // 브라우저 기본 말풍선 방지
+        uploadForm.setAttribute('novalidate', true);
+
+        uploadForm.addEventListener('submit', function (e) {
+            let isValid = true;
+
+            // 검사할 필드들 설정
+            const fields = [
+                { name: 'title', msg: '상품명을 입력해주세요' },
+                { name: 'category', msg: '카테고리를 선택해주세요' },
+                { name: 'price', msg: '가격을 입력해주세요' },
+                { name: 'content', msg: '상세 설명을 입력해주세요' }
+            ];
+
+            fields.forEach(field => {
+                const input = this.querySelector(`[name="${field.name}"]`);
+                const errorDiv = document.getElementById(`error-${field.name}`);
+
+                // 빈칸, 카테고리 초기값일 때 찾아내기용
+                const isInvalidValue = !input.value ||
+                                     input.value.trim() === "" ||
+                                     input.value === "카테고리 선택" ||
+                                     (input.tagName === 'SELECT' && !input.value);
+
+                if (isInvalidValue) {
+                    isValid = false;
+
+                    // 빨간 테두리
+                    input.classList.add('is-invalid');
+
+                    if (errorDiv) {
+                        errorDiv.innerText = field.msg;
+                        errorDiv.style.display = 'block';
+                    }
+                } else {
+                    // 잘 입력했으면 원래대로
+                    input.classList.remove('is-invalid');
+                    if (errorDiv) {
+                        errorDiv.style.display = 'none';
+                    }
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                e.stopPropagation();
+                // 첫 번째 에러가 난 곳으로 포커스 이동
+                const firstError = this.querySelector('.is-invalid');
+                if (firstError) firstError.focus();
+            }
+        });
+
+        // 사용자가 다시 타이핑을 시작하면 실시간으로 빨간색 지워주기
+        uploadForm.querySelectorAll('.custom-input').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+                const errorDiv = document.getElementById(`error-${this.name}`);
+                if (errorDiv) {
+                    errorDiv.innerText = '';
+                    errorDiv.style.display = 'none';
+                }
+            });
+
+            // select 박스 전용
+            input.addEventListener('change', function() {
+                if(this.value !== "카테고리 선택") {
+                    this.classList.remove('is-invalid');
+                    const errorDiv = document.getElementById(`error-${this.name}`);
+                    if (errorDiv) errorDiv.style.display = 'none';
+                }
+            });
+        });
     }
 
     // 마이페이지, 판매자페이지 ( mypage.html, seller_profile.html )
@@ -431,4 +536,37 @@ document.addEventListener('DOMContentLoaded', function () {
         const cancelBtn = document.getElementById('statusCancelBtn');
         if (cancelBtn) cancelBtn.onclick = () => { editMode.style.display = 'none'; viewMode.style.display = 'block'; editBtn.style.display = 'inline-block'; };
     }
+
+
 });
+
+// 토스트 모든 페이지 기능 공유 함수
+function showToast(message) {
+    const container = document.querySelector('.toast-container');
+    if (!container) return;
+
+    const toastId = 'toast_' + Date.now();
+    const toastHTML = `
+        <div id="${toastId}" class="toast align-items-center text-white border-0 show" role="alert" 
+             style="background-color: #CCCCFF; border-radius: 12px; min-width: 250px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <div class="d-flex">
+                <div class="toast-body text-center w-100">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span>${message}</span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', toastHTML);
+    const target = document.getElementById(toastId);
+
+    // 사라지는 애니메이션 로직
+    setTimeout(() => {
+        if (target) {
+            target.style.transition = "opacity 0.5s ease";
+            target.style.opacity = '0';
+            setTimeout(() => { target.remove(); }, 500);
+        }
+    }, 2000);
+}

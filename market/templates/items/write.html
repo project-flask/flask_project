@@ -2,7 +2,15 @@
 {% block extra_css %}
     <link rel="stylesheet" href="{{ url_for('static', filename='style/write.css') }}">
 {% endblock %}
+
 {% block content %}
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <input type="hidden" id="flask-message" value="{{ messages[0] }}">
+    {% endif %}
+{% endwith %}
+
 <main class="container">
     <div class="form-container">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -30,20 +38,21 @@
                     <div class="mb-4">
                         <label class="custom-label">상품명</label>
                         <input type="text" class="form-control custom-input" name="title" placeholder="상품명 입력"
-                            value="{{ product.item_title if product else '' }}" required>
+                            value="{{ product.item_title if product else '' }}">
+                        <div class="invalid-feedback-custom" id="error-title"></div>
                     </div>
 
                     <div class="mb-4">
                         <label class="custom-label">카테고리 선택</label>
                         <select class="form-select custom-input" name="category">
-                            <option selected disabled>카테고리 선택</option>
+                            <option value="" selected disabled>카테고리 선택</option>
                             {% for cat in categories %}
-                            <option value="{{ cat.id }}" {% if product and cat.id==product.category_id %}selected{%
-                                endif %}>
+                            <option value="{{ cat.id }}" {% if product and cat.id==product.category_id %}selected{% endif %}>
                                 {{ cat.category_name }}
                             </option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback-custom" id="error-category"></div>
                     </div>
 
                     <div class="mb-4">
@@ -54,12 +63,14 @@
                             <span class="input-group-text custom-input"
                                 style="background: none; border-left: none;">원</span>
                         </div>
+                        <div class="invalid-feedback-custom" id="error-price"></div>
                     </div>
 
                     <div class="mb-4">
                         <label class="custom-label">내용 입력</label>
                         <textarea class="form-control custom-input" name="content" rows="8"
                             placeholder="간단한 상품 설명을 입력해주세요">{{ product.item_description if product else '' }}</textarea>
+                        <div class="invalid-feedback-custom" id="error-content"></div>
                     </div>
                 </div>
             </div>
