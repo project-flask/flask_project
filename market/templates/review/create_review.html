@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style/review.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="save-toast">{{ messages[0] }}</div>
+{% endif %}
+{% endwith %}
+
+<div class="container mt-4">
+    <div class="review-section">
+
+        <h5 class="section-title">✍️ 리뷰 작성</h5>
+
+        <div class="review-target-box">
+            <p class="review-target-text">
+                <strong>{{ seller.nickname }}</strong> 님에게 남기는 리뷰입니다.
+            </p>
+        </div>
+
+        <form method="post">
+            <textarea
+                name="content"
+                class="review-textarea"
+                placeholder="거래 경험을 자유롭게 작성해주세요"
+                maxlength="300"
+                required
+            >{{ request.form.get('content', '') }}</textarea>
+
+            <div class="review-action-buttons">
+                <button type="button" class="review-cancel-btn"
+                    onclick="location.href='{{ url_for('personal.seller_profile', user_id=seller.id) }}'">
+                    취소
+                </button>
+
+                <button type="submit" class="review-save-btn">
+                    등록하기
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

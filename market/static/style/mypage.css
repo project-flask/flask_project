@@ -1,5 +1,5 @@
 /* 마이페이지 전체 배경 */
-/* 배경 색깔 삭제 4월16일 */
+/* 순서대로 정리 4월21일 */
 
 /* 너무 넓어보이는 콘텐츠 영역 감소 4월15일 */
 .container.mt-4 {
@@ -31,14 +31,11 @@
     gap: 8px;
 }
 
-/* 프로필 상단 영역 */
-/* 크기세부조절 4월15일 */
-.profile-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 28px;
-    flex-wrap: nowrap;
+/* 리뷰숫자 4월15일*/
+.review-count {
+    font-size: 14px;
+    font-weight: 600;
+    color: #8a8aa8;
 }
 
 /* 나의 정보 상단 바 4월16일 추가*/
@@ -55,6 +52,26 @@
     display: flex;
     gap: 10px;
     align-items: center;
+}
+
+/* 거래 내역 버튼 4월20일 */
+.mypage-history-btn {
+    background: #ffffff;
+    color: #7c6ff6;
+    border: 1px solid #ddd6ff;
+    border-radius: 12px;
+    padding: 11px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.mypage-history-btn:hover {
+    background-color: #f4f2ff;
+    border-color: #cfc8ff;
+    color: #6f61f2;
 }
 
 /* 마이페이지 상품 등록 버튼 4월16일 추가*/
@@ -84,37 +101,14 @@
     transform: translateY(0);
 }
 
-/* 거래 내역 버튼 4월20일 */
-.mypage-history-btn {
-    background: #ffffff;
-    color: #7c6ff6;
-    border: 1px solid #ddd6ff;
-    border-radius: 12px;
-    padding: 11px 20px;
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 1;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-}
-
-.mypage-history-btn:hover {
-    background-color: #f4f2ff;
-    border-color: #cfc8ff;
-    color: #6f61f2;
-}
-
-/* 모바일 대응 */
-@media (max-width: 767px) {
-    .mypage-topbar {
-        flex-wrap: wrap;
-        align-items: flex-start;
-    }
-
-    .mypage-upload-btn {
-        width: 100%;
-        justify-content: center;
-    }
+/* 프로필 상단 영역 */
+/* 크기세부조절 4월15일 */
+.profile-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: nowrap;
 }
 
 /* 프로필 왼쪽 4월15일 생성 */
@@ -124,57 +118,6 @@
     gap: 20px;
     min-width: 0;
     flex: 1;
-}
-
-/* nickname css 4월17일 */
-.nickname-text{
-    color: #6C5CE7;
-    font-weight: 700;
-}
-
-/* 오른쪽 활동 요약 */
-.profile-summary {
-    display: flex;
-    gap: 12px;
-    flex-wrap: nowrap;
-    margin-left: auto;
-    flex-shrink: 0;
-}
-
-/* 활동 요약 카드 1개 */
-/* 세부수정 4월16일 */
-.summary-box {
-    min-width: 120px;
-    background: #ffffff;
-    border: 1px solid #e3dcff;
-    border-radius: 18px;
-    padding: 16px 18px;
-    text-align: center;
-    box-shadow: 0 8px 20px rgba(124, 111, 246, 0.08);
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.summary-box:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 28px rgba(124, 111, 246, 0.14);
-    border-color: #cfc8ff
-}
-
-.summary-box:active {
-    transform: scale(0.97);
-}
-
-/* 활동 요약 카드 제목 */
-.summary-label {
-    color: #8f89b3;
-    font-weight: 600;
-}
-
-/* 활동 요약 카드 숫자 */
-.summary-value {
-    color: #6f61f2;
-    font-weight: 800;
 }
 
 /* 프로필 원형 이미지 */
@@ -192,7 +135,9 @@
     color: white;
     font-size: 2.5rem;
     font-weight: bold;
+    flex-shrink: 0;
 }
+
 /* 프로필이미지 4월17일 */
 .avatar-img {
     width: 100%;
@@ -200,6 +145,12 @@
     object-fit: cover;
     border-radius: 50%;
     display: block;
+}
+
+/* nickname css 4월17일 */
+.nickname-text {
+    color: #6C5CE7;
+    font-weight: 700;
 }
 
 /* 내 정보 수정 버튼  4월15일 명칭 변경으로 인해 수정*/
@@ -240,6 +191,17 @@
     margin-bottom: 6px;
 }
 
+/* 크기세부조절 4월15일 */
+.status-label {
+    color: #8b84b7;
+    font-weight: 600;
+}
+
+.status-text {
+    color: #4b4568;
+    font-weight: 500;
+}
+
 /* 상태 메시지 수정 버튼 */
 .status-edit-btn {
     background: transparent;
@@ -262,17 +224,6 @@
     content: "✏️";
     margin-left: 4px;
     font-size: 11px;
-}
-
-/* 크기세부조절 4월15일 */
-.status-label {
-    color: #8b84b7;
-    font-weight: 600;
-}
-
-.status-text {
-    color: #4b4568;
-    font-weight: 500;
 }
 
 /* 수정모드 css 4월 15일생성 */
@@ -341,6 +292,69 @@
     background: #ebe7ff;
 }
 
+/* 오른쪽 활동 요약 */
+.profile-summary {
+    display: flex;
+    gap: 12px;
+    flex-wrap: nowrap;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* 활동 요약 카드 1개 */
+/* 세부수정 4월16일 */
+.summary-box {
+    min-width: 120px;
+    background: #ffffff;
+    border: 1px solid #e3dcff;
+    border-radius: 18px;
+    padding: 16px 18px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(124, 111, 246, 0.08);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.summary-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(124, 111, 246, 0.14);
+    border-color: #cfc8ff;
+}
+
+.summary-box:active {
+    transform: scale(0.97);
+}
+
+/* 탭 활성화 상태 4월21일 */
+.summary-box.active {
+    background: linear-gradient(180deg, #f7f5ff 0%, #efeaff 100%);
+    border-color: #bfb6ff;
+    box-shadow: 0 12px 26px rgba(124, 111, 246, 0.16);
+}
+
+/* 활동 요약 카드 제목 */
+.summary-label {
+    color: #8f89b3;
+    font-weight: 600;
+}
+
+/* 활동 요약 카드 숫자 */
+.summary-value {
+    color: #6f61f2;
+    font-weight: 800;
+    font-size: 22px;
+    margin-top: 6px;
+}
+
+/* 탭 패널 4월21일 */
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
 /* 상품 / 찜 카드 공통 */
 /* 상품 등록시 나올 디자인 4월15일 */
 .card.h-100.border-0.shadow-sm {
@@ -377,13 +391,27 @@
     box-shadow: 0 8px 18px rgba(171, 171, 250, 0.12);
 }
 
-/* 상품 이미지 박스 */
 /* 상품 a태그 css 추가 4월17일 수정 */
 .product-card-link {
     display: block;
     color: inherit;
+    text-decoration: none;
 }
 
+/* 상품 목록 grid 4월21일 */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+/* 페이지네이션용 기본 숨김 4월21일 */
+.product-card-item,
+.review-page-item {
+    display: none;
+}
+
+/* 상품 이미지 박스 */
 .product-thumb {
     width: 100%;
     height: 180px;
@@ -398,97 +426,6 @@
     object-fit: cover;
     display: block;
 }
-
-/* 섹션 제목 + 슬라이드 버튼 */
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 20px;
-}
-
-/* 슬라이드 버튼 영역 */
-.slide-controls {
-    display: flex;
-    gap: 8px;
-}
-
-/* 슬라이드 버튼 */
-.slide-btn {
-    width: 36px;
-    height: 36px;
-    border: 1px solid #ddd6ff;
-    background-color: #ffffff;
-    color: #6f61f2;
-    border-radius: 10px;
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.slide-btn:hover {
-    background-color: #f4f2ff;
-    border-color: #cfc8ff;
-}
-
-.slide-btn:disabled {
-    opacity: 0.45;
-    cursor: default;
-    background-color: #fafaff;
-}
-
-/* 슬라이드 바깥 영역 */
-.product-slider-wrapper {
-    overflow: hidden;
-    width: 100%;
-}
-
-/* 슬라이드 트랙 */
-.product-slider-track {
-    display: flex;
-    gap: 16px;
-    transition: transform 0.35s ease;
-    will-change: transform;
-}
-
-/* 카드 4개씩 보이도록 */
-.product-slide {
-    flex: 0 0 calc((100% - 48px) / 4);
-    min-width: calc((100% - 48px) / 4);
-}
-
-/* 반응형 */
-@media (max-width: 991px) {
-    .product-slide {
-        flex: 0 0 calc((100% - 16px) / 2);
-        min-width: calc((100% - 16px) / 2);
-    }
-}
-
-@media (max-width: 767px) {
-
-    .section-header,
-    .profile-top {
-        align-items: flex-start;
-        flex-wrap: wrap;
-    }
-
-    .product-slide {
-        flex: 0 0 100%;
-        min-width: 100%;
-    }
-
-    .profile-summary {
-        width: 100%;
-        margin-left: 0;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-    }
-}
-
 
 /* 상품 정보 영역 */
 /* 이미지 아래 정보 정렬용 4월16일 수정 */
@@ -516,32 +453,19 @@
 }
 
 /* 빈 상태 메시지 박스 4월17일*/
-
 .empty-product-link {
-    display: inline-block;
+    display: block;
     text-decoration: none;
     color: inherit;
 }
 
-.empty-product-link:hover .empty-product-card {
+.empty-product-link:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 24px rgba(124, 111, 246, 0.12);
     border-color: #bdb7ff;
 }
 
-.empty-product-card {
-    width: 240px;
-    border: 1px dashed #ccccff;
-    border-radius: 16px;
-    background-color: #f8f8ff;
-    padding: 14px;
-    text-align: center;
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
 /* 리뷰가 없을 때 사용 */
-
 /* 빈 박스 크기조절 4월16일 */
 .empty-box {
     background-color: #f8f8ff;
@@ -557,38 +481,7 @@
     justify-content: center;
 }
 
-/* 더미상품 */
-.empty-product-card {
-    width: 240px;
-    border: 1px dashed #ccccff;
-    border-radius: 16px;
-    background-color: #f8f8ff;
-    padding: 14px;
-    text-align: center;
-}
-
-.empty-product-image {
-    width: 100%;
-    height: 180px;
-    background-color: #eeeeff;
-    border-radius: 12px;
-    margin-bottom: 14px;
-}
-
-.empty-product-text {
-    color: #8a8aa8;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
 /* 리뷰 목록 */
-/* 리뷰숫자 4월15일*/
-.review-count {
-    font-size: 14px;
-    font-weight: 600;
-    color: #8a8aa8;
-}
-
 .review-list {
     display: flex;
     flex-direction: column;
@@ -647,48 +540,46 @@
     border: 1px solid #ddddff;
 }
 
-/* 리뷰 더보기 버튼 */
-/* 크기세부조절 4월15일 */
-.more-btn {
-    width: 100%;
-    margin-top: 18px;
-    background: linear-gradient(90deg, #f3f0ff 0%, #ece8ff 100%);
-    color: #6f61f2;
+/* 페이지네이션 영역 4월21일 */
+.pagination-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+/* 페이지네이션 버튼 4월21일 */
+.page-btn {
+    min-width: 36px;
+    height: 36px;
     border: 1px solid #ddd6ff;
-    border-radius: 14px;
-    padding: 13px;
+    background-color: #ffffff;
+    color: #6f61f2;
+    border-radius: 10px;
+    font-size: 14px;
     font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.more-btn:hover {
-    background: linear-gradient(90deg, #7c6ff6 0%, #695cef 100%);
-    color: #ffffff;
-    border-color: #7c6ff6;
-    box-shadow: 0 12px 24px rgba(124, 111, 246, 0.22);
+.page-btn:hover {
+    background-color: #f4f2ff;
+    border-color: #cfc8ff;
 }
 
-/* 더 보기 버튼 기능 4월15일 생성*/
-/* 6번째 리뷰부터 숨김 */
-.review-hidden {
-    display: none;
+.page-btn.active {
+    background: linear-gradient(180deg, #f7f5ff 0%, #efeaff 100%);
+    border-color: #bfb6ff;
+    color: #5d50d8;
+    box-shadow: 0 8px 18px rgba(124, 111, 246, 0.14);
 }
 
-/* 펼쳐질 때 */
-.review-item {
-    animation: fadeInUp 0.25s ease;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(6px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.page-btn:disabled {
+    opacity: 0.45;
+    cursor: default;
+    background-color: #fafaff;
 }
 
 /* 팝업 스타일 */
@@ -707,4 +598,49 @@
     transition: opacity 0.5s ease, transform 0.5s ease;
     opacity: 1;
     pointer-events: none; /* 토스트로 클릭 안 되는 현상 방지 */
+}
+
+/* 모바일 대응 */
+@media (max-width: 991px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .mypage-topbar {
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    .mypage-action-buttons {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .mypage-history-btn,
+    .mypage-upload-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .profile-top {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .profile-summary {
+        width: 100%;
+        margin-left: 0;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .review-card {
+        align-items: flex-start;
+    }
 }
