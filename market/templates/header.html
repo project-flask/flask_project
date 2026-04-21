@@ -49,6 +49,7 @@
     </div>
 </nav>
 
+
 <!--=== 로그아웃 완료창 토스트 팝업 ===-->
 <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 3000; margin-top: 20px;">
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -56,6 +57,7 @@
             {% for category, message in messages %}
                 {% if '로그아웃' in message or category == 'info' or category == 'success' %}
                     <input type="hidden" id="flask-message" value="{{ message }}">
+
                 {% endif %}
 {#                {% if '로그아웃' in message %}#}
 {#                <div id="logoutToast"#}

@@ -1,0 +1,58 @@
+.container.mt-4 {
+    max-width: 900px;
+}
+
+.review-section {
+    background: #ffffff;
+    border: 1px solid #f0f1f7;
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(119, 119, 170, 0.08);
+}
+
+.section-title {
+    font-weight: 800;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+.review-target-box {
+    background: #f4f2ff;
+    border: 1px solid #ddd6ff;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 20px;
+}
+
+.review-textarea {
+    width: 100%;
+    min-height: 120px;
+    border: 1px solid #ddd6ff;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px;
+    resize: none;
+}
+
+.review-action-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.review-save-btn {
+    background: linear-gradient(90deg, #c3bcff 0%, #aca3ff 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: 700;
+}
+
+.review-cancel-btn {
+    background: #f4f2ff;
+    border: 1px solid #ddd6ff;
+    border-radius: 10px;
+    padding: 10px 16px;
+}

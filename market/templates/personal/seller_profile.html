@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block extra_css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/seller_profile.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style/seller_profile.css') }}">
 {% endblock %}
 {% block content %}
 
@@ -38,21 +38,22 @@
                 </div>
             </div>
 
-            <!--활동 요약 -->
+            <!--활동 요약 탭구조로 수정 4월21일-->
             <div class="profile-summary">
-
                 <!-- 판매 중 -->
-                <div class="summary-box">
+                <div class="summary-box {% if tab == 'selling' %}active{% endif %}" data-tab="sellingTab">
                     <div class="summary-label">판매 중</div>
                     <div class="summary-value">{{ products|length }}</div>
                 </div>
+
                 <!-- 판매 완료 -->
-                <div class="summary-box">
+                <div class="summary-box {% if tab == 'completed' %}active{% endif %}" data-tab="completedTab">
                     <div class="summary-label">판매 완료</div>
                     <div class="summary-value">{{ completed_products_count }}</div>
                 </div>
+
                 <!-- 받은 리뷰 -->
-                <div class="summary-box">
+                <div class="summary-box {% if tab == 'review' %}active{% endif %}" data-tab="reviewTab">
                     <div class="summary-label">받은 리뷰</div>
                     <div class="summary-value">{{ reviews|length }}</div>
                 </div>
@@ -60,93 +61,131 @@
         </div>
     </div>
 
-    <!-- 판매 중인 상품 -->
-    <div class="seller-section">
-        <div class="section-header">
-            <h5 class="section-title">📦 판매 중인 상품<span class="section-count">({{ products|length }})</span></h5>
+    <!--조건 맞는 사람에게만 리뷰작성칸 보이기 4월21일-->
+    {% if can_write_review %}
+    <div class="review-write-box">
+        <form method="post"
+              action="{{ url_for('review.create_review', user_id=seller.id) }}">
 
-            <!-- 상품이 4개 초과일 때만 슬라이드 버튼 표시 -->
-            {% if products|length > 4 %}
-            <div class="slide-controls">
-                <button type="button" class="slide-btn" id="sellerProductPrevBtn">‹</button>
-                <button type="button" class="slide-btn" id="sellerProductNextBtn">›</button>
+            <textarea name="content" class="review-textarea"
+                      placeholder="거래 경험을 작성해주세요"
+                      required maxlength="300"></textarea>
+
+            <div class="review-count">0 / 300</div>
+
+            <div class="review-action-buttons">
+                <button type="submit" class="review-save-btn">등록</button>
             </div>
-            {% endif %}
-        </div>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- 판매 중인 상품 4월21일 -->
+    <div class="seller-section tab-panel {% if tab == 'selling' %}active{% endif %}" id="sellingTab">
+        <h5 class="section-title">📦 판매 중인 상품<span class="section-count">({{ products|length }})</span></h5>
 
         {% if products %}
-        <div class="product-slider-wrapper">
-            <div class="product-slider-track" id="sellerProductSliderTrack">
-                {% for product in products %}
-                <div class="product-slide">
-                    <!--상품 클릭시 상품페이지로 이동하게 수정 4월17일-->
-                    <a href="{{ url_for('items.product_details', item_id=product.id) }}"
-                        class="product-card-link text-decoration-none">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body">
-                                <!-- 상품 이미지 -->
-                                <!-- 임시 이미지와 실제 이미지 크기 통일 4월16일 수정 -->
-                                <div class="product-thumb">
-                                    <img src="{{ product.images[0].image_url if product.images else '/static/img/default.png' }}"
-                                             class="product-thumb-img"
-                                             alt="{{ product.item_title }}">
-                                </div>
+        <div class="product-grid paged-grid" data-tab-name="sellerProduct">
+            {% for product in products %}
+            <div class="product-card-item">
+                <a href="{{ url_for('items.product_details', item_id=product.id) }}"
+                    class="product-card-link text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="product-thumb">
+                                <img src="{{ product.images[0].image_url if product.images else url_for('static', filename='img/default_product.png') }}"
+                                    class="product-thumb-img" alt="{{ product.item_title }}">
+                            </div>
 
-                                <!-- 상품 정보 -->
-                                <div class="product-info">
-                                    <h6 class="card-title mb-1 text-truncate">
-                                        {{ product.item_title }}
-                                    </h6>
-                                    <p class="card-text fw-bold text-primary mb-0">{{ "{:,}원".format(product.item_price)
-                                        }}
-                                    </p>
-                                </div>
+                            <div class="product-info">
+                                <h6 class="card-title mb-1 text-truncate">
+                                    {{ product.item_title }}
+                                </h6>
+                                <p class="card-text fw-bold text-primary mb-0">
+                                    {{ "{:,}원".format(product.item_price) }}
+                                </p>
                             </div>
                         </div>
-                    </a>
-                </div>
-                {% endfor %}
+                    </div>
+                </a>
             </div>
+            {% endfor %}
         </div>
+
+        <div class="pagination-wrap" data-pagination-for="sellerProduct"></div>
         {% else %}
-        <!-- 상품이 없을 때 -->
-        <div class="empty-product-card">
-            <div class="empty-product-image"></div>
-            <div class="empty-product-text">현재 판매 중인 상품이 없습니다.</div>
-        </div>
+        <div class="empty-box">현재 판매 중인 상품이 없습니다.</div>
         {% endif %}
     </div>
 
-    <!-- 받은 리뷰 -->
-    <div class="seller-section">
+    <!--판매완료 목록 4월21일-->
+    <div class="seller-section tab-panel {% if tab == 'completed' %}active{% endif %}" id="completedTab">
+        <h5 class="section-title">✅ 판매 완료 상품<span class="section-count">({{ completed_products|length }})</span></h5>
+
+        {% if completed_products %}
+        <div class="product-grid paged-grid" data-tab-name="sellerCompleted">
+            {% for product in completed_products %}
+            <div class="product-card-item">
+                <a href="{{ url_for('items.product_details', item_id=product.id) }}"
+                    class="product-card-link text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="product-thumb">
+                                <img src="{{ product.images[0].image_url if product.images else url_for('static', filename='img/default_product.png') }}"
+                                    class="product-thumb-img" alt="{{ product.item_title }}">
+                                <div class="product-status-overlay">판매완료</div>
+                            </div>
+
+                            <div class="product-info">
+                                <h6 class="card-title mb-1 text-truncate">{{ product.item_title }}</h6>
+                                <p class="card-text fw-bold text-primary mb-0">
+                                    {{ "{:,}원".format(product.item_price) }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="pagination-wrap" data-pagination-for="sellerCompleted"></div>
+        {% else %}
+        <div class="empty-box">판매 완료된 상품이 없습니다.</div>
+        {% endif %}
+    </div>
+
+    <!-- 받은 리뷰 4월21일 -->
+    <div class="seller-section tab-panel {% if tab == 'review' %}active{% endif %}" id="reviewTab">
         <h5 class="section-title">💬 받은 리뷰<span class="section-count">({{ reviews|length }})</span></h5>
 
-        <div class="review-list">
+        {% if reviews %}
+        <div class="review-list paged-review-list" data-tab-name="sellerReview">
             {% for review in reviews %}
-            <div class="review-card">
-                <!-- 리뷰 텍스트 -->
+            <div class="review-card review-page-item">
                 <div class="review-text">
                     <p class="review-content">{{ review.content }}</p>
                     <small class="review-item-name">
                         거래 상품:
-                        {% if review.deal and review.deal.item %}
-                        {{ review.deal.item.item_title }}
+                        {% if review.deal and review.deal.items %}
+                        {{ review.deal.items.item_title }}
                         {% else %}
                         삭제된 상품
                         {% endif %}
                     </small>
                 </div>
 
-                <!-- 상품 이미지 -->
                 <div class="review-thumb">
                     <img src="{{ url_for('static', filename='img/default_product.png') }}" alt="상품 이미지">
                 </div>
             </div>
-            {% else %}
-            <!-- 리뷰가 없을 때 -->
-            <div class="empty-box">아직 받은 리뷰가 없습니다.</div>
             {% endfor %}
         </div>
+
+        <div class="pagination-wrap" data-pagination-for="sellerReview"></div>
+        {% else %}
+        <div class="empty-box">아직 받은 리뷰가 없습니다.</div>
+        {% endif %}
     </div>
 
 </div>

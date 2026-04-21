@@ -1,4 +1,4 @@
-# import 추가 4월17일 수정
+# import 추가 4월21일 수정
 import os
 import re
 import uuid
@@ -8,7 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from market import db
 from market.views.auth_view import login_required
-from market.models import Item, Favorite, Review, User, ItemStatus
+from market.models import Item, Favorite, Review, User, ItemStatus, Deal
 
 # 경로 수정으로 인해 삭제 4월16일
 bp = Blueprint('personal', __name__, url_prefix='/personal')
@@ -185,34 +185,58 @@ def favorite():
     return render_template('personal/favorite.html',
                            wishes=g.user.favorites)
 
-# 판매자 공개정보 4월16일 생성
+# 판매자 공개정보 4월21일 수정
 @bp.route('/seller/<int:user_id>/')
 def seller_profile(user_id):
     seller = User.query.get_or_404(user_id)
+    tab = request.args.get('tab', 'products')
 
-    # 판매 중인 상품만 조회 4월20일 수정
     products = Item.query.join(ItemStatus).filter(
         Item.user_id == seller.id,
         Item.is_deleted == False,
         ItemStatus.item_status == '판매중'
     ).order_by(Item.created_at.desc()).all()
 
-    # 판매 완료 상품 조회 4월20일 수정
-    completed_products_count = Item.query.join(ItemStatus).filter(
+    completed_products = Item.query.join(ItemStatus).filter(
         Item.user_id == seller.id,
         Item.is_deleted == False,
         ItemStatus.item_status == '판매완료'
-    ).count()
+    ).order_by(Item.created_at.desc()).all()
+
+    completed_products_count = len(completed_products)
 
     reviews = Review.query.filter_by(target_user_id=seller.id)\
         .order_by(Review.created_at.desc()).all()
+
+    # 특정 조건에서만 노출되게
+    can_write_review = False
+
+    if g.user:
+        deal = Deal.query.filter_by(
+            seller_id=seller.id,
+            buyer_id=g.user.id,
+            deal_status='completed'
+        ).first()
+
+        if deal:
+            # 이미 리뷰 썼는지 체크
+            existing_review = Review.query.filter_by(
+                deal_id=deal.id,
+                reviewer_id=g.user.id
+            ).first()
+
+            if not existing_review:
+                can_write_review = True
 
     return render_template(
         'personal/seller_profile.html',
         seller=seller,
         products=products,
         reviews=reviews,
-        completed_products_count=completed_products_count
+        completed_products=completed_products,
+        completed_products_count=completed_products_count,
+        can_write_review=can_write_review,
+        tab=tab
     )
 
 # 상태메시지 저장 4월16일 생성

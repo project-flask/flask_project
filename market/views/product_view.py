@@ -3,7 +3,7 @@ import os
 from flask import Blueprint, render_template, request, url_for, redirect, g, flash, current_app
 from market.views.auth_view import login_required
 from market import db
-from market.models import User, Item, Category, Comment, ItemStatus, ItemImage
+from market.models import User, Item, Category, Comment, ItemStatus, ItemImage, Deal
 from werkzeug.utils import secure_filename
 
 from datetime import datetime  # 날짜 기능을 쓰기 위해 추가
@@ -151,7 +151,7 @@ def product_details(item_id):
 
     return render_template('items/PDP.html', product = product, cat = cat, status_list=status_list, product_list=product_list)
 
-# PDP.html 상품 상태 게시글 업로드 유저만 수정 가능하고 이외의 유저는 수정 불가능 함수
+# PDP.html 상품 상태 게시글 업로드 유저만 수정 가능하고 이외의 유저는 수정 불가능 함수 4월21일 수정
 @bp.route('/modify-status/<int:item_id>', methods=['POST'])
 @login_required
 def modify_status(item_id):
@@ -161,14 +161,92 @@ def modify_status(item_id):
     if g.user != product.seller:
         return redirect(url_for('items.product_details', item_id=item_id))
 
-    new_status = request.form.get('status_id')
+    new_status = request.form.get('status_id', type=int)
 
     if new_status:
         product.status_id = int(new_status)
         db.session.commit()
         flash('변경이 완료되었습니다')
 
+    if not new_status:
+        flash('변경할 상품 상태를 찾을 수 없습니다.')
+        return redirect(url_for('items.product_details', item_id=item_id))
+
+    # 판매완료(3)로 변경하려는 경우에는 바로 저장하지 않고 구매자 입력 페이지로 이동
+    if new_status == 3:
+        existing_deal = Deal.query.filter_by(item_id=product.id).first()
+
+        # 이미 판매완료 처리와 거래 등록이 끝난 상품이면 다시 입력 페이지로 보내지 않음
+        if product.status_id == 3 and existing_deal:
+            flash('이미 판매완료 처리된 상품입니다.')
+            return redirect(url_for('items.product_details', item_id=item_id))
+
+        return redirect(url_for('items.complete_deal', item_id=item_id))
+
+    existing_deal = Deal.query.filter_by(item_id=product.id).first()
+
+    # 이미 거래가 등록된 상품은 판매완료 외 다른 상태로 되돌릴 수 없음
+    if existing_deal:
+        flash('거래가 등록된 상품은 상태를 다시 변경할 수 없습니다.')
+        return redirect(url_for('items.product_details', item_id=item_id))
+
+    # 판매중 / 예약중은 기존처럼 바로 변경
+    product.status_id = new_status
+    db.session.commit()
+    flash('상품 상태 수정 완료')
+
     return redirect(url_for('items.product_details', item_id=item_id))
+
+# 거래상대 저장 4월21일 생성
+@bp.route('/complete-deal/<int:item_id>/', methods=['GET', 'POST'])
+@login_required
+def complete_deal(item_id):
+    product = Item.query.get_or_404(item_id)
+
+    # 판매자만 접근 가능
+    if g.user != product.seller:
+        return redirect(url_for('items.product_details', item_id=item_id))
+
+    # 이미 거래기록이 있으면 다시 등록하지 못하게 막기
+    existing_deal = Deal.query.filter_by(item_id=product.id).first()
+    if existing_deal:
+        flash('이미 거래 정보가 등록된 상품입니다.')
+        return redirect(url_for('items.product_details', item_id=item_id))
+
+    if request.method == 'POST':
+        buyer_nickname = request.form.get('buyer_nickname', '').strip()
+
+        if not buyer_nickname:
+            flash('구매자 닉네임을 입력해주세요.')
+            return render_template('items/complete_deal.html', product=product)
+
+        buyer = User.query.filter_by(nickname=buyer_nickname).first()
+
+        if not buyer:
+            flash('해당 닉네임의 사용자를 찾을 수 없습니다.')
+            return render_template('items/complete_deal.html', product=product)
+
+        if buyer.id == g.user.id:
+            flash('본인은 구매자로 등록할 수 없습니다.')
+            return render_template('items/complete_deal.html', product=product)
+
+        new_deal = Deal(
+            item_id=product.id,
+            seller_id=product.user_id,
+            buyer_id=buyer.id,
+            deal_price=product.item_price,
+            deal_status='completed',
+            deal_datetime=datetime.now()
+        )
+
+        db.session.add(new_deal)
+        product.status_id = 3   # 판매완료
+        db.session.commit()
+
+        flash('거래 정보가 등록되었고 상품이 판매완료로 변경되었습니다.')
+        return redirect(url_for('items.product_details', item_id=item_id))
+
+    return render_template('items/complete_deal.html', product=product)
 
 # 카테고리별 페이지
 @bp.route('/product-categories/<int:category_id>')

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style/complete_deal.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div id="saveToast" class="save-toast">
+    {{ messages[0] }}
+</div>
+{% endif %}
+{% endwith %}
+
+<div class="container mt-4">
+    <div class="deal-section">
+        <div class="deal-topbar">
+            <h5 class="section-title mb-0">🤝 거래 상대 등록</h5>
+            <button type="button" class="deal-back-btn"
+                onclick="location.href='{{ url_for('items.product_details', item_id=product.id) }}'">
+                상품 상세로
+            </button>
+        </div>
+
+        <div class="deal-card-wrap">
+            <div class="deal-product-box">
+                <div class="deal-product-thumb">
+                    {% if product.images %}
+                    <img src="{{ product.images[0].image_url }}" alt="{{ product.item_title }}">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='img/default.png') }}" alt="기본 이미지">
+                    {% endif %}
+                </div>
+
+                <div class="deal-product-info">
+                    <div class="deal-label">판매완료 처리할 상품</div>
+                    <h3 class="deal-product-title">{{ product.item_title }}</h3>
+                    <p class="deal-product-price">{{ "{:,}원".format(product.item_price) }}</p>
+                    <p class="deal-guide-text">
+                        거래한 상대방의 닉네임을 입력하면 거래 정보가 저장되고 상품 상태가 판매완료로 변경됩니다.
+                    </p>
+                </div>
+            </div>
+
+            <form method="post" action="{{ url_for('items.complete_deal', item_id=product.id) }}" class="deal-form-box">
+                <div class="deal-input-card">
+                    <div class="status-header">
+                        <span class="status-label">구매자 닉네임</span>
+                    </div>
+
+                    <input
+                        type="text"
+                        name="buyer_nickname"
+                        class="deal-input"
+                        maxlength="10"
+                        placeholder="거래한 상대의 닉네임을 입력하세요"
+                        value="{{ request.form.get('buyer_nickname', '') }}"
+                        required
+                    >
+
+                    <p class="deal-help-text">
+                        닉네임은 정확히 입력해야 하며, 본인 닉네임은 등록할 수 없습니다.
+                    </p>
+
+                    <div class="deal-action-buttons">
+                        <button type="button" class="deal-cancel-btn"
+                            onclick="location.href='{{ url_for('items.product_details', item_id=product.id) }}'">
+                            취소
+                        </button>
+                        <button type="submit" class="deal-save-btn">
+                            거래 등록 및 판매완료
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

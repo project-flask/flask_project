@@ -55,7 +55,7 @@
 /* 선택된 활성화 탭 스타일 (연보라색 텍스트, 흰색 배경) */
 .nav-pills .nav-link.active {
     background-color: white !important;
-    color: #CCCCFF !important;
+    color: #8479ED !important;
     box-shadow: 0 4px 12px rgba(204, 204, 255, 0.2);
 }
 
@@ -79,7 +79,7 @@
 }
 
 .find-btn {
-    background-color: #CCCCFF;
+    background-color: #9C96F3;
     color: white;
     border: none;
     border-radius: 14px;
@@ -91,7 +91,7 @@
 }
 
 .find-btn:hover {
-    background-color: #B3B3FF;
+    background-color: #8479ED;
     transform: translateY(-2px);
 }
 

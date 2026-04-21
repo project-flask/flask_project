@@ -19,7 +19,7 @@
             <h3 class="fw-bold mb-4" id="signup-title" style="color: #555;">회원가입</h3>
 
             <!-- 가입 방식 선택 화면 -->
-            <div id="select-area">
+            <div id="select-area" style="display: {% if form.errors %}none{% else %}block{% endif %};">
                 <p class=" text-muted mb-4" style="font-size: 0.9rem;">반가워요! 가입 방법을 선택해주세요.</p>
                 <div class="btn-select-group">
                     <!-- 카카오 로그인 -->

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block extra_css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/mypage.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style/mypage.css') }}">
 {% endblock %}
 {% block content %}
 
@@ -83,21 +83,20 @@
                     </div>
                 </div>
             </div>
-            <!--활동 요약, 구조 수정 4월16일-->
+            <!--활동 요약, 탭구조로 수정 4월21일-->
             <div class="profile-summary">
-                <!-- 판매 상품 클릭하면 판매 중인 상품 목록으로 스크롤 이동 -->
-                <div class="summary-box" onclick="scrollToSection('productSection')">
+                <div class="summary-box active" data-tab="productTab">
                     <!--디자인적 요인으로 인한 수정 4월17일-->
                     <div class="summary-label">판매 중</div>
                     <div class="summary-value">{{ products|length }}</div>
                 </div>
-                <!-- 찜한 상품 클릭하면 찜한 상품 목록 스크롤 이동 -->
-                <div class="summary-box" onclick="scrollToSection('wishSection')">
+
+                <div class="summary-box" data-tab="wishTab">
                     <div class="summary-label">찜한 상품</div>
                     <div class="summary-value">{{ wishes|length }}</div>
                 </div>
-                <!-- 받은 리뷰를 클릭하면 구매자 리뷰로 스크롤 이동 -->
-                <div class="summary-box" onclick="scrollToSection('reviewSection')">
+
+                <div class="summary-box" data-tab="reviewTab">
                     <div class="summary-label">받은 리뷰</div>
                     <div class="summary-value">{{ reviews|length }}</div>
                 </div>
@@ -107,290 +106,119 @@
     </div>
     <hr class="my-4">
 
-    <!-- 판매 중인 상품 -->
-    <div class="mypage-section" id="productSection">
-        <div class="section-header">
-            <h5 class="section-title">📦 판매 중인 상품<span class="review-count">({{ products|length }})</span></h5>
+    <!-- 판매 중인 상품 탭구조로 수정 4월21일-->
+    <div class="mypage-section tab-panel active" id="productTab">
+    <h5 class="section-title">📦 판매 중인 상품<span class="review-count">({{ products|length }})</span></h5>
 
-            <!-- 상품이 4개 초과일 때만 슬라이드 버튼 표시, 4월15일 수정 -->
-            {% if products|length > 4 %}
-            <div class="slide-controls">
-                <button type="button" class="slide-btn" id="productPrevBtn">‹</button>
-                <button type="button" class="slide-btn" id="productNextBtn">›</button>
-            </div>
-            {% endif %}
-        </div>
-
-        {% if products %}
-        <div class="product-slider-wrapper">
-            <div class="product-slider-track" id="productSliderTrack">
-                {% for product in products %}
-                <div class="product-slide">
-                    <!--상품카드 전체 클릭가능 4월 17일 수정-->
-                    <a href="{{ url_for('items.product_details', item_id=product.id) }}"
-                        class="product-card-link text-decoration-none">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body">
-                                <!-- 상품 이미지 -->
-                                <!-- 임시 이미지와 실제 이미지 크기 통일 4월16일 수정 -->
-                                <div class="product-thumb">
-                                    <img src="{{ product.images[0].image_url if product.images else '/static/img/default.png' }}"
-                                             class="product-thumb-img"
-                                             alt="{{ product.item_title }}">
-                                </div>
-
-                                <!-- 상품 정보 -->
-                                <div class="product-info">
-                                    <h6 class="card-title mb-1 text-truncate">
-                                        {{ product.item_title }}
-                                    </h6>
-                                    <p class="card-text fw-bold text-primary mb-0">{{ "{:,}원".format(product.item_price)
-                                        }}
-                                    </p>
-                                </div>
-                            </div>
+    {% if products %}
+    <div class="product-grid paged-grid" data-tab-name="product">
+        {% for product in products %}
+        <div class="product-card-item">
+            <a href="{{ url_for('items.product_details', item_id=product.id) }}"
+                class="product-card-link text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="product-thumb">
+                            <img src="{{ product.images[0].image_url if product.images else '/static/img/default.png' }}"
+                                class="product-thumb-img" alt="{{ product.item_title }}">
                         </div>
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% else %}
-        <!-- 상품이 없을 때 4월20일 상품등록으로 가는 기능 제거-->
 
-        <div class="empty-product-card">
-            <div class="empty-product-image"></div>
-            <div class="empty-product-text">
-                현재 판매 중인 상품이 없습니다.<br>
-
-            </div>
-        </div>
-
-        {% endif %}
-    </div>
-
-    <!-- 찜한 물건 목록 -->
-    <div class="mypage-section" id="wishSection">
-        <div class="section-header">
-            <h5 class="section-title">❤️ 찜한 물건 목록<span class="review-count">({{ wishes|length }})</span></h5>
-
-            <!-- 찜한 상품이 4개 초과일 때만 슬라이드 버튼 표시 -->
-            {% if wishes|length > 4 %}
-            <div class="slide-controls">
-                <button type="button" class="slide-btn" id="wishPrevBtn">‹</button>
-                <button type="button" class="slide-btn" id="wishNextBtn">›</button>
-            </div>
-            {% endif %}
-        </div>
-
-        {% if wishes %}
-        <div class="product-slider-wrapper">
-            <div class="product-slider-track" id="wishSliderTrack">
-                {% for wish in wishes %}
-                <div class="product-slide">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body">
-                            <!-- 찜한 상품 이미지 -->
-                            <!-- 임시 이미지와 실제 이미지 크기 통일 4월16일 수정 -->
-                            <div class="product-thumb">
-                                <img src="{{ url_for('static', filename='img/default_wish.png') }}"
-                                    class="product-thumb-img" alt="찜이미지">
-                            </div>
-
-                            <!-- 찜한 상품 정보 -->
-                            <div class="product-info">
-                                <h6 class="card-title mb-1 text-truncate">{{ wish.item.item_title }}</h6>
-                                <p class="card-text fw-bold text-danger">{{ "{:,}원".format(wish.item.item_price) }}</p>
-
-                                <!-- 찜 취소 -->
-                                <form method="post"
-                                    action="{{ url_for('product.remove_favorite', item_id=wish.item.id) }}">
-                                    <button class="favorite-remove-btn" type="submit">찜 취소</button>
-                                </form>
-                            </div>
+                        <div class="product-info">
+                            <h6 class="card-title mb-1 text-truncate">
+                                {{ product.item_title }}
+                            </h6>
+                            <p class="card-text fw-bold text-primary mb-0">
+                                {{ "{:,}원".format(product.item_price) }}
+                            </p>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
-            </div>
+            </a>
         </div>
-        {% else %}
-        <!-- 찜한 상품이 없을 때 빈 박스 클릭시 메인으로 이동 4월17일 수정-->
-        <a href="{{ url_for('main.index') }}" class="empty-product-link">
-            <div class="empty-product-card">
-                <div class="empty-product-image"></div>
-                <div class="empty-product-text">
-                    찜한 상품이 없습니다.<br>
-                    <strong>메인에서 상품을 둘러보세요</strong>
-                </div>
-            </div>
-        </a>
-        {% endif %}
+        {% endfor %}
     </div>
 
-    <!-- 구매자 리뷰 -->
-    <!-- 이동을 위해 id부여 -->
-    <div class="mypage-section" id="reviewSection">
-        <!-- 구매자 리뷰 옆에 받은 리뷰수 표시하기 4월15일 -->
-        <h5 class="section-title">💬 구매자 리뷰<span class="review-count">({{ reviews|length }})</span></h5>
-
-        <div class="review-list" id="reviewList">
-            <!--리뷰 5개만 보이기 4월15일 수정-->
-            {% for review in reviews %}
-            <div class="review-card review-item {% if loop.index > 5 %}review-hidden{% endif %}">
-                <!-- 리뷰 텍스트 -->
-                <div class="review-text">
-                    <p class="review-content">{{ review.content }}</p>
-                    <small class="review-item-name">
-                        거래 상품:
-                        {% if review.deal and review.deal.item %}
-                        {{ review.deal.item.item_title }}
-                        {% else %}
-                        삭제된 상품
-                        {% endif %}
-                    </small>
-                </div>
-
-                <!-- 상품 이미지 -->
-                <div class="review-thumb">
-                    <img src="{{ url_for('static', filename='img/default_product.png') }}" alt="상품 이미지">
-                </div>
-            </div>
-            {% else %}
-            <!-- 리뷰가 없을 때 -->
-            <div class="empty-box">아직 받은 리뷰가 없습니다.</div>
-            {% endfor %}
+    <div class="pagination-wrap" data-pagination-for="product"></div>
+    {% else %}
+        <div class="empty-product-card">
+            현재 판매 중인 상품이 없습니다.
         </div>
-
-        <!-- 리뷰 더보기 -->
-        <!-- 리뷰가 5개 초과 했을 경우에만 더 보기 버튼이 나오게 4월15일 -->
-        {% if reviews|length > 5 %}
-        <button class="more-btn" id="toggleReviewBtn" type="button">더 보기</button>
-        {% endif %}
-    </div>
+    {% endif %}
 </div>
 
-<!-- 더 보기 버튼을 누르면 펼쳐지게  4월15일 생성-->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const toggleBtn = document.getElementById('toggleReviewBtn');
-        const hiddenReviews = document.querySelectorAll('.review-hidden');
+<!-- 찜한 물건 목록 탭구조로 수정 4월21일-->
+<div class="mypage-section tab-panel" id="wishTab">
+    <h5 class="section-title">❤️ 찜한 물건 목록 <span class="review-count">({{ wishes|length }})</span></h5>
 
-        if (!toggleBtn) return;
+    {% if wishes %}
+    <div class="product-grid paged-grid" data-tab-name="wish">
+        {% for wish in wishes %}
+        <div class="product-card-item">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="product-thumb">
+                        <img src="{{ url_for('static', filename='img/default_wish.png') }}" class="product-thumb-img"
+                            alt="찜이미지">
+                    </div>
 
-        let expanded = false;
+                    <div class="product-info">
+                        <h6 class="card-title mb-1 text-truncate">{{ wish.item.item_title }}</h6>
+                        <p class="card-text fw-bold text-danger">
+                            {{ "{:,}원".format(wish.item.item_price) }}
+                        </p>
 
-        toggleBtn.addEventListener('click', function () {
-            hiddenReviews.forEach(function (review) {
-                review.style.display = expanded ? 'none' : 'flex';
-            });
+                        <form method="post" action="{{ url_for('product.remove_favorite', item_id=wish.item.id) }}">
+                            <button class="favorite-remove-btn" type="submit">찜 취소</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
-            expanded = !expanded;
-            toggleBtn.textContent = expanded ? '접기' : '더보기';
-        });
-    });
+    <div class="pagination-wrap" data-pagination-for="wish"></div>
+    {% else %}
+    <a href="{{ url_for('main.index') }}" class="empty-product-link">
+        <div class="empty-box">
+            찜한 상품이 없습니다.<br>
+            <strong>메인에서 상품을 둘러보세요</strong>
+        </div>
+    </a>
+    {% endif %}
+</div>
 
-    // 받은 리뷰를 클릭하면 구매자 리뷰로 스크롤 이동 4월15일
-    function scrollToSection(id) {
-        const section = document.getElementById(id);
-        if (!section) return;
+<!-- 구매자 리뷰 탭구조로 수정 4월21일 -->
+<div class="mypage-section tab-panel" id="reviewTab">
+    <h5 class="section-title">💬 구매자 리뷰 <span class="review-count">({{ reviews|length }})</span></h5>
 
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    {% if reviews %}
+    <div class="review-list paged-review-list" data-tab-name="review">
+        {% for review in reviews %}
+        <div class="review-card review-page-item">
+            <div class="review-text">
+                <p class="review-content">{{ review.content }}</p>
+                <small class="review-item-name">
+                    거래 상품:
+                    {% if review.deal and review.deal.item %}
+                    {{ review.deal.item.item_title }}
+                    {% else %}
+                    삭제된 상품
+                    {% endif %}
+                </small>
+            </div>
 
-    //상태메시지 수정버튼 활성화 4월16일 수정
-    document.addEventListener('DOMContentLoaded', function () {
-        const editBtn = document.getElementById('statusEditBtn');
-        const cancelBtn = document.getElementById('statusCancelBtn');
+            <div class="review-thumb">
+                <img src="{{ url_for('static', filename='img/default_product.png') }}" alt="상품 이미지">
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
-        const viewMode = document.getElementById('statusViewMode');
-        const editMode = document.getElementById('statusEditMode');
-        const statusInput = document.getElementById('statusInput');
-        const statusText = document.getElementById('statusText');
-
-        if (!editBtn || !cancelBtn || !viewMode || !editMode) return;
-
-        function getRealValue(text) {
-            return text === "상태 메시지를 입력하세요" ? "" : text;
-        }
-
-        editBtn.addEventListener('click', function () {
-            statusInput.value = getRealValue(statusText.textContent.trim());
-            viewMode.style.display = 'none';
-            editMode.style.display = 'block';
-            editBtn.style.display = 'none';
-            statusInput.focus();
-        });
-
-        cancelBtn.addEventListener('click', function () {
-            editMode.style.display = 'none';
-            viewMode.style.display = 'block';
-            editBtn.style.display = 'inline-block';
-        });
-    });
-    // 공통 슬라이드 함수 4월16일 정리
-    function initSlider(trackId, prevBtnId, nextBtnId) {
-        const track = document.getElementById(trackId);
-        const prevBtn = document.getElementById(prevBtnId);
-        const nextBtn = document.getElementById(nextBtnId);
-
-        if (!track || !prevBtn || !nextBtn) return;
-
-        const slides = track.querySelectorAll('.product-slide');
-        if (!slides.length) return;
-
-        let currentIndex = 0;
-
-        function getVisibleCount() {
-            if (window.innerWidth <= 767) return 1;
-            if (window.innerWidth <= 991) return 2;
-            return 4;
-        }
-
-        function getGap() {
-            return 16;
-        }
-
-        function updateSlider() {
-            const visibleCount = getVisibleCount();
-            const maxIndex = Math.max(0, slides.length - visibleCount);
-
-            if (currentIndex > maxIndex) {
-                currentIndex = maxIndex;
-            }
-
-            const slideWidth = slides[0].offsetWidth;
-            const moveX = currentIndex * (slideWidth + getGap());
-
-            track.style.transform = `translateX(-${moveX}px)`;
-
-            prevBtn.disabled = currentIndex === 0;
-            nextBtn.disabled = currentIndex >= maxIndex;
-        }
-
-        prevBtn.addEventListener('click', function () {
-            const visibleCount = getVisibleCount();
-            currentIndex = Math.max(0, currentIndex - visibleCount);
-            updateSlider();
-        });
-
-        nextBtn.addEventListener('click', function () {
-            const visibleCount = getVisibleCount();
-            const maxIndex = Math.max(0, slides.length - visibleCount);
-            currentIndex = Math.min(maxIndex, currentIndex + visibleCount);
-            updateSlider();
-        });
-
-        window.addEventListener('resize', updateSlider);
-
-        updateSlider();
-    }
-
-    // 판매 중인 상품 / 찜한 물건 목록 슬라이드 공통 적용 4월16일 정리
-    document.addEventListener('DOMContentLoaded', function () {
-        initSlider('productSliderTrack', 'productPrevBtn', 'productNextBtn');
-        initSlider('wishSliderTrack', 'wishPrevBtn', 'wishNextBtn');
-    });
-</script>
-
+    <div class="pagination-wrap" data-pagination-for="review"></div>
+    {% else %}
+    <div class="empty-box">아직 받은 리뷰가 없습니다.</div>
+    {% endif %}
+</div>
+</div>
 {% endblock %}
