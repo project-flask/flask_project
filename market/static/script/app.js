@@ -178,8 +178,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // 사용자가 다시 타이핑하면
         inputElement.addEventListener('input', function () {
             // 1. form.py 에러 메시지 제거
-            const parent = inputElement.parentElement;
+            const parent = inputElement.closest('.mb-3') || inputElement.closest('.mb-4');
+        if (parent) {
             parent.querySelectorAll('.invalid-feedback-custom').forEach(err => err.remove());
+        }
 
             // 2. 입력창 빨간 테두리 제거
             inputElement.classList.remove('is-invalid');
@@ -242,18 +244,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 // 사용 가능한 경우
                 } else {
                     msgElement.innerText = "사용 가능합니다!";
-                    msgElement.style.color = "#CCCCFF";
+                    msgElement.style.color = "#9C96F3";
                     inputElement.classList.remove('is-invalid');
                 }
             });
         });
     }
 
-    // 아이디, 닉네임, 이메일 각각 실행
-    checkDuplicate('user_id', 'id-check-msg', "{{ url_for('auth.check_id_duplicate') }}", 'user_id');
-    checkDuplicate('nickname', 'nickname-check-msg', "{{ url_for('auth.check_nickname_duplicate') }}", 'nickname');
-    checkDuplicate('email', 'email-check-msg', "{{ url_for('auth.check_email_duplicate') }}", 'email');
-    checkDuplicate('phone', 'phone-check-msg', "{{ url_for('auth.check_phone_duplicate') }}", 'phone');
+    // 아이디, 닉네임, 이메일 각각 실행(4/21 추가)
+checkDuplicate('user_id', 'id-check-msg', "/auth/check_id_duplicate/", 'user_id');
+checkDuplicate('nickname', 'nickname-check-msg', "/auth/check_nickname_duplicate/", 'nickname');
+checkDuplicate('email', 'email-check-msg', "/auth/check_email_duplicate/", 'email');
+checkDuplicate('phone', 'phone-check-msg', "/auth/check_phone_duplicate/", 'phone');
+checkDuplicate('username', null, null, 'username');
+checkDuplicate('signup-pw1', null, null, 'password1');
+checkDuplicate('signup-pw2', null, null, 'password2');
+checkDuplicate('login-password', null, null, 'password');
 
     // [이메일 도메인 자동 추천 JS (4/17)]
     const emailInput = document.getElementById('email');

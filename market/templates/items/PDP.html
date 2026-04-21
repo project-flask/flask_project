@@ -94,7 +94,8 @@
             <div class="d-flex justify-content-between gap-2 mt-3">
                 <a href="{{ url_for('items.product_modify', item_id=product.id) }}"
                     class="btn btn-outline-secondary flex-fill fw-bold rounded-3 py-2">게시글 수정하기</a>
-                <a href="javascript:void(0)" class="delete btn btn-outline-danger flex-fill fw-bold rounded-3 py-2"
+                <a href="javascript:void(0)" onclick="confirmDelete('{{url_for('items.product_delete', item_id=product.id) }}')"
+                class="delete btn btn-outline-dan ger flex-fill fw-bold rounded-3 py-2"
                     data-uri="{{ url_for('items.product_delete', item_id=product.id) }}">게시글 삭제하기</a>
 
             </div>

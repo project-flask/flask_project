@@ -54,7 +54,7 @@
                         {{ form.username(class="form-control custom-input", placeholder="성함") }}
                     </div>
                     <div class="mb-3">
-                        {{ form.email(class="form-control custom-input", placeholder="이메일 주소") }}
+                        {{ form.email(class="form-control custom-input", placeholder="이메일 주소", id="find_email") }}
                     </div>
                     <!-- 제출 버튼 -->
                     <button type="submit" class="find-btn">아이디 확인하기</button>
@@ -86,7 +86,7 @@
                     {{ form.csrf_token }}
                     <!-- 아이디 입력 -->
                     <div class="mb-3">
-                        {{ form.user_id(class="form-control custom-input", placeholder="아이디") }}
+                        {{ form.user_id(class="form-control custom-input", placeholder="아이디", id="find_user_id") }}
                     </div>
                     <!-- 이메일 입력 -->
                     <div class="mb-3">
