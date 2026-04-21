@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // JS: 화면 전환 / 회원가입 중복 체크 ( 아이디, 닉네임, 이메일 ) / 이메일 도메인 추천 (( singup.html )
     // [화면 전환(이메일로 시작하기 - 이메일 회원가입)]
-    window.toggleForm = function() {
+    window.toggleForm = function () {
         const selectArea = document.getElementById('select-area');
         const formArea = document.getElementById('email-form-area');
         const title = document.getElementById('signup-title');
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
             formArea.style.display = 'block';
             card.style.setProperty('max-width', '1050px', 'important');
             const inp = document.querySelector('input[name="user_id"]');
-            if(inp) inp.focus();
+            if (inp) inp.focus();
         }
 
         // 폼이 열려있다가 닫힐 때 (선택 화면으로 돌아갈 때)
@@ -201,11 +201,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         // 입력 완료 -> 포커스 나갈 때 중복 체크 실행
-        inputElement.addEventListener('blur', function() {
+        inputElement.addEventListener('blur', function () {
             const value = inputElement.value.trim();
             if (value === "") return;
 
-        // 아이디, 닉네임 글자 수 검증(
+            // 아이디, 닉네임 글자 수 검증(
             let minLen = 0;
             let maxLen = 0;
             let label = "";
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     msgElement.innerText = "이미 사용 중입니다.";
                     msgElement.style.color = "#dc3545";
                     inputElement.classList.add('is-invalid');
-                // 사용 가능한 경우
+                    // 사용 가능한 경우
                 } else {
                     msgElement.innerText = "사용 가능합니다!";
                     msgElement.style.color = "#9C96F3";
@@ -267,7 +267,7 @@ checkDuplicate('login-password', null, null, 'password');
     const domains = ['naver.com', 'gmail.com', 'kakao.com', 'daum.net', 'hanmail.net', 'outlook.com'];
 
     if (emailInput && emailDataList) {
-        emailInput.addEventListener('input', function() {
+        emailInput.addEventListener('input', function () {
             const value = this.value;
 
             // '@'가 포함되었을 때 추천 도메인 보이게
@@ -309,7 +309,7 @@ checkDuplicate('login-password', null, null, 'password');
         if (slideNum) slideNum.innerText = slideIdx + 1;
     };
 
-    window.handleInquiryClick = function(){
+    window.handleInquiryClick = function () {
         const form = document.getElementById('comment-form');
         const contentInput = document.getElementById('content');
 
@@ -390,51 +390,179 @@ checkDuplicate('login-password', null, null, 'password');
         fillEmptySlots();
     }
 
-    // 마이페이지, 판매자페이지 ( mypage.html, seller_profile.html )
-    window.initSlider = function (trackId, prevBtnId, nextBtnId) {
-        const track = document.getElementById(trackId), prevBtn = document.getElementById(prevBtnId), nextBtn = document.getElementById(nextBtnId);
-        if (!track || !prevBtn || !nextBtn) return;
-        const slidesItems = track.querySelectorAll('.product-slide');
-        if (!slidesItems.length) return;
-        let currentIndex = 0;
+    // 마이페이지, 판매자페이지 탭구조로 수정 4월21일( mypage.html, seller_profile.html )
+    // 탭 기능 4월21일
+    function initTabs() {
+        const tabButtons = document.querySelectorAll('.summary-box[data-tab]');
+        const tabPanels = document.querySelectorAll('.tab-panel');
 
-        const updateSlider = () => {
-            const visibleCount = window.innerWidth <= 767 ? 1 : (window.innerWidth <= 991 ? 2 : 4);
-            const maxIndex = Math.max(0, slidesItems.length - visibleCount);
-            currentIndex = Math.min(currentIndex, maxIndex);
-            track.style.transform = `translateX(-${currentIndex * (slidesItems[0].offsetWidth + 16)}px)`;
-            prevBtn.disabled = (currentIndex === 0); nextBtn.disabled = (currentIndex >= maxIndex);
-        };
+        if (!tabButtons.length || !tabPanels.length) return;
 
-        prevBtn.onclick = () => { currentIndex = Math.max(0, currentIndex - 1); updateSlider(); };
-        nextBtn.onclick = () => { currentIndex++; updateSlider(); };
-        window.addEventListener('resize', updateSlider); updateSlider();
-    };
+        // 현재 active 버튼 찾기
+        let activeButton = document.querySelector('.summary-box.active');
 
-    // 슬라이더 실행
-    initSlider('productSliderTrack', 'productPrevBtn', 'productNextBtn');
-    initSlider('wishSliderTrack', 'wishPrevBtn', 'wishNextBtn');
-    initSlider('sellerProductSliderTrack', 'sellerProductPrevBtn', 'sellerProductNextBtn');
+        if (activeButton) {
+            const targetId = activeButton.dataset.tab;
 
-    // 리뷰 더보기 및 상태메시지
-    const toggleBtn = document.getElementById('toggleReviewBtn');
-    if (toggleBtn) {
-        let expanded = false;
-        toggleBtn.onclick = () => {
-            document.querySelectorAll('.review-hidden').forEach(r => r.style.display = expanded ? 'none' : 'flex');
-            expanded = !expanded; toggleBtn.textContent = expanded ? '접기' : '더보기';
-        };
+            tabPanels.forEach(function (panel) {
+                panel.classList.remove('active');
+            });
+
+            const targetPanel = document.getElementById(targetId);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+        }
+
+        // 기존 클릭 이벤트
+        tabButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                const targetId = button.dataset.tab;
+
+                tabButtons.forEach(function (btn) {
+                    btn.classList.remove('active');
+                });
+
+                tabPanels.forEach(function (panel) {
+                    panel.classList.remove('active');
+                });
+
+                button.classList.add('active');
+
+                const targetPanel = document.getElementById(targetId);
+                if (targetPanel) {
+                    targetPanel.classList.add('active');
+                }
+            });
+        });
+    }
+    // 페이지네이션 기능 4월21일 .paged-grid가 있으면 동작
+    function initPagedList(config) {
+        const {
+            listSelector,
+            itemSelector,
+            pageSize,
+            displayType
+        } = config;
+
+        document.querySelectorAll(listSelector).forEach(function (list) {
+            const tabName = list.dataset.tabName;
+            const items = Array.from(list.querySelectorAll(itemSelector));
+            const paginationWrap = document.querySelector(`[data-pagination-for="${tabName}"]`);
+
+            if (!paginationWrap || items.length === 0) return;
+
+            function renderPage(page) {
+                const totalPages = Math.ceil(items.length / pageSize);
+
+                items.forEach(function (item, index) {
+                    const start = (page - 1) * pageSize;
+                    const end = start + pageSize;
+                    item.style.display = (index >= start && index < end) ? displayType : 'none';
+                });
+
+                renderPagination(totalPages, page);
+            }
+
+            function renderPagination(totalPages, currentPage) {
+                paginationWrap.innerHTML = '';
+
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'page-btn';
+                prevBtn.textContent = '‹';
+                prevBtn.disabled = currentPage === 1;
+                prevBtn.addEventListener('click', function () {
+                    if (currentPage > 1) {
+                        renderPage(currentPage - 1);
+                    }
+                });
+                paginationWrap.appendChild(prevBtn);
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = 'page-btn';
+                    if (i === currentPage) {
+                        pageBtn.classList.add('active');
+                    }
+                    pageBtn.textContent = i;
+                    pageBtn.addEventListener('click', function () {
+                        renderPage(i);
+                    });
+                    paginationWrap.appendChild(pageBtn);
+                }
+
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'page-btn';
+                nextBtn.textContent = '›';
+                nextBtn.disabled = currentPage === totalPages;
+                nextBtn.addEventListener('click', function () {
+                    if (currentPage < totalPages) {
+                        renderPage(currentPage + 1);
+                    }
+                });
+                paginationWrap.appendChild(nextBtn);
+            }
+
+            renderPage(1);
+        });
     }
 
-    const editBtn = document.getElementById('statusEditBtn');
-    if (editBtn) {
-        const viewMode = document.getElementById('statusViewMode'), editMode = document.getElementById('statusEditMode');
-        const statusInput = document.getElementById('statusInput'), statusText = document.getElementById('statusText');
+    // 상태메세지
+    function initStatusEdit() {
+        const editBtn = document.getElementById('statusEditBtn');
+        if (!editBtn) return;
+
+        const viewMode = document.getElementById('statusViewMode');
+        const editMode = document.getElementById('statusEditMode');
+        const statusInput = document.getElementById('statusInput');
+        const statusText = document.getElementById('statusText');
+        const cancelBtn = document.getElementById('statusCancelBtn');
+
+        if (!viewMode || !editMode || !statusInput || !statusText) return;
+
         editBtn.onclick = () => {
             statusInput.value = statusText.textContent.trim() === "상태 메시지를 입력하세요" ? "" : statusText.textContent.trim();
-            viewMode.style.display = 'none'; editMode.style.display = 'block'; editBtn.style.display = 'none'; statusInput.focus();
+            viewMode.style.display = 'none';
+            editMode.style.display = 'block';
+            editBtn.style.display = 'none';
+            statusInput.focus();
         };
-        const cancelBtn = document.getElementById('statusCancelBtn');
-        if (cancelBtn) cancelBtn.onclick = () => { editMode.style.display = 'none'; viewMode.style.display = 'block'; editBtn.style.display = 'inline-block'; };
+
+        if (cancelBtn) {
+            cancelBtn.onclick = () => {
+                editMode.style.display = 'none';
+                viewMode.style.display = 'block';
+                editBtn.style.display = 'inline-block';
+            };
+        }
+    }
+
+    initTabs();
+
+    initPagedList({
+        listSelector: '.paged-grid',
+        itemSelector: '.product-card-item',
+        pageSize: 8,
+        displayType: 'block'
+    });
+
+    initPagedList({
+        listSelector: '.paged-review-list',
+        itemSelector: '.review-page-item',
+        pageSize: 5,
+        displayType: 'flex'
+    });
+
+    initStatusEdit();
+
+    // 리뷰 글자수 카운트
+    const textarea = document.querySelector('.review-textarea');
+    const counter = document.querySelector('.review-count');
+
+    if (textarea && counter) {
+        textarea.addEventListener('input', function () {
+            counter.textContent = `${this.value.length} / 300`;
+
+        });
     }
 });

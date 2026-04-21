@@ -116,7 +116,7 @@ def create_app():
         product_view,
         mypage_view,
  #       favorite_view,
- #       review_view,
+        review_view,
     )
 
     app.register_blueprint(main_view.bp)      # 메인 페이지
@@ -124,6 +124,6 @@ def create_app():
     app.register_blueprint(product_view.bp)   # 상품
     app.register_blueprint(mypage_view.bp)    # 마이 페이지
     # app.register_blueprint(favorite_view.bp)  # 찜
-    # app.register_blueprint(review_view.bp)    # 리뷰
+    app.register_blueprint(review_view.bp)    # 리뷰 4월21일
 
     return app
