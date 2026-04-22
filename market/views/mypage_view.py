@@ -97,8 +97,8 @@ def edit_profile():
                     os.rename(old_folder, new_folder)
 
                 if user.profile_image:
-                    user.profile_image = user.profile_image.replace(f'/profiles/{old_nickname}/',
-                                                                    f'/profiles/{new_nickname}/')
+                    user.profile_image = user.profile_image.replace(f'/static/uploads/profiles/{old_nickname}/',
+                                                                    f'/static/uploads/profiles/{new_nickname}/')
 
             # 변수저장
             user.nickname = new_nickname
@@ -128,9 +128,6 @@ def edit_profile():
             db.session.commit()
             flash('회원정보가 저장되었습니다.')
             return redirect(url_for('personal.my_page'))
-          
-
-
     return render_template('personal/edit_profile.html', user=user)
 
 # 비밀번호 변경 페이지로 이동 4월 15일 생성
@@ -181,6 +178,7 @@ def favorite():
 @bp.route('/seller/<int:user_id>/')
 def seller_profile(user_id):
     seller = User.query.get_or_404(user_id)
+    print(f"판매자 이미지 경로: {seller.profile_image}")
     tab = request.args.get('tab', 'products')
 
     products = Item.query.join(ItemStatus).filter(

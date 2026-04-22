@@ -17,7 +17,7 @@
                 <!--원형 프로필, 프로필이미지 변경하면 출력, 명칭 수정 4월17일 -->
                 <div class="avatar-circle">
                     {% if seller.profile_image %}
-                    <img src="{{ url_for('static', filename='uploads/profiles/' + seller.profile_image) }}"
+                    <img src="{{ seller.profile_image }}"
                         class="avatar-img" alt="판매자 프로필 이미지">
                     {% else %}
                     {{ (seller.nickname or "U")[0] | upper }}

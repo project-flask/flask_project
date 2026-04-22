@@ -8,8 +8,6 @@ from sqlalchemy import MetaData
 
 import os
 
-login_manager = LoginManager()
-
 naming_convention = {
     'ix': 'ix_%(column_0_label)s',
     'uq': 'uq_%(table_name)s_%(column_0_name)s',
