@@ -16,10 +16,12 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 # [일반 회원가입]
 @bp.route('/signup/', methods=['GET', 'POST'])
 
-# 일반 아이디 회원가입
+# 일반 아이디 회원가입(4/21 수정)
+@bp.route('/signup/', methods=['GET', 'POST'])
 def signup():
     form = UserCreateForm()
     if request.method == 'POST' and form.validate_on_submit():
+        # 아이디 중복 체크
         user = User.query.filter_by(login_id=form.user_id.data).first()
         if not user:
             new_user = User(
@@ -32,9 +34,12 @@ def signup():
             )
             db.session.add(new_user)
             db.session.commit()
+            # 가입 성공했을 때만 로그인 페이지로(4/21)
             return redirect(url_for('auth.login'))
         else:
+            # 아이디 중복 에러 메시지
             flash('이미 존재하는 아이디입니다.')
+
     return render_template('auth/signup.html', form=form)
 
 

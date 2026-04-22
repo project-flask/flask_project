@@ -28,8 +28,8 @@
 }
 
 /* 가격 입력창 화살표 제거 */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
@@ -68,8 +68,15 @@ input::-webkit-inner-spin-button {
 
 .preview-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 15px;
+}
+
+/* 모바일에서 보여지는 그리드 수 다르게 */
+@media (max-width: 768px) {
+    .preview-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 .preview-item {
@@ -88,6 +95,7 @@ input::-webkit-inner-spin-button {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
 .custom-input {
@@ -120,4 +128,30 @@ input::-webkit-inner-spin-button {
 .empty-slot {
     color: #ccc;
     font-size: 20px;
+}
+
+.custom-input.is-invalid {
+    border-color: #ff6b6b !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.1) !important;
+}
+
+.error-msg {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    font-weight: 500;
+    display: none; /* 평소엔 숨김 */
+}
+
+.invalid-feedback-custom {
+    display: none;
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+.custom-input.is-invalid {
+    border-color: #ff6b6b !important;
+    background-color: #fffafa !important;
 }

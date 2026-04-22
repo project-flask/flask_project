@@ -6,11 +6,9 @@
 
 <!-- 마이페이지 토스트 팝업 -->
 {% with messages = get_flashed_messages() %}
-{% if messages %}
-<div id="saveToast" class="save-toast">
-    {{ messages[0] }}
-</div>
-{% endif %}
+    {% if messages %}
+        <input type="hidden" id="flask-message" value="{{ messages[0] }}">
+    {% endif %}
 {% endwith %}
 
 <div class="container mt-4">

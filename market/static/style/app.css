@@ -38,23 +38,6 @@ nav {
     box-shadow: 0 4px 10px rgba(204, 204, 255, 0.4);
 }
 
-/* 상품 검색하기 버튼 */
-.search-toggle-btn {
-    background-color: transparent;
-    color: #CCCCFF !important;
-    border: 2px solid #CCCCFF !important;
-    border-radius: 8px;
-    padding: 6px 18px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-/* 상품 검색하기 버튼 효과 */
-.search-toggle-btn:hover {
-    background-color: #CCCCFF;
-    color: white !important;
-}
-
 /* 상품 검색하기 영역 그룹 */
 .center-search-area {
     position: absolute;
@@ -62,6 +45,8 @@ nav {
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 10;
+    width: 40%;
+    min-width: 300px;
 }
 
 .search-wrapper {
@@ -81,9 +66,7 @@ nav {
 /* 검색 요소 그룹 */
 .search-input-group {
     display: flex;
-    width: 70%;
-    min-width: 300px;
-    max-width: 600px;
+    width: 100%;
     background-color: white;
     border: 3px solid #CCCCFF;
     border-radius: 25px;
@@ -95,8 +78,9 @@ nav {
 .custom-search-input {
     flex: 1;
     border: none !important;
-    padding: 12px 20px;
+    padding: 10px 20px;
     outline: none;
+    font-size: 14px;
 }
 
 /* 검색창 오른쪽 검색 버튼 */
@@ -107,6 +91,7 @@ nav {
     padding: 0 25px;
     font-weight: bold;
     transition: background-color 0.2s;
+    white-space: nowrap;
 }
 
 /* 검색 버튼 효과 */
@@ -115,12 +100,21 @@ nav {
 }
 
 /* 반응형 화면에서 상품 검색하기, 햄버거 메뉴 겹치지 않게 */
-@media (max-width: 768px) {
+/* 태블릿 이하부터 위치 조정으로 수정 768px -> 992px */
+@media (max-width: 992px) {
     .center-search-area {
         position: static;
         transform: none;
         margin: 10px 0;
         text-align: center;
+        width: 100%;
+        padding: 0 15px;
+        order: 3; /* 모바일에서 로고 아래로 배치되게 설정 가능 */
+    }
+
+    /* 네비바 내부 배치 고정 */
+    .navbar > .container-fluid {
+        flex-wrap: wrap;
     }
 }
 

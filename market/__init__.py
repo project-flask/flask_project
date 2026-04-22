@@ -4,10 +4,9 @@ from flask_migrate import Migrate
 from flask_login import LoginManager #intro 페이지용(4/20)
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import MetaData
 
 import os
-
-from sqlalchemy import MetaData
 
 login_manager = LoginManager()
 
@@ -27,6 +26,9 @@ login_manager = LoginManager()  # Loginmanager객체 생성
 
 def create_app():
     app = Flask(__name__)
+
+    from .filter import format_datetime
+    app.jinja_env.filters['format_datetime'] = format_datetime
 
     BASE_DIR = os.path.dirname(__file__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(BASE_DIR, 'market.db')

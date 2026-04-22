@@ -57,7 +57,7 @@
 /* 왼쪽 포인트 영역 */
 .brand-section {
     flex: 1;
-    background-color: #CCCCFF;
+    background-color: #9C96F3;
     color: white;
     display: flex;
     flex-direction: column;
@@ -90,7 +90,7 @@
 
 /* 일반 로그인 버튼 */
 .login-submit-btn {
-    background-color: #CCCCFF;
+    background-color: #9C96F3;
     color: white;
     border: none;
     border-radius: 12px;
@@ -102,7 +102,7 @@
 }
 
 .login-submit-btn:hover {
-    background-color: #B3B3FF;
+    background-color: #8479ED;
     transform: translateY(-2px);
 }
 

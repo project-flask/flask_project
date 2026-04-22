@@ -4,6 +4,14 @@
 {% endblock %}
 
 {% block content %}
+
+<!-- 토스트 팝업 -->
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <input type="hidden" id="flask-message" value="{{ messages[0] }}">
+    {% endif %}
+{% endwith %}
+
 <div class="pdp-container">
     <div class="d-flex justify-content-between">
         <div class="d-flex justify-content-start align-items-end mb-2">
@@ -17,7 +25,6 @@
     </div>
 
     <section class="product-main-section">
-
         {# 페이지네이션 #}
         <div class="product-image-wrapper">
             {% if product.images %}
@@ -43,30 +50,29 @@
         <div class="product-info-column">
             <div class="product-status-area mb-3">
                 {% if g.user == product.seller %}
-                <form action="{{ url_for('items.modify_status', item_id=product.id) }}" method="POST">
-                    <label class="small text-muted mb-1">상품 상태 수정</label>
-                    <select name="status_id" class="form-select form-select-sm status-select-box" onchange="this.form.submit()">
-                        {% for status in status_list %}
-                        <option value="{{ status.id }}" {% if product.status_id==status.id %}selected{% endif %}>
-                            {{ status.item_status }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </form>
+                    <form action="{{ url_for('items.modify_status', item_id=product.id) }}" method="POST">
+                        <label class="small text-muted mb-1">상품 상태 수정</label>
+                        <select name="status_id" class="form-select form-select-sm status-select-box" onchange="this.form.submit()">
+                            {% for status in status_list %}
+                                <option value="{{ status.id }}" {% if product.status_id==status.id %}selected{% endif %}>
+                                    {{ status.item_status }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
                 {% else %}
-                <div class="d-flex align-items-center">
-                    <span class="badge status-view-badge">
-                        {{ product.status.item_status }}
-                    </span>
-                </div>
+                    <div class="d-flex align-items-center">
+                        <span class="badge status-view-badge">
+                            {{ product.status.item_status }}
+                        </span>
+                    </div>
                 {% endif %}
             </div>
             <h2 class="title-display">{{ product.item_title if product else '게시글 제목' }}</h2>
 
 
             <div class="d-flex justify-content-start">
-                <p class="product-date-text">{{ product.created_at.strftime('%Y.%m.%d') if product else '날짜 정보 없음' }}&nbsp;</p>
-                <p class="d-flex align-items-end text-muted small">{{ product.created_at.strftime('%H:%M') if product else '' }}</p>
+                <p class="product-date-text">{{ product.created_at | format_datetime }}&nbsp;</p>
             </div>
 
             <h3 class="price-display">{{ "{:,}원".format(product.item_price) if product else '0' }}</h3>
@@ -78,26 +84,26 @@
             </div>
 
             {% if g.user %}
-            <button type="button" class="btn-inquiry" onclick="handleInquiryClick()">
-                문의하기
-            </button>
-            {% else %}
-            <a href="{{ url_for('auth.login') }}" class="text-decoration-none">
-                <button type="button" class="btn-login-required">
-                    로그인 후 댓글달기
+                <button type="button" class="btn-inquiry" onclick="handleInquiryClick()">
+                    문의하기
                 </button>
-            </a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="text-decoration-none">
+                    <button type="button" class="btn-login-required">
+                        로그인 후 댓글달기
+                    </button>
+                </a>
             {% endif %}
 
 
             {% if g.user.id == product.user_id %}
-            <div class="d-flex justify-content-between gap-2 mt-3">
-                <a href="{{ url_for('items.product_modify', item_id=product.id) }}"
-                    class="btn btn-outline-secondary flex-fill fw-bold rounded-3 py-2">게시글 수정하기</a>
-                <a href="javascript:void(0)" class="delete btn btn-outline-danger flex-fill fw-bold rounded-3 py-2"
-                    data-uri="{{ url_for('items.product_delete', item_id=product.id) }}">게시글 삭제하기</a>
-
-            </div>
+                <div class="d-flex justify-content-between gap-2 mt-3">
+                    <a href="{{ url_for('items.product_modify', item_id=product.id) }}"
+                        class="btn btn-outline-secondary flex-fill fw-bold rounded-3 py-2">게시글 수정하기</a>
+                    <a href="javascript:void(0)" onclick="confirmDelete('{{ url_for('items.product_delete', item_id=product.id) }}')"
+                       class="btn btn-outline-danger flex-fill fw-bold rounded-3 py-2"
+                       data-uri="{{ url_for('items.product_delete', item_id=product.id) }}">게시글 삭제하기</a>
+                </div>
             {% endif %}
         </div>
     </section>
@@ -105,36 +111,36 @@
 
     <div class="comment-list-wrap my-5">
         <h5 class="border-bottom py-3 fw-bold text-dark">{{ product.comment_set|length }}개의 댓글이 있습니다.</h5>
-
         <div id="comment-container">
-        {% for comment in product.comment_set %}
-        <div class="card my-3 shadow-sm comment-card-box display: {{ 'block' if loop.index <= 5 else 'none' }};">
-            <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <span class="badge bg-white text-dark comment-user-info">👤 {{ comment.user.username }}</span>
-                        <small class="text-muted ms-2">{{ comment.create_date.strftime('%Y-%m-%d %H:%M') }}</small>
-                    </div>
-                    {% if g.user == comment.user %}
-                        <a href="javascript:void(0)"
-                            onclick="confirmDelete('{{ url_for('items.comment_delete', comment_id=comment.id) }}')"
-                            class="btn btn-sm btn-outline-danger"
-                            style="font-size: 11px; border-radius: 12px; padding: 4px 10px;">삭제</a>
-                    {% endif %}
-                </div>
-                <div class="card-text text-secondary">{{ comment.content }}</div>
-
-        
-
-                      
+            {% for comment in product.comment_set %}
+                <div class="card my-3 shadow-sm comment-card-box comment-item" style="display: {{ 'block' if loop.index <= 5 else 'none' }};">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <span class="badge bg-white text-dark comment-user-info">👤 {{ comment.user.username }}</span>
+                                <small class="text-muted ms-2">{{ comment.create_date | format_datetime }}</small>
+                            </div>
+                            {% if g.user == comment.user %}
+                                <a href="javascript:void(0)"
+                                    onclick="confirmDelete('{{ url_for('items.comment_delete', comment_id=comment.id) }}')"
+                                    class="btn btn-sm btn-outline-danger btn-comment-delete">삭제</a>
+                            {% endif %}
+                        </div>
+                        <div class="card-text text-secondary">{{ comment.content }}</div>
                     </div>
                 </div>
-            </div>
             {% endfor %}
         </div>
 
-        <form action="{{ url_for('items.comment_create', item_id=product.id) }}" method="post" class="mt-3"
-            id="comment-form" style="display: none;">
+        {% if product.comment_set|length > 5 %}
+            <div class="text-center mt-4">
+                <button type="button" id="load-more-btn" onclick="showAllComments()" class="btn btn-load-more">
+                    댓글 더 보기 (+{{ product.comment_set|length - 5 }}개)
+                </button>
+            </div>
+        {% endif %}
+
+        <form action="{{ url_for('items.comment_create', item_id=product.id) }}" method="post" class="mt-4" id="comment-form" style="display: none;">
             <div class="mb-3">
                 <textarea name="content" id="content" class="form-control comment-input-area" rows="2" placeholder="판매자에게 궁금한 점을 남겨보세요."></textarea>
             </div>
@@ -142,65 +148,64 @@
                 <button type="submit" class="btn btn-comment-submit">댓글 등록</button>
             </div>
         </form>
-
-        {% if product.comment_set|length > 5 %}
-        <div class="text-center mt-4">
-            <button type="button" id="load-more-btn" onclick="showAllComments()" class="btn"
-                style="background-color: #f1f1f1; color: #666; border-radius: 30px; padding: 10px 30px; font-weight: bold; border: 1px solid #eee;">
-                댓글 더 보기 (+{{ product.comment_set|length - 5 }}개)
-            </button>
-        </div>
-        {% endif %}
     </div>
-
-    <!--4월20일 댓글등록 색상 변경함-->
-    <form action="{{ url_for('items.comment_create', item_id=product.id) }}" method="post" class="mt-3"
-        id="comment-form" style="display: none;">
-        <div class="mb-3">
-            <textarea name="content" id="content" class="form-control" rows="2" placeholder="판매자에게 궁금한 점을 남겨보세요."
-                style="border-radius: 15px; border: 2px solid #eee; padding: 12px; resize: none; transition: 0.3s;"></textarea>
-        </div>
-        <div class="text-center">
-            <button type="submit" class="btn"
-                style="background-color:#9C96F3 ; color: white; border: none; padding: 8px 255px; border-radius: 30px; font-weight: bold; box-shadow: 0 4px 6px rgba(108, 92, 231, 0.2);">댓글
-                등록</button>
-        </div>
-    </form>
-</div>
 </div>
 
 <section class="seller-info-divider">
     <div class="container">
         <div class="d-flex align-items-center py-4 border-bottom">
-            <div class="seller-profile-circle"></div>
-            <div>
-                <div class="fw-bold fs-6">{{ product.seller.nickname if product.seller else '판매자 정보 없음' }}</div>
+            <div class="seller-profile-circle">
+                {% if product.seller.profile_image %}
+                    <img src="{{ url_for('static', filename='uploads/profiles/' + product.seller.profile_image) }}"
+                         alt="프로필" class="seller-profile-img">
+                {% else %}
+                    <span class="default-profile-text">
+                        {{ (product.seller.nickname or "U")[0] | upper }}
+                    </span>
+                {% endif %}
+            </div>
+            <div class="ms-1">
+                {% if product.seller.nickname %}
+                    <div class="fw-bold fs-6">{{ product.seller.nickname }}</div>
+                    <a href="{{ url_for('items.user_items', user_id=product.user_id) }}"
+                    class="text-muted text-decoration-none small">판매자 상점 방문</a>
+                {% else %}
+                    <div class="fw-bold fs-6">'판매자 정보 없음'</div>
+                {% endif %}
             </div>
         </div>
 
-        <div class="other-products mt-5">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold fs-5 m-0">{{ product.seller.nickname if product.seller else '판매자' }}님의 판매상품</h4>
-                <a href="{{ url_for('items.user_items', user_id=product.user_id) }}"
-                    class="text-muted text-decoration-none small">판매상품 더 보기 ></a>
+        <div class="other-products mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <h4 class="fw-bold fs-5 m-0">{{ product.seller.nickname if product.seller else '판매자' }}님의 다른 상품</h4>
             </div>
+
+            {% set current_page_id = product.id %}
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
                 {% for product in product_list %}
-                <div class="product-card col h-100" style="cursor: pointer;"
-                    onclick="location.href=`{{ url_for('items.product_details', item_id=product.id) }}`">
+                    {% if product.id != current_page_id %}
+                    <div class="product-card col h-100" style="cursor: pointer;"
+                        onclick="location.href=`{{ url_for('items.product_details', item_id=product.id) }}`">
 
-                    <div class="other-item-img-container">
-                        {% if product.images %}
-                        <img src="{{ product.images[0].image_url }}" class="w-100 ratio-1x1 object-fit-cover d-block product-thumb-img" alt="{{ product.item_title }}">
-                        {% else %}
-                        <img src="{{ url_for('static', filename='img/default.png') }}"
-                            class="w-100 ratio-1x1 object-fit-cover d-block product-thumb-img">
-                        {% endif %}
+                        <div class="other-item-img-container">
+                            {% if product.status_id == 2 %}
+                                <div class="product-status-overlay">예약중</div>
+                            {% elif product.status_id == 3 %}
+                                <div class="product-status-overlay">판매완료</div>
+                            {% endif %}
+                            {% if product.images %}
+                                <img src="{{ product.images[0].image_url }}" class="w-100 ratio-1x1 object-fit-cover d-block product-thumb-img"
+                                     alt="{{ product.item_title }}">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='img/default.png') }}"
+                                    class="w-100 ratio-1x1 object-fit-cover d-block product-thumb-img">
+                            {% endif %}
+                        </div>
+                        <div class="text-dark small text-truncate mb-1">{{ product.item_title }}</div>
+                        <div class="fw-bold text-dark">{{ "{:,}원".format(product.item_price) }}</div>
+                        <div class="text-muted extra-small mt-1">{{ product.created_at.strftime('%Y.%m.%d') }}</div>
                     </div>
-                    <div class="text-dark small text-truncate mb-1">{{ product.item_title }}</div>
-                    <div class="fw-bold text-dark">{{ "{:,}원".format(product.item_price) }}</div>
-                    <div class="text-muted extra-small mt-1">{{ product.created_at.strftime('%Y.%m.%d') }}</div>
-                </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
