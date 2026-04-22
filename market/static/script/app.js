@@ -196,9 +196,9 @@ document.addEventListener('DOMContentLoaded', function () {
         inputElement.addEventListener('input', function () {
             // 1. form.py 에러 메시지 제거
             const parent = inputElement.closest('.mb-3') || inputElement.closest('.mb-4');
-        if (parent) {
-            parent.querySelectorAll('.invalid-feedback-custom').forEach(err => err.remove());
-        }
+            if (parent) {
+                parent.querySelectorAll('.invalid-feedback-custom').forEach(err => err.remove());
+            }
 
             // 2. 입력창 빨간 테두리 제거
             inputElement.classList.remove('is-invalid');
@@ -269,14 +269,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 아이디, 닉네임, 이메일 각각 실행(4/21 추가)
-checkDuplicate('user_id', 'id-check-msg', "/auth/check_id_duplicate/", 'user_id');
-checkDuplicate('nickname', 'nickname-check-msg', "/auth/check_nickname_duplicate/", 'nickname');
-checkDuplicate('email', 'email-check-msg', "/auth/check_email_duplicate/", 'email');
-checkDuplicate('phone', 'phone-check-msg', "/auth/check_phone_duplicate/", 'phone');
-checkDuplicate('username', null, null, 'username');
-checkDuplicate('signup-pw1', null, null, 'password1');
-checkDuplicate('signup-pw2', null, null, 'password2');
-checkDuplicate('login-password', null, null, 'password');
+    checkDuplicate('user_id', 'id-check-msg', "/auth/check_id_duplicate/", 'user_id');
+    checkDuplicate('nickname', 'nickname-check-msg', "/auth/check_nickname_duplicate/", 'nickname');
+    checkDuplicate('email', 'email-check-msg', "/auth/check_email_duplicate/", 'email');
+    checkDuplicate('phone', 'phone-check-msg', "/auth/check_phone_duplicate/", 'phone');
+    checkDuplicate('username', null, null, 'username');
+    checkDuplicate('signup-pw1', null, null, 'password1');
+    checkDuplicate('signup-pw2', null, null, 'password2');
+    checkDuplicate('login-password', null, null, 'password');
 
     // [이메일 도메인 자동 추천 JS (4/17)]
     const emailInput = document.getElementById('email');
@@ -426,7 +426,7 @@ checkDuplicate('login-password', null, null, 'password');
     // 상품 등록 시 가격 입력 칸에서 스크롤 작동하면 가격 변동되던 에러 방지
     const priceInput = document.querySelector('input[name="price"]');
     if (priceInput) {
-        priceInput.addEventListener('wheel', function() {
+        priceInput.addEventListener('wheel', function () {
             this.blur();
         });
     }
@@ -454,9 +454,9 @@ checkDuplicate('login-password', null, null, 'password');
 
                 // 빈칸, 카테고리 초기값일 때 찾아내기용
                 const isInvalidValue = !input.value ||
-                                     input.value.trim() === "" ||
-                                     input.value === "카테고리 선택" ||
-                                     (input.tagName === 'SELECT' && !input.value);
+                    input.value.trim() === "" ||
+                    input.value === "카테고리 선택" ||
+                    (input.tagName === 'SELECT' && !input.value);
 
                 if (isInvalidValue) {
                     isValid = false;
@@ -488,7 +488,7 @@ checkDuplicate('login-password', null, null, 'password');
 
         // 사용자가 다시 타이핑을 시작하면 실시간으로 빨간색 지워주기
         uploadForm.querySelectorAll('.custom-input').forEach(input => {
-            input.addEventListener('input', function() {
+            input.addEventListener('input', function () {
                 this.classList.remove('is-invalid');
                 const errorDiv = document.getElementById(`error-${this.name}`);
                 if (errorDiv) {
@@ -498,8 +498,8 @@ checkDuplicate('login-password', null, null, 'password');
             });
 
             // select 박스 전용
-            input.addEventListener('change', function() {
-                if(this.value !== "카테고리 선택") {
+            input.addEventListener('change', function () {
+                if (this.value !== "카테고리 선택") {
                     this.classList.remove('is-invalid');
                     const errorDiv = document.getElementById(`error-${this.name}`);
                     if (errorDiv) errorDiv.style.display = 'none';

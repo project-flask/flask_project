@@ -3,7 +3,7 @@ import os
 from flask import Blueprint, render_template, request, url_for, redirect, g, flash, current_app
 from market.views.auth_view import login_required
 from market import db
-from market.models import User, Item, Category, Comment, ItemStatus, ItemImage, Deal
+from market.models import User, Item, Category, Comment, ItemStatus, ItemImage, Deal, Favorite
 from werkzeug.utils import secure_filename
 
 from datetime import datetime  # 날짜 기능을 쓰기 위해 추가
@@ -136,20 +136,65 @@ def product_upload():
     return render_template('items/write.html', categories = categories)
 
 
-# 상품 상세페이지 (4월17일 product_list 추가함)
+# 상품 상세페이지 (4월22일 수정함)
 @bp.route('/product-details/<int:item_id>')
 def product_details(item_id):
     # DB에서 해당 ID의 상품 하나 가져옴
     product = Item.query.get_or_404(item_id)
     cat = Category.query.get(product.category_id)
     status_list = ItemStatus.query.all()
+    is_wished = False
+    if g.user:
+        # Favorite 모델에서 현재 유저와 상품 ID가 매칭되는 데이터가 있는지 확인
+        f = Favorite.query.filter_by(user_id=g.user.id, item_id=item_id).first()
+        if f:
+            is_wished = True
+    # 현재 상품(item_id)을 찜한 모든 데이터의 개수를 DB에서 직접 셉니다.
+    wish_count = Favorite.query.filter_by(item_id=item_id).count()
     product_list = Item.query.filter(
         Item.user_id == product.user_id,
         Item.id != item_id,
         Item.is_deleted == False  # 삭제되지 않은 상품만
     ).order_by(Item.created_at.desc()).limit(6).all()
 
-    return render_template('items/PDP.html', product = product, cat = cat, status_list=status_list, product_list=product_list)
+    return render_template('items/PDP.html', product = product, cat = cat, status_list=status_list, product_list=product_list,is_wished=is_wished,wish_count=wish_count)
+
+
+# --- 찜하기 토글 (추가/해제) 기능 4월22일 ---
+@bp.route('/wishlist/toggle/<int:item_id>')
+@login_required
+def toggle_favorite(item_id):
+    item = Item.query.get_or_404(item_id)
+    # 이미 찜했는지 확인
+    f = Favorite.query.filter_by(user_id=g.user.id, item_id=item_id).first()
+
+    if f:
+        # 이미 있다면 삭제 (찜 해제)
+        db.session.delete(f)
+        db.session.commit()
+        flash("찜 목록에서 제거되었습니다.")
+    else:
+        # 없다면 추가 (찜 등록)
+        new_f = Favorite(user_id=g.user.id, item_id=item_id)
+        db.session.add(new_f)
+        db.session.commit()
+        flash("찜 목록에 추가되었습니다!")
+
+    return redirect(url_for('items.product_details', item_id=item_id))
+
+
+# --- 마이페이지용 찜 삭제 기능 (창환 님이 에러 났던 부분) ---
+@bp.route('/wishlist/delete/<int:item_id>')
+@login_required
+def remove_favorite(item_id):
+    f = Favorite.query.filter_by(user_id=g.user.id, item_id=item_id).first()
+    if f:
+        db.session.delete(f)
+        db.session.commit()
+        flash("찜 목록에서 삭제되었습니다.")
+
+    # 삭제 후 다시 마이페이지로 이동
+    return redirect(url_for('personal.mypage'))
 
 # PDP.html 상품 상태 게시글 업로드 유저만 수정 가능하고 이외의 유저는 수정 불가능 함수 4월21일 수정
 @bp.route('/modify-status/<int:item_id>', methods=['POST'])

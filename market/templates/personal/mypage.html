@@ -146,31 +146,30 @@
         {% endif %}
     </div>
 
-    <!-- 찜한 물건 목록 탭구조로 수정 4월21일-->
-    <div class="mypage-section tab-panel" id="wishTab">
-        <h5 class="section-title">❤️ 찜한 물건 목록 <span class="review-count">({{ wishes|length }})</span></h5>
+<!-- 찜한 물건 목록 탭구조로 4월22일 items로 수정-->
+<div class="mypage-section tab-panel" id="wishTab">
+    <h5 class="section-title">❤️ 찜한 물건 목록 <span class="review-count">({{ wishes|length }})</span></h5>
 
-        {% if wishes %}
-        <div class="product-grid paged-grid" data-tab-name="wish">
-            {% for wish in wishes %}
-            <div class="product-card-item">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="product-thumb">
-                            <img src="{{ url_for('static', filename='img/default_wish.png') }}"
-                                class="product-thumb-img" alt="찜이미지">
-                        </div>
+    {% if wishes %}
+    <div class="product-grid paged-grid" data-tab-name="wish">
+        {% for wish in wishes %}
+        <div class="product-card-item">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="product-thumb">
+                        <img src="{{ url_for('static', filename='img/default_wish.png') }}" class="product-thumb-img"
+                            alt="찜이미지">
+                    </div>
 
-                        <div class="product-info">
-                            <h6 class="card-title mb-1 text-truncate">{{ wish.items.item_title }}</h6>
-                            <p class="card-text fw-bold text-danger">
-                                {{ "{:,}원".format(wish.items.item_price) }}
-                            </p>
+                    <div class="product-info">
+                        <h6 class="card-title mb-1 text-truncate">{{ wish.items.item_title }}</h6>
+                        <p class="card-text fw-bold text-danger">
+                            {{ "{:,}원".format(wish.items.item_price) }}
+                        </p>
 
-                            <form method="post" action="{{ url_for('product.remove_favorite', item_id=wish.item.id) }}">
-                                <button class="favorite-remove-btn" type="submit">찜 취소</button>
-                            </form>
-                        </div>
+                        <form method="post" action="{{ url_for('items.remove_favorite', item_id=wish.items.id) }}">
+                            <button class="favorite-remove-btn" type="submit">찜 취소</button>
+                        </form>
                     </div>
                 </div>
             </div>
