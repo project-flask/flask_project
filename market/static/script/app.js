@@ -395,6 +395,15 @@ document.addEventListener('DOMContentLoaded', function () {
         // 현재 active 버튼 찾기
         let activeButton = document.querySelector('.summary-box.active');
 
+        // active가 없으면 첫 번째 탭을 기본으로 사용
+        if (!activeButton) {
+            activeButton = tabButtons[0];
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+
+        // 초기 패널 세팅
         if (activeButton) {
             const targetId = activeButton.dataset.tab;
 

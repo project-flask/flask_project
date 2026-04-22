@@ -212,14 +212,13 @@ def seller_profile(user_id):
     can_write_review = False
 
     if g.user:
-        deal = Deal.query.filter_by(
+        deals = Deal.query.filter_by(
             seller_id=seller.id,
             buyer_id=g.user.id,
             deal_status='completed'
-        ).first()
+        ).all()
 
-        if deal:
-            # 이미 리뷰 썼는지 체크
+        for deal in deals:
             existing_review = Review.query.filter_by(
                 deal_id=deal.id,
                 reviewer_id=g.user.id
@@ -227,6 +226,7 @@ def seller_profile(user_id):
 
             if not existing_review:
                 can_write_review = True
+                break
 
     return render_template(
         'personal/seller_profile.html',
