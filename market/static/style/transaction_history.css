@@ -184,6 +184,12 @@
     box-shadow: 0 14px 28px rgba(124, 111, 246, 0.12) !important;
 }
 
+.card-meta {
+    font-size: 12px;
+    color: #8a8aa8;
+    margin-bottom: 2px;
+}
+
 .product-thumb {
     position: relative;
     width: 100%;
@@ -310,4 +316,170 @@
     opacity: 0.45;
     cursor: default;
     background-color: #fafaff;
+}
+
+/* 구매 이력 리스트 전체 4월 22일 */
+.purchase-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.purchase-page-item {
+    display: none;
+}
+
+/* 한 줄 카드 */
+.purchase-history-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #ffffff;
+    border: 1px solid #e8e8ff;
+    border-radius: 14px;
+    padding: 14px 18px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+}
+
+/* 썸네일 + 정보 묶음 링크 */
+.purchase-main-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+}
+
+.purchase-main-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.purchase-main-link.is-disabled {
+    cursor: default;
+}
+
+.purchase-main-link:not(.is-disabled):hover .purchase-title {
+    color: #6f61f2;
+}
+
+/* 왼쪽 썸네일 */
+.purchase-thumb {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.purchase-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+}
+
+/* 가운데 정보 */
+.purchase-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.purchase-title {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #2d2d44;
+}
+
+.deleted-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    color: #7a7a8c;
+    background-color: #f1f1f5;
+    border: 1px solid #d9d9e3;
+    border-radius: 999px;
+    vertical-align: middle;
+}
+
+.purchase-meta {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+}
+
+/* 오른쪽 버튼 영역 */
+.purchase-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* 버튼 공통 */
+.purchase-action-btn {
+    display: inline-block;
+    min-width: 120px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+/* 판매자 보기 */
+.seller-info-btn {
+    background-color: #E8E6FF;
+    color: #6a5cff;
+}
+
+.seller-info-btn:hover {
+    background-color: #dcd8ff;
+    color: #5a4fe0;
+}
+
+/* 리뷰 작성 */
+.review-write-btn {
+    background-color: #9C96F3;
+    color: #ffffff;
+    border: none;
+}
+
+.review-write-btn:hover {
+    background-color: #8479ED;
+    color: #ffffff;
+}
+
+/* 리뷰 완료 */
+.review-done-btn {
+    background-color: #F7F5FF;
+    color: #8B84B7;
+    border: 1px solid #DDD6FF;
+    cursor: default;
+    pointer-events: none;
+    box-shadow: none;
+}
+
+@media (max-width: 768px) {
+    .purchase-history-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .purchase-main-link {
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .purchase-actions {
+        flex-direction: row;
+        width: 100%;
+    }
 }

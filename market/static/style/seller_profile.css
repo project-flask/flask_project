@@ -174,9 +174,9 @@
     margin-top: 12px;
 }
 
-/* 등록 버튼 */
+/* 등록 버튼 4월22일 버튼색통일 */
 .review-save-btn {
-    background: linear-gradient(90deg, #c3bcff 0%, #aca3ff 100%);
+    background: #9C96F3;
     color: #ffffff;
 
     border: none;
@@ -192,8 +192,9 @@
     box-shadow: 0 6px 14px rgba(124, 111, 246, 0.18);
 }
 
-/* hover */
+/* hover 4월22일 버튼색통일*/
 .review-save-btn:hover {
+    background: #8479ED;
     filter: brightness(1.05);
     box-shadow: 0 10px 20px rgba(124, 111, 246, 0.25);
 }
