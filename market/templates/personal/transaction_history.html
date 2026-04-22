@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block extra_css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/transaction_history.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style/transaction_history.css') }}">
 {% endblock %}
 {% block content %}
 
@@ -33,130 +33,186 @@
                     </div>
                 </div>
             </div>
-            <!-- 거래 상태 탭 버튼 디폴트는 판매중-->
+            <!-- 거래 상태 탭 버튼 디폴트는 구매 이력 4월22일-->
             <div class="history-summary">
-                <div class="summary-box active" data-tab="sellingTab">
-                    <div class="summary-label">판매중</div>
-                    <div class="summary-value">{{ selling_items|length }}</div>
-                </div>
 
-                <div class="summary-box" data-tab="reservedTab">
-                    <div class="summary-label">예약중</div>
-                    <div class="summary-value">{{ reserved_items|length }}</div>
+                <!--구매 이력 탭버튼 4월22일-->
+                <div class="summary-box" data-tab="purchaseTab">
+                    <div class="summary-label">구매 이력</div>
+                    <div class="summary-value">{{ purchase_deals|length }}</div>
                 </div>
 
                 <div class="summary-box" data-tab="completedTab">
                     <div class="summary-label">판매완료</div>
-                    <div class="summary-value">{{ completed_items|length }}</div>
+                    <div class="summary-value">{{ completed_deals|length }}</div>
                 </div>
 
-
             </div>
         </div>
     </div>
 
-    <!-- 판매중 -->
-    <div class="history-section tab-panel active" id="sellingTab">
-        <h5 class="section-title">📦 판매중 상품 <span class="section-count">({{ selling_items|length }})</span></h5>
+    <!--구매 이력 탭 4월22일-->
+    <!-- 구매 이력 -->
+    <div class="history-section tab-panel" id="purchaseTab">
 
-        {% if selling_items %}
-        <div class="product-grid paged-grid" data-tab-name="selling">
-            {% for product in selling_items %}
-            <div class="product-card-item">
-                <a href="{{ url_for('items.product_details', item_id=product.id) }}" class="product-card-link">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body">
-                            <div class="product-thumb">
-                                <img src="{{ url_for('static', filename=product.images[0].image_url) if product.images else url_for('static', filename='img/default_product.png') }}"
-                                    class="product-thumb-img" alt="상품이미지">
-                            </div>
+        <h5 class="section-title">🛍️ 구매 이력 <span class="section-count">({{ purchase_deals|length }})</span></h5>
 
-                            <div class="product-info">
-                                <h6 class="card-title mb-1 text-truncate">{{ product.item_title }}</h6>
-                                <p class="card-text fw-bold text-primary mb-0">{{ "{:,}원".format(product.item_price) }}
-                                </p>
-                            </div>
+        {% if purchase_deals %}
+        <div class="purchase-history-list paged-purchase-list" data-tab-name="purchase">
+            {% for deal in purchase_deals %}
+            <div class="purchase-history-item purchase-page-item">
+                {% if deal.items and not deal.items.is_deleted %}
+                <a href="{{ url_for('items.product_details', item_id=deal.items.id) }}" class="purchase-main-link">
+                {% else %}
+                <div class="purchase-main-link is-disabled">
+                {% endif %}
+
+                        <div class="purchase-thumb">
+                            {% if deal.items and not deal.items.is_deleted and deal.items.images %}
+                            <img src="{{ deal.items.images[0].image_url }}" class="purchase-thumb-img" alt="상품이미지">
+                            {% elif deal.items and deal.items.is_deleted %}
+                            <img src="{{ url_for('static', filename='img/deleted_product.png') }}"
+                                class="purchase-thumb-img" alt="삭제된 상품">
+                            {% else %}
+                            <img src="{{ url_for('static', filename='img/default_product.png') }}"
+                                class="purchase-thumb-img" alt="기본이미지">
+                            {% endif %}
                         </div>
-                    </div>
-                </a>
-            </div>
-            {% endfor %}
-        </div>
 
-        <div class="pagination-wrap" data-pagination-for="selling"></div>
-        {% else %}
-        <div class="empty-box">현재 판매중인 상품이 없습니다.</div>
-        {% endif %}
-    </div>
+                        <div class="purchase-info">
+                            <h6 class="purchase-title">
+                                {% if deal.items and not deal.items.is_deleted %}
+                                {{ deal.items.item_title }}
+                                {% else %}
+                                {{ deal.items.item_title }}<span class="deleted-badge">삭제됨</span>
+                                {% endif %}
+                            </h6>
 
-    <!-- 예약중 -->
-    <div class="history-section tab-panel" id="reservedTab">
-        <h5 class="section-title">⏳ 예약중 상품 <span class="section-count">({{ reserved_items|length }})</span></h5>
-
-        {% if reserved_items %}
-        <div class="product-grid paged-grid" data-tab-name="reserved">
-            {% for product in reserved_items %}
-            <div class="product-card-item">
-                <a href="{{ url_for('items.product_details', item_id=product.id) }}" class="product-card-link">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body">
-                            <div class="product-thumb">
-                                <img src="{{ url_for('static', filename=product.images[0].image_url) if product.images else url_for('static', filename='img/default_product.png') }}"
-                                    class="product-thumb-img" alt="상품이미지">
-                                <div class="product-status-overlay">예약중</div>
-                            </div>
-
-                            <div class="product-info">
-                                <h6 class="card-title mb-1 text-truncate">{{ product.item_title }}</h6>
-                                <p class="card-text fw-bold text-primary mb-0">{{ "{:,}원".format(product.item_price) }}
-                                </p>
-                            </div>
+                            <p class="purchase-meta">거래 금액: {{ "{:,}원".format(deal.deal_price) }}</p>
+                            <p class="purchase-meta">
+                                거래일:
+                                {% if deal.deal_datetime %}
+                                {{ deal.deal_datetime.strftime('%Y-%m-%d') }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </p>
+                            <p class="purchase-meta">
+                                판매자:
+                                {% if deal.seller %}
+                                {{ deal.seller.nickname }}
+                                {% else %}
+                                알 수 없음
+                                {% endif %}
+                            </p>
                         </div>
-                    </div>
-                </a>
+
+            {% if deal.items and not deal.items.is_deleted %}
+            </a>
+            {% else %}
             </div>
-            {% endfor %}
+            {% endif %}
+
+            <div class="purchase-actions">
+                {% if deal.seller %}
+                <a href="{{ url_for('personal.seller_profile', user_id=deal.seller.id) }}"
+                    class="purchase-action-btn seller-info-btn">
+                    판매자 정보 보기
+                </a>
+                {% endif %}
+
+                {% set my_reviews = deal.reviews | selectattr('reviewer_id', 'equalto', user.id) | list %}
+                {% if my_reviews %}
+                <button type="button" class="purchase-action-btn review-done-btn" disabled>
+                    ✓ 리뷰 작성 완료
+                </button>
+                {% elif deal.seller %}
+                <a href="{{ url_for('personal.seller_profile', user_id=deal.seller.id, tab='review') }}"
+                    class="purchase-action-btn review-write-btn">
+                    리뷰 작성하기
+                </a>
+                {% endif %}
+            </div>
         </div>
 
-        <div class="pagination-wrap" data-pagination-for="reserved"></div>
-        {% else %}
-        <div class="empty-box">현재 예약중인 상품이 없습니다.</div>
-        {% endif %}
+        {% endfor %}
     </div>
+    <div class="pagination-wrap" data-pagination-for="purchase"></div>
+    {% else %}
+    <div class="empty-box">아직 구매 이력이 없습니다.</div>
+    {% endif %}
+</div>
 
     <!-- 판매완료 -->
     <div class="history-section tab-panel" id="completedTab">
-        <h5 class="section-title">✅ 판매완료 상품 <span class="section-count">({{ completed_items|length }})</span></h5>
-
-        {% if completed_items %}
+        <h5 class="section-title">
+            ✅ 판매완료 상품
+            <span class="section-count">({{ completed_deals|length }})</span>
+        </h5>
+    
+        {% if completed_deals %}
         <div class="product-grid paged-grid" data-tab-name="completed">
-            {% for product in completed_items %}
+        
+            {% for deal in completed_deals %}
+            {% set product = deal.items %}
+        
             <div class="product-card-item">
                 <a href="{{ url_for('items.product_details', item_id=product.id) }}" class="product-card-link">
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="card-body">
+                        
+                            <!-- 썸네일 -->
                             <div class="product-thumb">
-                                <img src="{{ url_for('static', filename=product.images[0].image_url) if product.images else url_for('static', filename='img/default_product.png') }}"
-                                    class="product-thumb-img" alt="상품이미지">
+                                {% if product.images %}
+                                <img src="{{ product.images[0].image_url }}" class="product-thumb-img">
+                                {% else %}
+                                <img src="{{ url_for('static', filename='img/default_product.png') }}"
+                                     class="product-thumb-img">
+                                {% endif %}
                                 <div class="product-status-overlay">판매완료</div>
                             </div>
-
+                        
+                            <!-- 상품 정보 -->
                             <div class="product-info">
-                                <h6 class="card-title mb-1 text-truncate">{{ product.item_title }}</h6>
-                                <p class="card-text fw-bold text-primary mb-0">{{ "{:,}원".format(product.item_price) }}
+                                <h6 class="card-title mb-1 text-truncate">
+                                    {{ product.item_title }}
+                                </h6>
+                            
+                                <p class="card-text fw-bold text-primary mb-1">
+                                    {{ "{:,}원".format(product.item_price) }}
                                 </p>
+                            
+                                <!-- ✅ 추가된 부분 -->
+                                <p class="card-meta">
+                                    구매자: {{ deal.buyer.nickname if deal.buyer else '알 수 없음' }}
+                                </p>
+                            
+                                <p class="card-meta">
+                                    거래일:
+                                    {% if deal.deal_datetime %}
+                                        {{ deal.deal_datetime.strftime('%Y-%m-%d') }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </p>
+                            
                             </div>
+                        
                         </div>
                     </div>
                 </a>
             </div>
+        
             {% endfor %}
+        
         </div>
-
+    
         <div class="pagination-wrap" data-pagination-for="completed"></div>
+    
         {% else %}
         <div class="empty-box">판매완료된 상품이 없습니다.</div>
         {% endif %}
     </div>
+
 </div>
 {% endblock %}

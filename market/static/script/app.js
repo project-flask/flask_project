@@ -496,22 +496,6 @@ checkDuplicate('login-password', null, null, 'password');
         });
     }
 
-    // 마이페이지, 판매자페이지 ( mypage.html, seller_profile.html )
-    window.initSlider = function (trackId, prevBtnId, nextBtnId) {
-        const track = document.getElementById(trackId), prevBtn = document.getElementById(prevBtnId), nextBtn = document.getElementById(nextBtnId);
-        if (!track || !prevBtn || !nextBtn) return;
-        const slidesItems = track.querySelectorAll('.product-slide');
-        if (!slidesItems.length) return;
-        let currentIndex = 0;
-
-        const updateSlider = () => {
-            const visibleCount = window.innerWidth <= 767 ? 1 : (window.innerWidth <= 991 ? 2 : 4);
-            const maxIndex = Math.max(0, slidesItems.length - visibleCount);
-            currentIndex = Math.min(currentIndex, maxIndex);
-            track.style.transform = `translateX(-${currentIndex * (slidesItems[0].offsetWidth + 16)}px)`;
-            prevBtn.disabled = (currentIndex === 0); nextBtn.disabled = (currentIndex >= maxIndex);
-        };
-
     // 마이페이지, 판매자페이지 탭구조로 수정 4월21일( mypage.html, seller_profile.html )
     // 탭 기능 4월21일
     function initTabs() {
@@ -675,6 +659,13 @@ checkDuplicate('login-password', null, null, 'password');
         itemSelector: '.product-card-item',
         pageSize: 8,
         displayType: 'block'
+    });
+    // 구매이력 페이지네이션 4월22일
+    initPagedList({
+    listSelector: '.paged-purchase-list',
+    itemSelector: '.purchase-page-item',
+    pageSize: 5,
+    displayType: 'flex'
     });
 
     initPagedList({
