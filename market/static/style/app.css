@@ -20,7 +20,7 @@ nav {
 
 /* 회원가입, 마이페이지 버튼 */
 .custom-btn {
-    background-color: #CCCCFF;
+    background-color: #9C96F3;
     color: white !important;
     border-radius: 8px;
     padding: 6px 18px;
@@ -33,7 +33,7 @@ nav {
 
 /* 회원가입, 마이페이지 버튼 효과 */
 .custom-btn:hover {
-    background-color: #B3B3FF;
+    background-color: #8479ED;
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(204, 204, 255, 0.4);
 }
@@ -67,8 +67,8 @@ nav {
 .search-input-group {
     display: flex;
     width: 100%;
-    background-color: white;
-    border: 3px solid #CCCCFF;
+    background-color: #9C96F3; /* 검색 버튼 사이에 흰 선이 있어서 추가 */
+    border: 3px solid #9C96F3;
     border-radius: 25px;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(204, 204, 255, 0.1);
@@ -85,7 +85,7 @@ nav {
 
 /* 검색창 오른쪽 검색 버튼 */
 .search-submit-btn {
-    background-color: #CCCCFF;
+    background-color: #9C96F3;
     color: white;
     border: none;
     padding: 0 25px;
@@ -96,7 +96,7 @@ nav {
 
 /* 검색 버튼 효과 */
 .search-submit-btn:hover {
-    background-color: #B3B3FF;
+    background-color: #8479ED;
 }
 
 /* 반응형 화면에서 상품 검색하기, 햄버거 메뉴 겹치지 않게 */

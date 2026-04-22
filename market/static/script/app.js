@@ -3,7 +3,18 @@ document.addEventListener('DOMContentLoaded', function () {
     // toast 모든 페이지 기능 공유
     const flaskMsg = document.getElementById("flask-message");
     if (flaskMsg && flaskMsg.value) {
-        showToast(flaskMsg.value);
+        const msg = flaskMsg.value;
+
+        // 토스트 팝업 메시지 제외해야 하는 케이스(4/22)
+        // 1. 비밀번호 변경 완료 메시지
+        // 2. 아이디 찾기 결과
+        const isForbidden =
+            (msg.includes("비밀번호") && msg.includes("변경")) ||
+            msg.includes("찾으시는 아이디는");
+        // 위에 있는 메시지 아닐 때만 토스트 실행
+        if (!isForbidden) {
+            showToast(msg);
+        }
     }
 
     // const toastList = ['saveToast', 'logoutToast', 'statusToast'];
@@ -20,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //         }, 1500);
     //     }
     // });
+
 
     // 상단 header 고정 ( header.html )
     const headerFixed = document.querySelector('.hfixed');
@@ -130,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const hasLetter = /[a-zA-Z]/.test(val), hasNumber = /[0-9]/.test(val), hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(val);
                 const len = val.length;
 
-                if (hasLetter && hasNumber && hasSpecial && len >= 8) updateUI(strengthBar, strengthText, '100%', '#CCCCFF', '높음 (안전한 비밀번호입니다)');
+                if (hasLetter && hasNumber && hasSpecial && len >= 8) updateUI(strengthBar, strengthText, '100%', '#9C96F3', '높음 (안전한 비밀번호입니다)');
                 else if (hasLetter && hasNumber && len >= 6) updateUI(strengthBar, strengthText, '66%', '#ffcc00', '보통 (특수문자를 섞어보세요)');
                 else updateUI(strengthBar, strengthText, '33%', '#ff6b6b', '낮음 (보안이 약해요)');
             });
@@ -198,12 +210,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 const newDiv = document.createElement('div');
                 newDiv.id = msgId;
                 newDiv.className = "check-msg";
-                inputElement.after(newDiv);
-            }
-            else {
-                msgElement.innerText = "";
-            }
-        });
+               // inputElement.after(newDiv);
+                inputElement.parentNode.insertBefore(newDiv, inputElement.nextSibling);
+                } else {
+                    msgElement.innerText = ""; // 오류 뜨고나서는 중복체크가 안돼서 추가 4/22
+                }
+            });
 
         // 입력 완료 -> 포커스 나갈 때 중복 체크 실행
         inputElement.addEventListener('blur', function () {

@@ -29,7 +29,7 @@
                 <!-- 로그인 상태일 때 로그아웃, 마이페이지 출력 -->
                 {% if g.user %}
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('auth.logout') }}" style="font-size: 15px; color: #ababfa">로그아웃</a>
+                        <a class="nav-link active" href="{{ url_for('auth.logout') }}" style="font-size: 15px; color: #8479ED">로그아웃</a>
                     </li>
                     <li class="nav-item ms-md-2 mt-2 mt-md-0">
                         <a class="custom-btn" href="{{ url_for('personal.my_page')}}">마이페이지</a>
@@ -37,7 +37,7 @@
                 <!-- 로그아웃 상태일 때 로그인, 회원가입 출력  -->
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('auth.login') }}" style="font-size: 15px; color: #9C96F3">로그인</a>
+                        <a class="nav-link active" href="{{ url_for('auth.login') }}" style="font-size: 15px; color: #8479ED">로그인</a>
                     </li>
                     <li class="nav-item ms-md-2 mt-2 mt-md-0">
                         <a class="custom-btn" href="{{ url_for('auth.signup') }}">회원가입</a>
