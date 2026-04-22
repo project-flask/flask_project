@@ -6,9 +6,9 @@
 
 <!-- 마이페이지 토스트 팝업 -->
 {% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <input type="hidden" id="flask-message" value="{{ messages[0] }}">
-    {% endif %}
+{% if messages %}
+<input type="hidden" id="flask-message" value="{{ messages[0] }}">
+{% endif %}
 {% endwith %}
 
 <div class="container mt-4">
@@ -104,47 +104,47 @@
         </div>
 
     </div>
-    <hr class="my-4">
+    
 
     <!-- 판매 중인 상품 탭구조로 수정 4월21일-->
     <div class="mypage-section tab-panel active" id="productTab">
-    <h5 class="section-title">📦 판매 중인 상품<span class="review-count">({{ products|length }})</span></h5>
+        <h5 class="section-title">📦 판매 중인 상품<span class="review-count">({{ products|length }})</span></h5>
 
-    {% if products %}
-    <div class="product-grid paged-grid" data-tab-name="product">
-        {% for product in products %}
-        <div class="product-card-item">
-            <a href="{{ url_for('items.product_details', item_id=product.id) }}"
-                class="product-card-link text-decoration-none">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="product-thumb">
-                            <img src="{{ product.images[0].image_url if product.images else '/static/img/default.png' }}"
-                                class="product-thumb-img" alt="{{ product.item_title }}">
-                        </div>
+        {% if products %}
+        <div class="product-grid paged-grid" data-tab-name="product">
+            {% for product in products %}
+            <div class="product-card-item">
+                <a href="{{ url_for('items.product_details', item_id=product.id) }}"
+                    class="product-card-link text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="product-thumb">
+                                <img src="{{ product.images[0].image_url if product.images else '/static/img/default.png' }}"
+                                    class="product-thumb-img" alt="{{ product.item_title }}">
+                            </div>
 
-                        <div class="product-info">
-                            <h6 class="card-title mb-1 text-truncate">
-                                {{ product.item_title }}
-                            </h6>
-                            <p class="card-text fw-bold text-primary mb-0">
-                                {{ "{:,}원".format(product.item_price) }}
-                            </p>
+                            <div class="product-info">
+                                <h6 class="card-title mb-1 text-truncate">
+                                    {{ product.item_title }}
+                                </h6>
+                                <p class="card-text fw-bold text-primary mb-0">
+                                    {{ "{:,}원".format(product.item_price) }}
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
 
-    <div class="pagination-wrap" data-pagination-for="product"></div>
-    {% else %}
-        <div class="empty-product-card">
+        <div class="pagination-wrap" data-pagination-for="product"></div>
+        {% else %}
+        <div class="empty-box">
             현재 판매 중인 상품이 없습니다.
         </div>
-    {% endif %}
-</div>
+        {% endif %}
+    </div>
 
 <!-- 찜한 물건 목록 탭구조로 4월22일 items로 수정-->
 <div class="mypage-section tab-panel" id="wishTab">
@@ -173,52 +173,57 @@
                     </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+
+        <div class="pagination-wrap" data-pagination-for="wish"></div>
+        {% else %}
+        <a href="{{ url_for('main.index') }}" class="empty-product-link">
+            <div class="empty-box">
+                찜한 상품이 없습니다.<br>
+                <strong>메인에서 상품을 둘러보세요</strong>
+            </div>
+        </a>
+        {% endif %}
     </div>
 
-    <div class="pagination-wrap" data-pagination-for="wish"></div>
-    {% else %}
-    <a href="{{ url_for('main.index') }}" class="empty-product-link">
-        <div class="empty-box">
-            찜한 상품이 없습니다.<br>
-            <strong>메인에서 상품을 둘러보세요</strong>
-        </div>
-    </a>
-    {% endif %}
-</div>
+    <!-- 구매자 리뷰 탭구조로 수정 4월21일 -->
+    <div class="mypage-section tab-panel" id="reviewTab">
+        <h5 class="section-title">💬 구매자 리뷰 <span class="review-count">({{ reviews|length }})</span></h5>
 
-<!-- 구매자 리뷰 탭구조로 수정 4월21일 -->
-<div class="mypage-section tab-panel" id="reviewTab">
-    <h5 class="section-title">💬 구매자 리뷰 <span class="review-count">({{ reviews|length }})</span></h5>
-
-    {% if reviews %}
-    <div class="review-list paged-review-list" data-tab-name="review">
-        {% for review in reviews %}
-        <div class="review-card review-page-item">
-            <div class="review-text">
-                <p class="review-content">{{ review.content }}</p>
-                <small class="review-item-name">
-                    거래 상품:
-                    {% if review.deal and review.deal.item %}
-                    {{ review.deal.item.item_title }}
+        {% if reviews %}
+        <div class="review-list paged-review-list" data-tab-name="review">
+            {% for review in reviews %}
+            <div class="review-card review-page-item">
+                <div class="review-text">
+                    <p class="review-content">{{ review.content }}</p>
+                    <!--거래 상태 표시 수정 4월22일-->
+                    <small class="review-item-name">
+                        거래 상품:
+                        {% if review.deal and review.deal.items and not review.deal.items.is_deleted %}
+                        {{ review.deal.items.item_title }}
+                        {% else %}
+                        삭제된 상품
+                        {% endif %}
+                    </small>
+                </div>
+                <!--썸네일수정 4월22일-->
+                <div class="review-thumb">
+                    {% if review.deal and review.deal.items and not review.deal.items.is_deleted and
+                    review.deal.items.images %}
+                    <img src="{{ review.deal.items.images[0].image_url }}" alt="상품 이미지">
                     {% else %}
-                    삭제된 상품
+                    <img src="{{ url_for('static', filename='img/default_product.png') }}" alt="상품 이미지">
                     {% endif %}
-                </small>
+                </div>
             </div>
-
-            <div class="review-thumb">
-                <img src="{{ url_for('static', filename='img/default_product.png') }}" alt="상품 이미지">
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
 
-    <div class="pagination-wrap" data-pagination-for="review"></div>
-    {% else %}
-    <div class="empty-box">아직 받은 리뷰가 없습니다.</div>
-    {% endif %}
-</div>
+        <div class="pagination-wrap" data-pagination-for="review"></div>
+        {% else %}
+        <div class="empty-box">아직 받은 리뷰가 없습니다.</div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

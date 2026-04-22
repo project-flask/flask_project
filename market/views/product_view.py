@@ -208,32 +208,22 @@ def modify_status(item_id):
 
     new_status = request.form.get('status_id', type=int)
 
-    if new_status:
-        product.status_id = int(new_status)
-        db.session.commit()
-        flash('변경이 완료되었습니다')
+
 
     if not new_status:
         flash('변경할 상품 상태를 찾을 수 없습니다.')
         return redirect(url_for('items.product_details', item_id=item_id))
 
-    # 판매완료(3)로 변경하려는 경우에는 바로 저장하지 않고 구매자 입력 페이지로 이동
-    if new_status == 3:
-        existing_deal = Deal.query.filter_by(item_id=product.id).first()
-
-        # 이미 판매완료 처리와 거래 등록이 끝난 상품이면 다시 입력 페이지로 보내지 않음
-        if product.status_id == 3 and existing_deal:
-            flash('이미 판매완료 처리된 상품입니다.')
-            return redirect(url_for('items.product_details', item_id=item_id))
-
-        return redirect(url_for('items.complete_deal', item_id=item_id))
-
     existing_deal = Deal.query.filter_by(item_id=product.id).first()
 
-    # 이미 거래가 등록된 상품은 판매완료 외 다른 상태로 되돌릴 수 없음
+    # 이미 거래가 등록된 상품은 상태변경 불가 4월22일
     if existing_deal:
         flash('거래가 등록된 상품은 상태를 다시 변경할 수 없습니다.')
         return redirect(url_for('items.product_details', item_id=item_id))
+
+    # 판매완료(3)로 변경하려는 경우에는 바로 저장하지 않고 구매자 입력 페이지로 이동 거래상대저장 로직으로 역활중복이 생겨서 수정 4월22일
+    if new_status == 3:
+        return redirect(url_for('items.complete_deal', item_id=item_id))
 
     # 판매중 / 예약중은 기존처럼 바로 변경
     product.status_id = new_status
@@ -400,8 +390,9 @@ def product_delete(item_id):
         # 본인이 아니면 상세 페이지로 다시 돌려보내기
         return redirect(url_for('items.product_details', item_id=item_id))
 
-    db.session.delete(item)
+    item.is_deleted = True
     db.session.commit()
+    flash('상품이 삭제되었습니다.')
 
     # 삭제 후에는 메인 페이지로 이동합니다.
     return redirect(url_for('main.index'))

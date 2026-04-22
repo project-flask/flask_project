@@ -12,24 +12,30 @@ bp = Blueprint('review', __name__, url_prefix='/review')
 def create_review(user_id):
     seller = User.query.get_or_404(user_id)
 
-    # 내가 이 판매자의 구매자인지 확인
-    deal = Deal.query.filter_by(
+    # 내가 이 판매자와 거래한 completed deal들 조회
+    deals = Deal.query.filter_by(
         seller_id=seller.id,
         buyer_id=g.user.id,
         deal_status='completed'
-    ).first()
+    ).all()
 
-    if not deal:
+    if not deals:
         flash('리뷰를 작성할 권한이 없습니다.')
         return redirect(url_for('personal.seller_profile', user_id=user_id))
 
-    # 이미 작성했는지 확인
-    existing_review = Review.query.filter_by(
-        deal_id=deal.id,
-        reviewer_id=g.user.id
-    ).first()
+    # 아직 리뷰를 작성하지 않은 거래 하나 찾기
+    target_deal = None
+    for deal in deals:
+        existing_review = Review.query.filter_by(
+            deal_id=deal.id,
+            reviewer_id=g.user.id
+        ).first()
 
-    if existing_review:
+        if not existing_review:
+            target_deal = deal
+            break
+
+    if not target_deal:
         flash('이미 리뷰를 작성한 거래입니다.')
         return redirect(url_for('personal.seller_profile', user_id=user_id, tab='review'))
 
@@ -44,7 +50,7 @@ def create_review(user_id):
             content=content,
             reviewer_id=g.user.id,
             target_user_id=seller.id,
-            deal_id=deal.id,
+            deal_id=target_deal.id,
             created_at=datetime.now()
         )
 

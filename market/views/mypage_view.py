@@ -159,11 +159,7 @@ def change_password():
         if new_password != confirm_password:
             flash('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.')
             return render_template('personal/change_password.html', user=user)
-
-        if len(new_password) < 8:
-            flash('새 비밀번호는 8자 이상 입력해주세요.')
-            return render_template('personal/change_password.html', user=user)
-
+        # 8글자 제한 삭제 4월22일
         if check_password_hash(user.password, new_password):
             flash('현재 비밀번호와 다른 비밀번호를 입력해주세요.')
             return render_template('personal/change_password.html', user=user)
@@ -212,14 +208,13 @@ def seller_profile(user_id):
     can_write_review = False
 
     if g.user:
-        deal = Deal.query.filter_by(
+        deals = Deal.query.filter_by(
             seller_id=seller.id,
             buyer_id=g.user.id,
             deal_status='completed'
-        ).first()
+        ).all()
 
-        if deal:
-            # 이미 리뷰 썼는지 체크
+        for deal in deals:
             existing_review = Review.query.filter_by(
                 deal_id=deal.id,
                 reviewer_id=g.user.id
@@ -227,6 +222,7 @@ def seller_profile(user_id):
 
             if not existing_review:
                 can_write_review = True
+                break
 
     return render_template(
         'personal/seller_profile.html',
@@ -273,17 +269,25 @@ def transaction_history():
         Item.is_deleted == False,
         ItemStatus.item_status == '예약중'
     ).order_by(Item.created_at.desc()).all()
-
-    completed_items = Item.query.join(ItemStatus).filter(
+    # 판매완료 목록에 구매자와 거래시간 표기 4월22일
+    completed_deals = Deal.query.join(Item).join(ItemStatus).filter(
         Item.user_id == user.id,
         Item.is_deleted == False,
-        ItemStatus.item_status == '판매완료'
-    ).order_by(Item.created_at.desc()).all()
+        ItemStatus.item_status == '판매완료',
+        Deal.deal_status == 'completed'
+    ).order_by(Deal.deal_datetime.desc()).all()
+
+    # 구매 이력 추가 4월22일
+    purchase_deals = Deal.query.filter(
+        Deal.buyer_id == user.id,
+        Deal.deal_status == 'completed'
+    ).order_by(Deal.deal_datetime.desc()).all()
 
     return render_template(
         'personal/transaction_history.html',
         user=user,
         selling_items=selling_items,
         reserved_items=reserved_items,
-        completed_items=completed_items,
+        completed_deals=completed_deals,
+        purchase_deals=purchase_deals,
     )
