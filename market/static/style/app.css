@@ -67,7 +67,7 @@ nav {
 .search-input-group {
     display: flex;
     width: 100%;
-    background-color: white;
+    background-color: #9C96F3; /* 검색 버튼 사이에 흰 선이 있어서 추가 */
     border: 3px solid #9C96F3;
     border-radius: 25px;
     overflow: hidden;
@@ -96,7 +96,7 @@ nav {
 
 /* 검색 버튼 효과 */
 .search-submit-btn:hover {
-    background-color: #9C96F3;
+    background-color: #8479ED;
 }
 
 /* 반응형 화면에서 상품 검색하기, 햄버거 메뉴 겹치지 않게 */

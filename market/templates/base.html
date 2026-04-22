@@ -1,4 +1,4 @@
-<!-- HTML 기본 베이스 4월15일 추가함 -->
+<!-- HTML 기본 베이스 4월22일 메세지 수신부 추가함 메세지를 Js가 읽을수있게 숨겨두는 역할을 함 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,6 +18,13 @@
 </head>
 <body>
     <!-- 공통 헤더 -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <input type="hidden" id="flask-message" value="{{ messages[0] }}">
+        {% endif %}
+    {% endwith %}
+
+
     {% include 'header.html' %}
 
     <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 3000; margin-top: 20px;">
