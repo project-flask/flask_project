@@ -129,7 +129,7 @@
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="card-body">
                             <div class="product-thumb">
-                                <img src="{{ product.images[0].image_url if product.images else url_for('static', filename='img/product.png') }}"
+                                <img src="{{ product.images[0].image_url if product.images else url_for('static', filename='img/default.png') }}"
                                     class="product-thumb-img" alt="{{ product.item_title }}">
                                 <div class="product-status-overlay">판매완료</div>
                             </div>
