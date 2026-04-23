@@ -424,7 +424,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         function fillEmptySlots() {
-            const currentCount = selectedFiles.length;
+            // preview-item 클래스를 가진 요소가 이미 몇 개 있는지 확인 (기존 이미지 포함 -> 수정할 때 에러나는 것 방지)
+            const currentCount = container.querySelectorAll('.preview-item').length;
             for (let i = currentCount; i < 10; i++) {
                 const empty = document.createElement('div');
                 empty.className = 'preview-item empty-slot';
@@ -454,27 +455,12 @@ document.addEventListener('DOMContentLoaded', function () {
         uploadForm.addEventListener('submit', function (e) {
             let isValid = true;
 
-            // 사진 업로드 체크
-            const errorImages = document.getElementById('error-images');
-
-            if (typeof selectedFiles === 'undefined' || selectedFiles.length === 0) {
-                isValid = false;
-
-                if (errorImages) {
-                    errorImages.innerText = '최소 1장의 사진을 등록해야 합니다.';
-                    errorImages.style.display = 'block';
-                }
-            }
-            else {
-                if (errorImages) errorImages.style.display = 'none';
-            }
-
             // 검사할 필드들 설정
             const fields = [
-                { name: 'title', msg: '상품명을 입력해주세요' },
-                { name: 'category', msg: '카테고리를 선택해주세요' },
-                { name: 'price', msg: '가격을 입력해주세요' },
-                { name: 'content', msg: '상세 설명을 입력해주세요' }
+                { name: 'title', msg: '상품명을 입력해주세요.' },
+                { name: 'category', msg: '카테고리를 선택해주세요.' },
+                { name: 'price', msg: '가격을 입력해주세요.' },
+                { name: 'content', msg: '상세 설명을 입력해주세요.' }
             ];
 
             // 텍스트 에러 테스트
@@ -482,12 +468,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 const input = this.querySelector(`[name="${field.name}"]`);
                 const errorDiv = document.getElementById(`error-${field.name}`);
 
-                if (!input.value || input.value.trim() === "" || input.value === "카테고리 선택") {
-                    isValid = false;
-                    input.classList.add('is-invalid');
-                    if (errorDiv) {
-                        errorDiv.innerText = field.msg;
-                        errorDiv.classList.add('show-error');
+                if (input) {
+                    const val = input.value.trim();
+                    if (!val || val === "" || (field.name === 'category' && val === "")) {
+                        isValid = false;
+                        input.classList.add('is-invalid');
+                        if (errorDiv) {
+                            errorDiv.innerText = field.msg;
+                            errorDiv.classList.add('show-error');
+                            errorDiv.style.display = 'block';
+                        }
                     }
                 }
             });
@@ -495,33 +485,27 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!isValid) {
                 e.preventDefault();
                 e.stopPropagation();
-                // 첫 번째 에러가 난 곳으로 포커스 이동
-                const firstError = this.querySelector('.is-invalid') || errorImages;
-                if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const firstError = this.querySelector('.is-invalid');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
             }
         });
 
         // 실시간 에러 제거
         uploadForm.querySelectorAll('.custom-input').forEach(input => {
-
-            // 글자 입력할 때
-            input.addEventListener('input', function() {
+            const clearError = function() {
                 this.classList.remove('is-invalid');
-                const errorDiv = document.getElementById(`error-${this.name}`);
+                const name = this.getAttribute('name');
+                const errorDiv = document.getElementById(`error-${name}`);
                 if (errorDiv) {
-                    errorDiv.classList.remove('show-error'); // 클래스 제거
+                    errorDiv.classList.remove('show-error');
+                    errorDiv.style.display = 'none';
                 }
-            });
-
-
-            // 카테고리 선택할 때
-            input.addEventListener('change', function() {
-                if(this.value !== "" && this.value !== "카테고리 선택") {
-                    this.classList.remove('is-invalid');
-                    const errorDiv = document.getElementById(`error-${this.name}`);
-                    if (errorDiv) errorDiv.classList.remove('show-error');
-                }
-            });
+            };
+            input.addEventListener('input', clearError);
+            input.addEventListener('change', clearError);
         });
     }
 
