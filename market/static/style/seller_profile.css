@@ -394,6 +394,32 @@
 .product-info {
     padding-top: 14px;
 }
+/* 상품정보 */
+.review-item-name {
+    color: #8f8ff7;
+    font-size: 13px;
+}
+
+/* 리뷰 구매자 닉네임 4월23일 */
+.reviewer-link {
+    color: #6f61f2;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.reviewer-link:hover {
+    text-decoration: underline;
+}
+
+/* 상품명,썸네일 4월23일 */
+.review-product-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.review-product-link:hover {
+    text-decoration: underline;
+}
 
 /* 빈 상태 박스 */
 .empty-box {

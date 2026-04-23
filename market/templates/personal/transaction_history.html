@@ -36,24 +36,22 @@
             <!-- 거래 상태 탭 버튼 디폴트는 구매 이력 4월22일-->
             <div class="history-summary">
 
-                <!--구매 이력 탭버튼 4월22일-->
-                <div class="summary-box" data-tab="purchaseTab">
+                <!-- 탭버튼 기능추가 4월23일-->
+                <div class="summary-box {% if tab == 'purchase' %}active{% endif %}" data-tab="purchaseTab">
                     <div class="summary-label">구매 이력</div>
                     <div class="summary-value">{{ purchase_deals|length }}</div>
                 </div>
 
-                <div class="summary-box" data-tab="completedTab">
+                <div class="summary-box {% if tab == 'completed' %}active{% endif %}" data-tab="completedTab">
                     <div class="summary-label">판매완료</div>
                     <div class="summary-value">{{ completed_deals|length }}</div>
                 </div>
-
             </div>
         </div>
     </div>
 
-    <!--구매 이력 탭 4월22일-->
-    <!-- 구매 이력 -->
-    <div class="history-section tab-panel" id="purchaseTab">
+    <!-- 구매 이력 4월23일-->
+    <div class="history-section tab-panel {% if tab == 'purchase' %}active{% endif %}" id="purchaseTab">
 
         <h5 class="section-title">🛍️ 구매 이력 <span class="section-count">({{ purchase_deals|length }})</span></h5>
 
@@ -143,8 +141,8 @@
     {% endif %}
 </div>
 
-    <!-- 판매완료 -->
-    <div class="history-section tab-panel" id="completedTab">
+    <!-- 판매완료 4월23일-->
+    <div class="history-section tab-panel {% if tab == 'completed' %}active{% endif %}" id="completedTab">
         <h5 class="section-title">
             ✅ 판매완료 상품
             <span class="section-count">({{ completed_deals|length }})</span>

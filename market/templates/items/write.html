@@ -30,22 +30,33 @@
                         <span class="text-muted">사진 등록</span>
                         <input type="file" id="images-input" name="images" multiple accept="image/*" style="display: none;">
                     </div>
-                    <div id="preview-container" class="preview-grid"></div>
+                    <div id="preview-container" class="preview-grid">
+                        {% if product and product.images %}
+                            {% for img in product.images %}
+                                <div class="preview-item existing-image" data-img-id="{{ img.id }}">
+                                    <img src="{{ img.image_url }}">
+                                    <button type="button" class="btn-remove" onclick="this.parentElement.remove(); fillEmptySlots();">×</button>
+                                    {% if loop.first %}<div class="main-badge">메인 이미지</div>{% endif %}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
 
                 <div class="info-section">
                     <div class="mb-4">
                         <label class="custom-label">상품명</label>
-                        <input type="text" class="form-control custom-input {% if '상품명' in errors|join %}is-invalid{% endif %}"
-                               name="title" value="{{ product.item_title if product else title or '' }}">
-                        <div class="invalid-feedback-custom {% if '상품명' in errors|join %}show-error{% endif %}" id="error-title">
+                        <input type="text" class="form-control custom-input {% if '상품명' in errors %}is-invalid{% endif %}"
+                               name="title" value="{{ product.item_title if product else title or '' }}" id="title"
+                               placeholder="상품명 입력">
+                        <div class="invalid-feedback-custom {% if '상품명' in errors %}show-error{% endif %}" id="error-title">
                             상품명을 입력해주세요.
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="custom-label">카테고리 선택</label>
-                        <select class="form-select custom-input {% if '카테고리' in errors|join %}is-invalid{% endif %}" name="category">
+                        <select class="form-select custom-input {% if '카테고리' in errors %}is-invalid{% endif %}" name="category" id="category">
                             <option value="" {% if not product and not category_id %}selected{% endif %} disabled>카테고리 선택</option>
                             {% for cat in categories %}
                             <option value="{{ cat.id }}" {% if (product and cat.id==product.category_id) or (category_id|default(0)|int == cat.id) %}selected{% endif %}>
@@ -53,29 +64,30 @@
                             </option>
                             {% endfor %}
                         </select>
-                        <div class="invalid-feedback-custom {% if '카테고리' in errors|join %}show-error{% endif %}" id="error-category">
-                            카테고리를 골라주세요.
+                        <div class="invalid-feedback-custom {% if '카테고리' in errors %}show-error{% endif %}" id="error-category">
+                            카테고리를 선택해주세요.
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="custom-label">가격</label>
                         <div class="input-group">
-                            <input type="number" class="form-control custom-input {% if '가격' in errors|join %}is-invalid{% endif %}"
-                                   name="price" value="{{ product.item_price if product else price or '' }}">
+                            <input type="number" class="form-control custom-input {% if '가격' in errors %}is-invalid{% endif %}"
+                                   name="price" value="{{ product.item_price if product else price or '' }}" id="price"
+                                   placeholder="가격 입력">
                             <span class="input-group-text custom-input">원</span>
                         </div>
-                        <div class="invalid-feedback-custom {% if '가격' in errors|join %}show-error{% endif %}" id="error-price">
+                        <div class="invalid-feedback-custom {% if '가격' in errors %}show-error{% endif %}" id="error-price">
                             가격을 입력해주세요.
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="custom-label">내용 입력</label>
-                        <textarea class="form-control custom-input {% if '상세 설명' in errors|join %}is-invalid{% endif %}"
-                                  name="content" rows="8">{{ product.item_description if product else content or '' }}</textarea>
-                        <div class="invalid-feedback-custom {% if '상세 설명' in errors|join %}show-error{% endif %}" id="error-content">
-                            상품 상세 설명을 적어주세요.
+                        <textarea class="form-control custom-input {% if '상세 설명' in errors %}is-invalid{% endif %}"
+                                  name="content" id="content" rows="8" placeholder="간단한 설명을 입력해주세요.">{{ product.item_description if product else content or '' }}</textarea>
+                        <div class="invalid-feedback-custom {% if '상세 설명' in errors %}show-error{% endif %}" id="error-content">
+                            상세 설명을 입력해주세요.
                         </div>
                     </div>
                 </div>
