@@ -30,7 +30,6 @@
         </div>
 
         <div class="profile-top">
-
             <!-- 프로필 이미지, 사용자 기본 정보 -->
             <div class="profile-left d-flex align-items-center">
                 <!--원형 프로필, 프로필이미지 변경하면 출력되게 수정4월17일 -->
@@ -177,18 +176,17 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="pagination-wrap" data-pagination-for="wish"></div>
+          </div>
+          {% endfor %}
+          </div>
+          <div class="pagination-wrap" data-pagination-for="wish"></div>
         {% else %}
-        <a href="{{ url_for('main.index') }}" class="empty-product-link">
-            <div class="empty-box">
-                찜한 상품이 없습니다.<br>
-                <strong>메인에서 상품을 둘러보세요</strong>
-            </div>
-        </a>
+            <a href="{{ url_for('main.index') }}" class="empty-product-link">
+                <div class="empty-box">
+                    찜한 상품이 없습니다.<br>
+                    <strong>메인에서 상품을 둘러보세요</strong>
+                </div>
+            </a>
         {% endif %}
     </div>
 
