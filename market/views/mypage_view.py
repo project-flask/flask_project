@@ -1,11 +1,10 @@
 # import 추가 4월21일 수정
 import os
 import re
-import uuid
+import shutil
 
 from flask import Blueprint, render_template, g, request, flash, redirect, url_for, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
-from werkzeug.utils import secure_filename
 from market import db
 from market.views.auth_view import login_required
 from market.models import Item, Favorite, Review, User, ItemStatus, Deal
@@ -91,15 +90,40 @@ def edit_profile():
 
             # 닉네임 바뀌었을 때 파일명 변경 예외처리
             if nickname_changed:
-                old_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'profiles', old_nickname)
-                new_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'profiles', new_nickname)
 
-                if os.path.exists(old_folder):
-                    os.rename(old_folder, new_folder)
+                # 프로필 폴더 경로
+                old_path = os.path.join(current_app.root_path, 'static', 'uploads', 'profiles', f"{old_nickname}")
+                new_path = os.path.join(current_app.root_path, 'static', 'uploads', 'profiles', f"{new_nickname}")
 
+                # 프로필 폴더 통째로 이름 변경
+                if os.path.exists(old_path) and not os.path.exists(new_path):
+                    try:
+                        shutil.move(old_path, new_path)
+                    except Exception as e:
+                        pass
+
+                # 상품 폴더 경로
+                old_products_path = os.path.join(current_app.root_path, 'static', 'uploads', 'products', old_nickname)
+                new_products_path = os.path.join(current_app.root_path, 'static', 'uploads', 'products', new_nickname)
+
+                # 상품 폴더 이름 변경
+                if os.path.exists(old_products_path) and not os.path.exists(new_products_path):
+                    try:
+                        shutil.move(old_products_path, new_products_path)
+                    except Exception as e:
+                        pass
+
+                # DB 내 이미지 경로 치환
                 if user.profile_image:
                     user.profile_image = user.profile_image.replace(f'/static/uploads/profiles/{old_nickname}/',
                                                                     f'/static/uploads/profiles/{new_nickname}/')
+                # 모든 상품 이미지 경로 치환
+                for item in user.items:
+                    for img in item.images:
+                        # 경로 중간에 있는 옛날 닉네임을 새 닉네임으로 변경
+                        if f'/products/{old_nickname}/' in img.image_url:
+                            img.image_url = img.image_url.replace(f'/static/uploads/products/{old_nickname}/',
+                                                                  f'/static/uploads/products/{new_nickname}/')
 
             # 변수저장
             user.nickname = new_nickname
@@ -110,7 +134,7 @@ def edit_profile():
             file = request.files.get('profile_image')
 
             if file and file.filename != '':
-                upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'profiles', new_nickname)
+                upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'profiles', f'{new_nickname}')
                 os.makedirs(upload_folder, exist_ok=True)
 
                 # 중복 방지
@@ -124,11 +148,12 @@ def edit_profile():
                 file.save(os.path.join(upload_folder, filename))
 
                 # DB에 웹 경로 업데이트
-                user.profile_image = f'/static/uploads/profiles/{new_nickname}/{filename}'
+                user.profile_image = (f'/static/uploads/profiles/{new_nickname}/{filename}')
 
             db.session.commit()
             flash('회원정보가 저장되었습니다.')
             return redirect(url_for('personal.my_page'))
+
     return render_template('personal/edit_profile.html', user=user)
 
 # 비밀번호 변경 페이지로 이동 4월 15일 생성

@@ -160,8 +160,15 @@ input[type="number"]::-webkit-inner-spin-button {
     font-weight: 500;
 }
 
+/* 에러 메시지가 나타날 때 스타일 */
+.invalid-feedback-custom.show-error {
+    display: block !important;
+    animation: fadeInError 0.3s ease-out;
+}
+
+/* 입력창 빨간 테두리 */
 .custom-input.is-invalid {
-    border-color: #ff6b6b !important;
+    border: 1.5px solid #dc3545 !important;
     background-color: #fffafa !important;
 }
 

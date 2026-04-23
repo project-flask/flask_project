@@ -59,16 +59,16 @@ def product_upload():
         errors = []
         # 상품 등록 시 빈 칸일 경우 메시지 출력
         if not title.strip():
-            errors.append("상품명을 입력해주세요")
+            errors.append("상품명")
 
         if not category_id:
-            errors.append("카테고리를 골라주세요")
+            errors.append("카테고리")
 
         if not price.strip():
-            errors.append("가격을 입력해주세요")
+            errors.append("가격")
 
         if not content.strip():
-            errors.append("상품 상세 설명을 적어주세요")
+            errors.append("상세 설명")
 
         if errors:
             # 입력 페이지로 이동
@@ -112,19 +112,23 @@ def product_upload():
             if 'images' in request.files:
                 files = request.files.getlist('images')
 
-                upload_path = os.path.join(current_app.root_path, 'static', 'uploads', f'{g.user.nickname}', f'{title}')
+                timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+                folder_name = f"{title}_{timestamp}"
+
+                upload_path = os.path.join(current_app.root_path, 'static', 'uploads', 'products', f'{g.user.nickname}', folder_name)
                 if not os.path.exists(upload_path):
-                    os.makedirs(upload_path)
+                    os.makedirs(upload_path, exist_ok=True)
 
                 for file in files:
                     if file and file.filename:
                         # 파일 이름 보안 처리
-                        filename = secure_filename(file.filename)
+                        #filename = secure_filename(file.filename)
+                        filename = file.filename
                         # 실제 서버 폴더에 저장
                         file.save(os.path.join(upload_path, filename))
 
                         # DB에 이미지 경로 기록 (ItemImage 모델 활용)
-                        web_path = f'/static/uploads/{g.user.nickname}/{title}/{filename}'
+                        web_path = f'/static/uploads/products/{g.user.nickname}/{folder_name}/{filename}'
                         new_img = ItemImage(item_id=new_item.id, image_url=web_path)
                         db.session.add(new_img)
 
@@ -367,49 +371,67 @@ def product_modify(item_id):
         category_id = request.form.get('category')
         price = request.form.get('price', '')
 
-        # 검증 (입력 안 했을 때 바로 밑에 빨간 글씨 뜨게 하려면 JS가 막아야 하지만 파이썬도 안전장치)
+        # 검증
         if not title.strip() or not category_id or not price.strip():
             flash("모든 항목을 입력해주세요!", "error")
             return render_template('items/write.html', product=product, categories=categories)
 
+        old_title = product.item_title
+        if old_title != title:
+            user_base_path = os.path.join(current_app.root_path, 'static', 'uploads', 'products', g.user.nickname)
+
+            if os.path.exists(user_base_path):
+                # 유저 폴더 안을 뒤져서 '기존상품명_타임스탬프'로 된 폴더를 찾아냄
+                for folder in os.listdir(user_base_path):
+                    if folder.startswith(f"{old_title}_"):
+                        old_folder_path = os.path.join(user_base_path, folder)
+                        # 폴더명에서 상품명 부분만 새 이름으로 교체 (타임스탬프는 유지)
+                        new_folder_name = folder.replace(old_title, title, 1)
+                        new_folder_path = os.path.join(user_base_path, new_folder_name)
+
+                        # 물리적 폴더 이름 변경 (이사 보내기)
+                        if not os.path.exists(new_folder_path):
+                            os.rename(old_folder_path, new_folder_path)
+
+                        for img in product.images:
+                            img.image_url = img.image_url.replace(f"/{folder}/", f"/{new_folder_name}/")
+
         # 닉네임 변경 시 기존 이미지 경로 이사 예외처리
         for img in product.images:
-            if f'/static/uploads/{g.user.nickname}/' not in img.image_url:
-                # 옛날 닉네임 부분을 현재 g.user.nickname으로 교체
-                # 예: /static/uploads/옛날닉네임/상품명/...
+            if f'/static/uploads/products/{g.user.nickname}/' not in img.image_url:
+                # 0423 수정: /static/uploads/products/옛날닉네임/상품명/... (프로필처럼 아이템폴더 새로 생성)
                 path_parts = img.image_url.split('/')
-                if len(path_parts) > 3:
-                    old_nickname = path_parts[3]
-                    img.image_url = img.image_url.replace(f'/uploads/{old_nickname}/', f'/uploads/{g.user.nickname}/')
+                if len(path_parts) > 4:
+                    old_nickname = path_parts[4]
+                    img.image_url = img.image_url.replace(f'/products/{old_nickname}/', f'/products/{g.user.nickname}/')
 
         product.item_title = title
         product.item_description = content
         product.category_id = int(category_id)
         product.item_price = int(str(price).replace(',', '').strip())
 
+        # 새 이미지 업로드 처리 (새 이미지를 새로 추가했을 때 작동)
         if 'images' in request.files:
             files = request.files.getlist('images')
 
-            # 현재 닉네임과 수정된 상품명으로 폴더 경로 설정
-            upload_path = os.path.join(current_app.root_path, 'static', 'uploads', f'{g.user.nickname}', f'{title}')
-            os.makedirs(upload_path, exist_ok=True)
+            # 파일이 실제로 업로드 되었을 때만 폴더 생성 및 DB 등록
+            if any(file and file.filename != '' for file in files):
+                timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+                folder_name = f"{title}_{timestamp}"
 
-            for file in files:
-                if file and file.filename != '':
-                    filename = file.filename
+                # 현재 닉네임과 수정된 상품명으로 폴더 경로 설정
+                upload_path = os.path.join(current_app.root_path, 'static', 'uploads', 'products', f'{g.user.nickname}', folder_name)
+                os.makedirs(upload_path, exist_ok=True)
 
-                    # 파일명 중복 체크
-                    save_path = os.path.join(upload_path, filename)
-                    if os.path.exists(save_path):
-                        filename = f"{datetime.now().strftime('%M%S')}_{filename}"
-                        save_path = os.path.join(upload_path, filename)
+                for file in files:
+                    if file and file.filename:
+                        filename = file.filename
+                        file.save(os.path.join(upload_path, filename))
 
-                    file.save(save_path)
-
-                    # DB에 새 이미지 정보 추가 - 기존 것은 유지하고 새 이미지 추가만
-                    web_path = f'/static/uploads/{g.user.nickname}/{title}/{filename}'
-                    new_img = ItemImage(item_id=product.id, image_url=web_path)
-                    db.session.add(new_img)
+                        # DB에 새 이미지 정보 추가 - 기존 것은 유지하고 새 이미지 추가만
+                        web_path = f'/static/uploads/products/{g.user.nickname}/{folder_name}/{filename}'
+                        new_img = ItemImage(item_id=product.id, image_url=web_path)
+                        db.session.add(new_img)
 
         db.session.commit()
         flash("수정이 완료되었습니다!", "success")
