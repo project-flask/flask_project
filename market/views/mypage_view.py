@@ -3,7 +3,7 @@ import os
 import re
 import uuid
 
-from flask import Blueprint, render_template, g, request, flash, redirect, url_for, current_app, session
+from flask import Blueprint, render_template, g, request, flash, redirect, url_for, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from market import db
@@ -13,12 +13,12 @@ from market.models import Item, Favorite, Review, User, ItemStatus, Deal
 # 경로 수정으로 인해 삭제 4월16일
 bp = Blueprint('personal', __name__, url_prefix='/personal')
 
-# 마이페이지 4월23일
+# 마이페이지 4월23일 2차수정
 @bp.route('/mypage/')
 @login_required
 def my_page():
     user = g.user
-    tab = session.pop('mypage_tab', 'product')
+    tab = request.args.get('tab', 'product')
     # 판매중인 상품수로 변경 4월20일
     products = Item.query.join(ItemStatus).filter(
         Item.user_id == user.id,
@@ -180,7 +180,7 @@ def favorite():
 def seller_profile(user_id):
     seller = User.query.get_or_404(user_id)
     print(f"판매자 이미지 경로: {seller.profile_image}")
-    tab = request.args.get('tab', 'products')
+    tab = request.args.get('tab', 'product')
 
     products = Item.query.join(ItemStatus).filter(
         Item.user_id == seller.id,
@@ -247,11 +247,12 @@ def update_status_message():
 
     return redirect(url_for('personal.my_page'))
 
-# 거래내역 페이지 4월20일 생성
+# 거래내역 페이지 탭구조 기능추가 4월23일 생성
 @bp.route('/transactions/')
 @login_required
 def transaction_history():
     user = g.user
+    tab = request.args.get('tab', 'purchase')
 
     selling_items = Item.query.join(ItemStatus).filter(
         Item.user_id == user.id,
@@ -286,4 +287,5 @@ def transaction_history():
         reserved_items=reserved_items,
         completed_deals=completed_deals,
         purchase_deals=purchase_deals,
+        tab=tab
     )

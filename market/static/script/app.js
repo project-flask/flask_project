@@ -532,16 +532,21 @@ document.addEventListener('DOMContentLoaded', function () {
         const tabPanels = document.querySelectorAll('.tab-panel');
 
         if (!tabButtons.length || !tabPanels.length) return;
-
+        // 새로고침해도 기존탭유지 맵핑 명칭 정리 4월23일 2차수정
+        const tabMap = {
+            productTab: 'product',
+            wishTab: 'wish',
+            reviewTab: 'review',
+            purchaseTab: 'purchase',
+            completedTab: 'completed'
+        };
         // 현재 active 버튼 찾기
         let activeButton = document.querySelector('.summary-box.active');
 
         // active가 없으면 첫 번째 탭을 기본으로 사용
         if (!activeButton) {
             activeButton = tabButtons[0];
-            if (activeButton) {
-                activeButton.classList.add('active');
-            }
+            if (activeButton) activeButton.classList.add('active');
         }
 
         // 초기 패널 세팅
@@ -558,10 +563,17 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        // 기존 클릭 이벤트
+        // 기존 클릭 이벤트 4월23일 수정 새로고침하면 기존 탭버튼 보이게
         tabButtons.forEach(function (button) {
             button.addEventListener('click', function () {
                 const targetId = button.dataset.tab;
+                const tabName = tabMap[targetId];
+
+                if (tabName) {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('tab', tabName);
+                    window.history.replaceState({}, '', url);
+                }
 
                 tabButtons.forEach(function (btn) {
                     btn.classList.remove('active');

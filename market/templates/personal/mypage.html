@@ -224,7 +224,7 @@
                     {% if review.deal.items.images %}
                     <img src="{{ review.deal.items.images[0].image_url }}" class="purchase-thumb-img">
                     {% else %}
-                    <img src="{{ url_for('static', filename='img/default_product.png') }}" class="purchase-thumb-img">
+                    <img src="{{ url_for('static', filename='img/default.png') }}" class="purchase-thumb-img">
                     {% endif %}
                     </a>
                     {% elif review.deal and review.deal.items and review.deal.items.is_deleted %}
