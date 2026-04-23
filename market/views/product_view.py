@@ -197,6 +197,7 @@ def remove_favorite(item_id):
 
     # 삭제 후 다시 찜목록으로 1번만 이동 4월23일
     session['mypage_tab'] = 'wish'
+    
     return redirect(url_for('personal.my_page'))
 
 # PDP.html 상품 상태 게시글 업로드 유저만 수정 가능하고 이외의 유저는 수정 불가능 함수 4월21일 수정

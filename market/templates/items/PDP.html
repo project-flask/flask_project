@@ -1,6 +1,9 @@
 {% extends "base.html" %}
+
+<!--4월23일 링크 추가함-->
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='style/PDP.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
@@ -102,13 +105,15 @@
                     문의하기
                 </button>
 
+                <!--4월23일 코드 span부분 수정-->
                 <a href="{{ url_for('items.toggle_favorite', item_id=product.id) }}" class="text-decoration-none">
                     <button type="button" id="wishlist-btn"
                         class="btn btn-outline-danger d-flex align-items-center justify-content-center"
                         style="width: 60px; height: 60px; border-radius: 8px;">
                         <span id="wish-icon" style="font-size: 24px;">
-                            {# 서버에서 넘겨받은 is_wished 값에 따라 하트 색상 결정 #}
-                            {% if is_wished %}❤️{% else %}🖤{% endif %}
+                            {% if is_wished %}
+                            <i class="fas fa-heart" style="color: #ff6b6b;"></i> {% else %}
+                            <i class="fas fa-heart" style="color: #9C96F3;"></i> {% endif %}
                         </span>
                     </button>
                 </a>
@@ -192,8 +197,7 @@
         <div class="d-flex align-items-center py-4 border-bottom">
             <div class="seller-profile-circle">
                 {% if product.seller.profile_image %}
-                    <img src="{{ product.seller.profile_image }}"
-                         alt="프로필" class="seller-profile-img">
+                <img src="{{ product.seller.profile_image }}" alt="프로필" class="seller-profile-img">
                 {% else %}
                 <span class="default-profile-text">
                     {{ (product.seller.nickname or "U")[0] | upper }}

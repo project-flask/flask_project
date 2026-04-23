@@ -110,6 +110,49 @@
     margin-top: 20px;
 }
 
+/* 게시글 삭제하기 버튼 (기본 상태) 4월23일 추가*/
+.btn-outline-danger {
+    border-color: #ffc9c9; /* 테두리도 살짝 부드러운 빨강 */
+    color: #ff6b6b;        /* 글자색도 조금 연한 빨강 */
+}
+
+/* 마우스를 올렸을 때 (Hover) 색상 조정 4월23일 추가*/
+.btn-outline-danger:hover {
+    background-color: #fff5f5 !important; /* 배경을 아주 연한 핑크로 */
+    border-color: #ffc9c9 !important;     /* 테두리 유지 */
+    color: #ff6b6b !important;            /* 글자색 유지 */
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.1); /* 미세한 그림자 추가 */
+}
+
+/* 게시글 수정하기 버튼 (기본 상태) 4월23일 추가*/
+.btn-outline-secondary {
+    border-color: #d1cff9; /* 테두리를 연한 보라색으로 */
+    color: #9C96F3;        /* 글자색을 테마 색상으로 */
+}
+
+/* 마우스를 올렸을 때 (Hover) 색상 조정  4월23일 추가*/
+.btn-outline-secondary:hover {
+    background-color: #f4f3ff !important; /* 배경을 아주 연한 보라색으로 */
+    border-color: #9C96F3 !important;     /* 테두리를 테마 색상으로 */
+    color: #8a83e6 !important;            /* 글자색을 살짝 진한 보라색으로 */
+    box-shadow: 0 4px 12px rgba(156, 150, 243, 0.15); /* 부드러운 그림자 */
+}
+
+/* 하트 버튼 테두리와 기본 상태를 보라색으로 변경 4월 23일 추가 */
+#wishlist-btn.btn-outline-danger {
+    border-color: #9C96F3 !important; /* 테두리 보라색 */
+    color: #9C96F3 !important;        /* 내부 아이콘/글자 보라색 */
+    background-color: transparent;
+    transition: 0.3s;
+}
+
+/* 마우스 올렸을 때 배경색과 테두리 유지  4월 23일 추가*/
+#wishlist-btn.btn-outline-danger:hover {
+    background-color: #f4f3ff !important; /* 연한 보라색 배경 */
+    border-color: #9C96F3 !important;
+    color: #8a83e6 !important;            /* 마우스 올리면 아이콘 색상 살짝 진하게 */
+}
+
 /* 댓글 영역 */
 .comment-list-wrap {
     max-width: 700px;

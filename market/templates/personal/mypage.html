@@ -100,9 +100,7 @@
                 </div>
             </div>
         </div>
-
     </div>
-
 
     <!-- 판매 중인 상품 탭 상태 active 수정 4월23일-->
     <div class="mypage-section tab-panel {% if tab == 'product' %}active{% endif %}" id="productTab">
@@ -169,7 +167,6 @@
                             <p class="card-text fw-bold text-danger">
                                 {{ "{:,}원".format(wish.items.item_price) }}
                             </p>
-
                             <form method="post" action="{{ url_for('items.remove_favorite', item_id=wish.items.id) }}">
                                 <button class="favorite-remove-btn" type="submit">찜 취소</button>
                             </form>
