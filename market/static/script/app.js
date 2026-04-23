@@ -731,7 +731,7 @@ function showToast(message) {
 
     const toastId = 'toast_' + Date.now();
     const toastHTML = `
-        <div id="${toastId}" class="toast align-items-center text-white border-0 show" role="alert" 
+        <div id="${toastId}" class="toast align-items-center text-white border-0 show" role="alert"
              style="background-color: #CCCCFF; border-radius: 12px; min-width: 250px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
             <div class="d-flex">
                 <div class="toast-body text-center w-100">

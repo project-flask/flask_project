@@ -427,9 +427,12 @@
 }
 
 /* 상품 정보 영역 */
-/* 이미지 아래 정보 정렬용 4월16일 수정 */
+/* 이미지 아래 정보 정렬용 4월23일 수정 */
 .product-info {
     padding-top: 14px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 /* 찜 취소 버튼 */
@@ -510,6 +513,27 @@
 .review-text {
     flex: 1;
     min-width: 0;
+}
+
+/* 리뷰 구매자 닉네임 4월23일 */
+.reviewer-link {
+    color: #6f61f2;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.reviewer-link:hover {
+    text-decoration: underline;
+}
+
+/* 상품명,썸네일 4월23일 */
+.review-product-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.review-product-link:hover {
+    text-decoration: underline;
 }
 
 /* 리뷰 영역 최대 2줄만 표시되게 수정 4월 16일 */

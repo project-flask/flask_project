@@ -15,8 +15,7 @@
             <div class="history-profile-left">
                 <div class="avatar-circle">
                     {% if user.profile_image %}
-                    <img src="{{ url_for('static', filename='uploads/profiles/' + user.profile_image) }}"
-                        class="avatar-img" alt="사용자 프로필 이미지">
+                    <img src="{{ user.profile_image }}" class="avatar-img" alt="사용자 프로필 이미지">
                     {% else %}
                     {{ (user.nickname or "U")[0] | upper }}
                     {% endif %}
