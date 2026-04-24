@@ -51,7 +51,8 @@
                                 </div>
                                 <div class="product-info p-3 text-center">
                                     <div class="fw-bold text-truncate mb-1">{{ product.item_title }}</div>
-                                    <div class="fw-bold text-muted">
+                                    <!--검색버튼을 누르면 가격크기가 커져서 fw-bold 삭제 4월24일-->
+                                    <div class="text-muted">
                                         {{ "{:,}원".format(product.item_price) }}
                                     </div>
                                 </div>

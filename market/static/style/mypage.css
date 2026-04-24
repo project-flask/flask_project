@@ -354,8 +354,7 @@
     display: block;
 }
 
-/* 상품 / 찜 카드 공통 */
-/* 상품 등록시 나올 디자인 4월15일 */
+/* 상품 / 찜 카드 공통 4월24일*/
 .card.h-100.border-0.shadow-sm {
     border: 1px solid #f0eefb !important;
     border-radius: 18px !important;
@@ -369,48 +368,25 @@
     box-shadow: 0 14px 28px rgba(124, 111, 246, 0.12) !important;
 }
 
-.card-title a:hover {
-    color: #6f61f2 !important;
-}
-
-.card-text.fw-bold.text-primary,
-.card-text.fw-bold.text-danger {
-    color: #6f61f2 !important;
-}
-
-.mypage-card {
-    border: none;
-    border-radius: 14px;
-    background-color: #ffffff;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.mypage-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 18px rgba(171, 171, 250, 0.12);
-}
-
-/* 상품 a태그 css 추가 4월17일 수정 */
 .product-card-link {
     display: block;
     color: inherit;
     text-decoration: none;
 }
 
-/* 상품 목록 grid 4월21일 */
 .product-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
 }
 
-/* 페이지네이션용 기본 숨김 4월21일 */
+/* 페이지네이션용 기본 숨김 */
 .product-card-item,
 .review-page-item {
     display: none;
 }
 
-/* 상품 이미지 박스 */
+/* 상품 이미지 */
 .product-thumb {
     width: 100%;
     height: 180px;
@@ -426,8 +402,7 @@
     display: block;
 }
 
-/* 상품 정보 영역 */
-/* 이미지 아래 정보 정렬용 4월23일 수정 */
+/* 상품 정보 */
 .product-info {
     padding-top: 14px;
     display: flex;
@@ -435,22 +410,46 @@
     height: 100%;
 }
 
-/* 찜 취소 버튼 */
-/* 크기세부조절 4월15일 */
-.favorite-remove-btn {
+.card-text.fw-bold.text-primary,
+.card-text.fw-bold.text-danger {
+    color: #6f61f2 !important;
+}
+
+/* 찜 목록 하트 버튼 */
+#wishTab .wish-card-body {
+    position: relative;
+}
+
+#wishTab .wish-remove-form {
+    position: absolute;
+    right: 14px;
+    bottom: 18px;
+    margin: 0;
+    padding: 0;
+}
+
+#wishTab .favorite-remove-btn {
+    width: 42px;
+    height: 42px;
     background-color: #f4f2ff;
-    color: #6f61f2;
     border: 1px solid #ddd6ff;
     border-radius: 10px;
-    font-size: 13px;
-    font-weight: 700;
-    padding: 6px 12px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.favorite-remove-btn:hover {
+#wishTab .favorite-remove-btn i {
+    font-size: 16px;
+    color: #ff6b6b;
+    transition: color 0.2s ease;
+}
+
+#wishTab .favorite-remove-btn:hover {
     background-color: #6f61f2;
-    color: white;
     border-color: #6f61f2;
 }
 

@@ -25,8 +25,10 @@ def my_page():
         ItemStatus.item_status == '판매중'
     ).order_by(Item.created_at.desc()).all()
 
-    wishes = Favorite.query.filter_by(user_id=user.id)\
-        .order_by(Favorite.created_at.desc()).all()
+    wishes = Favorite.query.join(Item).filter(
+        Favorite.user_id == user.id,
+        Item.is_deleted == False
+    ).order_by(Favorite.created_at.desc()).all()
 
     reviews = Review.query.filter_by(target_user_id=user.id)\
         .order_by(Review.created_at.desc()).all()
