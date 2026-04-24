@@ -1,9 +1,10 @@
 <!-- HTML 기본 베이스 4월22일 메세지 수신부 추가함 메세지를 Js가 읽을수있게 숨겨두는 역할을 함 -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}REBORN</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/reborn_logo.png') }}">
 
@@ -16,25 +17,32 @@
     {% block extra_css %}
     {% endblock %}
 </head>
+
 <body>
-    <!-- 공통 헤더 -->
-    {% with messages = get_flashed_messages() %}
+    <!--4월24일 수정-->
+    <div id="wrapper">
+        <!-- 공통 헤더 -->
+        {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <input type="hidden" id="flask-message" value="{{ messages[0] }}">
+        <input type="hidden" id="flask-message" value="{{ messages[0] }}">
         {% endif %}
-    {% endwith %}
+        {% endwith %}
 
 
-    {% include 'header.html' %}
+        {% include 'header.html' %}
 
-    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 3000; margin-top: 20px;">
+        <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3"
+            style="z-index: 3000; margin-top: 20px;">
+        </div>
+        <!-- 컨텐츠 영역 4월 24일 수정-->
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        {% include 'footer.html' %}
+
     </div>
-    <!-- 컨텐츠 영역 -->
-    {% block content %}
-
-    {% endblock %}
-
-    {% include 'footer.html' %}
 
     <!-- bootstrap JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
@@ -44,4 +52,5 @@
     {% block script %}
     {% endblock %}
 </body>
+
 </html>

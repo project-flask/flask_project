@@ -37,7 +37,7 @@
     position: absolute;
     bottom: 15px;
     right: 15px;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     color: white;
     padding: 2px 10px;
     border-radius: 10px;
@@ -113,45 +113,99 @@
 
 /* 게시글 삭제하기 버튼 (기본 상태) 4월23일 추가*/
 .btn-outline-danger {
-    border-color: #ffc9c9; /* 테두리도 살짝 부드러운 빨강 */
-    color: #ff6b6b;        /* 글자색도 조금 연한 빨강 */
+    border-color: #ffc9c9;
+    /* 테두리도 살짝 부드러운 빨강 */
+    color: #ff6b6b;
+    /* 글자색도 조금 연한 빨강 */
 }
 
 /* 마우스를 올렸을 때 (Hover) 색상 조정 4월23일 추가*/
 .btn-outline-danger:hover {
-    background-color: #fff5f5 !important; /* 배경을 아주 연한 핑크로 */
-    border-color: #ffc9c9 !important;     /* 테두리 유지 */
-    color: #ff6b6b !important;            /* 글자색 유지 */
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.1); /* 미세한 그림자 추가 */
+    background-color: #fff5f5 !important;
+    /* 배경을 아주 연한 핑크로 */
+    border-color: #ffc9c9 !important;
+    /* 테두리 유지 */
+    color: #ff6b6b !important;
+    /* 글자색 유지 */
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.1);
+    /* 미세한 그림자 추가 */
 }
 
 /* 게시글 수정하기 버튼 (기본 상태) 4월23일 추가*/
 .btn-outline-secondary {
-    border-color: #d1cff9; /* 테두리를 연한 보라색으로 */
-    color: #9C96F3;        /* 글자색을 테마 색상으로 */
+    border-color: #d1cff9;
+    /* 테두리를 연한 보라색으로 */
+    color: #9C96F3;
+    /* 글자색을 테마 색상으로 */
 }
 
 /* 마우스를 올렸을 때 (Hover) 색상 조정  4월23일 추가*/
 .btn-outline-secondary:hover {
-    background-color: #f4f3ff !important; /* 배경을 아주 연한 보라색으로 */
-    border-color: #9C96F3 !important;     /* 테두리를 테마 색상으로 */
-    color: #8a83e6 !important;            /* 글자색을 살짝 진한 보라색으로 */
-    box-shadow: 0 4px 12px rgba(156, 150, 243, 0.15); /* 부드러운 그림자 */
+    background-color: #f4f3ff !important;
+    /* 배경을 아주 연한 보라색으로 */
+    border-color: #9C96F3 !important;
+    /* 테두리를 테마 색상으로 */
+    color: #8a83e6 !important;
+    /* 글자색을 살짝 진한 보라색으로 */
+    box-shadow: 0 4px 12px rgba(156, 150, 243, 0.15);
+    /* 부드러운 그림자 */
 }
 
 /* 하트 버튼 테두리와 기본 상태를 보라색으로 변경 4월 23일 추가 */
 #wishlist-btn.btn-outline-danger {
-    border-color: #9C96F3 !important; /* 테두리 보라색 */
-    color: #9C96F3 !important;        /* 내부 아이콘/글자 보라색 */
+    border-color: #9C96F3 !important;
+    /* 테두리 보라색 */
+    color: #9C96F3 !important;
+    /* 내부 아이콘/글자 보라색 */
     background-color: transparent;
     transition: 0.3s;
 }
 
 /* 마우스 올렸을 때 배경색과 테두리 유지  4월 23일 추가*/
 #wishlist-btn.btn-outline-danger:hover {
-    background-color: #f4f3ff !important; /* 연한 보라색 배경 */
+    background-color: #f4f3ff !important;
+    /* 연한 보라색 배경 */
     border-color: #9C96F3 !important;
-    color: #8a83e6 !important;            /* 마우스 올리면 아이콘 색상 살짝 진하게 */
+    color: #8a83e6 !important;
+    /* 마우스 올리면 아이콘 색상 살짝 진하게 */
+}
+
+/* 답변 버튼 4월24일 추가 */
+.btn-reply-custom {
+    width: 48px;
+    /* 가로 길이를 삭제 버튼과 동일하게 고정 */
+    height: 26px;
+    /* 세로 길이 고정 */
+    padding: 0 !important;
+    /* 안쪽 여백 때문에 커지는 것 방지 */
+    font-size: 12px;
+    /* 글자 크기 조절 */
+    line-height: 24px;
+    /* 글자를 수직 중앙에 배치 */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-width: 1px;
+    /* 테두리 두께 일치 */
+    transition: all 0.2s;
+    background-color: transparent;
+}
+
+/* 마우스 올렸을 때 연한 파란색 효과 4월24일 추가 */
+.btn-reply-custom:hover {
+    background-color: #e7f1ff !important;
+    color: #007bff !important;
+    border-color: #007bff !important;
+}
+
+/* 답변 영역 스타일 4월24일 추가 */
+.reply-section {
+    background-color: #f8f9fa;
+    /* 아주 연한 회색 배경 */
+    border-left: 3px solid #007bff;
+    /* 파란색 선으로 '답변'임을 강조 */
+    margin-left: 20px;
+    /* 살짝 들여쓰기 해서 구분감 주기 */
 }
 
 /* 댓글 영역 */
@@ -181,13 +235,14 @@
 }
 
 
-/* 댓글 등록 버튼 (4월 20일 색상 반영) */
+/* 댓글 등록 버튼 */
 .btn-comment-submit {
     background-color: #9C96F3;
     color: white;
     border: none;
     padding: 8px 0;
-    width: 100%; /* 범용성을 위해 100%로 수정, 부모에서 조절 가능 */
+    width: 100%;
+    /* 범용성을 위해 100%로 수정, 부모에서 조절 가능 */
     max-width: 550px;
     border-radius: 30px;
     font-weight: bold;
@@ -283,11 +338,17 @@
 
 .product-status-overlay {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     color: #FFFFFF;
-    font-weight: bold; font-size: 16px;
-    display: flex; justify-content: center; align-items: center;
+    font-weight: bold;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     z-index: 5;
 }
 

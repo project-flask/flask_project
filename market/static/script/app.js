@@ -208,16 +208,16 @@ document.addEventListener('DOMContentLoaded', function () {
             // 3. 서버 에러 시 사라졌던 메시지창이 없으면 새로 생성
             if (msgId) {
                 let msgElement = document.getElementById(msgId);
-                if (!msgElement){
+                if (!msgElement) {
                     const newDiv = document.createElement('div');
                     newDiv.id = msgId;
                     newDiv.className = "check-msg";
                     inputElement.parentNode.insertBefore(newDiv, inputElement.nextSibling);
                 }
-                } else {
-                    msgElement.innerText = ""; // 오류 뜨고나서는 중복체크가 안돼서 추가 4/22
-                }
-            });
+            } else {
+                msgElement.innerText = ""; // 오류 뜨고나서는 중복체크가 안돼서 추가 4/22
+            }
+        });
 
         // 입력 완료 -> 포커스 나갈 때 중복 체크 실행
         inputElement.addEventListener('blur', function () {
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // 상품 이미지 페이지네이션 기능, 상품 삭제 시 alert ( PDP.html ) 4월20일 코드 수정
+    // 상품 이미지 페이지네이션 기능, 상품 삭제 시 alert ( PDP.html )
     const slides = document.querySelectorAll('.p-detail-img');
     const slideNum = document.getElementById('slideNum');
     let slideIdx = 0;
@@ -362,6 +362,18 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.style.display = 'none';
         }
     };
+
+    // 답변 입력창 토글 함수 (4월 24일 추가)
+window.toggleReplyForm = function (commentId) {
+    const form = document.getElementById(`reply-form-${commentId}`);
+    if (form) {
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
+};
 
     // 상품 업로드 페이지 사진 업로드 구간 기능 ( write.html )
     const input = document.getElementById('images-input');
@@ -495,7 +507,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 실시간 에러 제거
         uploadForm.querySelectorAll('.custom-input').forEach(input => {
-            const clearError = function() {
+            const clearError = function () {
                 this.classList.remove('is-invalid');
                 const name = this.getAttribute('name');
                 const errorDiv = document.getElementById(`error-${name}`);
@@ -687,10 +699,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     // 구매이력 페이지네이션 4월22일
     initPagedList({
-    listSelector: '.paged-purchase-list',
-    itemSelector: '.purchase-page-item',
-    pageSize: 5,
-    displayType: 'flex'
+        listSelector: '.paged-purchase-list',
+        itemSelector: '.purchase-page-item',
+        pageSize: 5,
+        displayType: 'flex'
     });
 
     initPagedList({

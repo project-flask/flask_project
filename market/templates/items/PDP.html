@@ -145,26 +145,94 @@
         </div>
     </section>
 
-     <div class="comment-list-wrap my-5">
-        <h5 class="border-bottom py-3 fw-bold text-dark">{{ product.comment_set|length }}개의 댓글이 있습니다.</h5>
+    <!--4월24일 코드 수정함-->
+    <div class="comment-list-wrap my-5">
+        <h5 class="border-bottom py-3 fw-bold text-dark">{{ product.comment_set | selectattr("parent_id", "none") | list | length }}개의 댓글이 있습니다.</h5>
         <div id="comment-container">
-            {% for comment in product.comment_set %}
+            {% for comment in product.comment_set if not comment.parent_id %}
             <div class="card my-3 shadow-sm comment-card-box comment-item"
                 style="display: {{ 'block' if loop.index <= 5 else 'none' }};">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
-                            <span class="badge bg-white text-dark comment-user-info">👤 {{ comment.user.username
-                                }}</span>
+                            <a href="{{ url_for('items.user_items', user_id=comment.user.id) }}"
+                                class="text-decoration-none">
+                                <span class="badge bg-white text-dark comment-user-info" style="cursor: pointer;">
+                                    👤 {{ comment.user.nickname }}
+                                </span>
+                            </a>
                             <small class="text-muted ms-2">{{ comment.create_date | format_datetime }}</small>
                         </div>
-                        {% if g.user == comment.user %}
-                        <a href="javascript:void(0)"
-                            onclick="confirmDelete('{{ url_for('items.comment_delete', comment_id=comment.id) }}')"
-                            class="btn btn-sm btn-outline-danger btn-comment-delete">삭제</a>
+
+                        <!--4월24일 코드 수정함-->
+                        <div class="d-flex gap-2">
+                            {# 추가: 판매자일 때만 보이는 답변 버튼 #}
+                            {% if g.user == product.seller %}
+                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill btn-reply-custom"
+                                onclick="toggleReplyForm('{{ comment.id }}')">답변</button>
+                            {% endif %}
+
+                            {# 기존 삭제 버튼 #}
+                            {% if g.user == comment.user %}
+                            <a href="javascript:void(0)"
+                                onclick="confirmDelete('{{ url_for('items.comment_delete', comment_id=comment.id) }}')"
+                                class="btn btn-sm btn-outline-danger btn-comment-delete">삭제</a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                     <!-- 4월24일 코드 수정함-->
+                    {# --- [질문 내용 영역] --- #}
+                    <div class="card-text text-secondary">
+                        {% if comment.is_private %}
+                            {% if g.user == comment.user or g.user == product.seller %}
+                                {# 비밀글 권한 있음 #}
+                                <div class="mt-2">
+                                    <span class="text-primary fw-bold d-block mb-1">
+                                        <i class="fas fa-lock-open"></i> [비밀문의]
+                                    </span>
+                                    <div class="text-dark">{{ comment.content }}</div>
+                                </div>
+                            {% else %}
+                                {# 비밀글 권한 없음 #}
+                                <div class="mt-2">
+                                    <span class="text-muted"><i class="fas fa-lock"></i> 작성자와 판매자만 볼 수 있는 비밀글입니다.</span>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            {# 일반글 #}
+                            <div class="text-dark mt-2">{{ comment.content }}</div>
+                        {% endif %}
+                        {# ↑ 여기서 모든 질문(비밀/일반) 조건문이 완전히 끝납니다. #}
+
+                        {# --- [답변 출력 영역: 여기서 딱 한 번만 실행] --- #}
+                        {% if comment.replies %}
+                            {# 일반글이거나, 비밀글인데 권한이 있는 경우에만 답변 노출 #}
+                            {% if not comment.is_private or (g.user == comment.user or g.user == product.seller) %}
+                                {% for reply in comment.replies %}
+                                <div class="mt-3 p-3 rounded-3" style="background-color: #f8f9fa; border-left: 4px solid #9C96F3;">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <span class="badge me-2" style="background-color: #9C96F3;">판매자 답변</span>
+                                        <small class="text-muted">{{ reply.create_date | format_datetime }}</small>
+                                    </div>
+                                    <div class="text-dark">{{ reply.content }}</div>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
                         {% endif %}
                     </div>
-                    <div class="card-text text-secondary">{{ comment.content }}</div>
+
+                    <div id="reply-form-{{ comment.id }}" class="mt-3"
+                        style="display: none; padding: 0 20px 20px 20px;">
+                        <form action="{{ url_for('items.reply_create', comment_id=comment.id) }}" method="post">
+                            <div class="input-group">
+                                <textarea name="content" class="form-control" rows="2"
+                                    placeholder="판매자 답변을 입력하세요..."></textarea>
+                                <button type="submit" class="btn btn-primary"
+                                    style="background-color: #9C96F3; border: none;">등록</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -177,19 +245,28 @@
         </div>
         {% endif %}
 
+        <!--4월24일 코드 수정-->
         <form action="{{ url_for('items.comment_create', item_id=product.id) }}" method="post" class="mt-4"
             id="comment-form" style="display: none;">
+
             <div class="mb-3">
                 <textarea name="content" id="content" class="form-control comment-input-area" rows="2"
                     placeholder="판매자에게 궁금한 점을 남겨보세요."></textarea>
             </div>
+
+            <div class="form-check mb-3 text-start d-inline-block" style="margin-left: 10px;">
+                <input class="form-check-input custom-check" type="checkbox" name="is_private" id="is_private">
+                <label class="form-check-label text-muted small" for="is_private" style="cursor: pointer;">
+                    🔒 비밀글로 문의하기 (판매자와 작성자만 볼 수 있습니다)
+                </label>
+            </div>
+
             <div class="text-center">
                 <button type="submit" class="btn btn-comment-submit">댓글 등록</button>
             </div>
         </form>
     </div>
 </div>
-
 <section class="seller-info-divider">
     <div class="container">
         <div class="d-flex align-items-center py-4 border-bottom">

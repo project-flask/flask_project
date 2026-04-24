@@ -317,24 +317,59 @@ def product_statuses(item_status_id):
                            item_status_id = item_status_id, title = "거래 가능 상품", product_list=items, all_categories=all_categories)
 
 
+# 4월24일 코드수정
 @bp.route('/comment/create/<int:item_id>', methods=('POST',))
 @login_required
 def comment_create(item_id):
     product = Item.query.get_or_404(item_id)
     content = request.form.get('content')
+    # 비밀글 체크박스 값 가져오기 (체크되면 'on'으로 들어옴)
+    is_private = True if request.form.get('is_private') else False
 
     if content:
         comment = Comment(
             content=content,
-            create_date=datetime.utcnow(),
+            create_date=datetime.now(),
             items=product,
-            user=g.user
+            user=g.user,
+            is_private = is_private  # 비밀글 여부 저장
         )
 
         db.session.add(comment)
         db.session.commit()
 
     return redirect(url_for('items.product_details', item_id=item_id))
+
+
+# --- 판매자 답변 등록 (4월 24일 추가) ---
+@bp.route('/reply/create/<int:comment_id>', methods=('POST',))
+@login_required
+def reply_create(comment_id):
+    # 1. 답변을 달 부모 댓글을 가져옴
+    parent_comment = Comment.query.get_or_404(comment_id)
+
+    # 2. 보안 체크: 이 상품의 판매자만 답변을 달 수 있음
+    if g.user != parent_comment.items.seller:
+        flash('판매자만 답변을 등록할 수 있습니다.')
+        return redirect(url_for('items.product_details', item_id=parent_comment.item_id))
+
+    content = request.form.get('content')
+    if content:
+        reply = Comment(
+            content=content,
+            create_date=datetime.now(),
+            item_id=parent_comment.item_id,  # 질문과 같은 상품 연결
+            user=g.user,  # 답변자 (판매자)
+            parent_id=comment_id,  # [핵심] 부모 댓글 ID 연결
+            is_private=parent_comment.is_private  # 질문이 비밀글이면 답변도 비밀글로 설정
+        )
+        db.session.add(reply)
+        db.session.commit()
+        flash('답변이 등록되었습니다.')
+    else:
+        flash('답변 내용을 입력해주세요.')
+
+    return redirect(url_for('items.product_details', item_id=parent_comment.item_id))
 
 
 @bp.route('/comment/delete/<int:comment_id>')
