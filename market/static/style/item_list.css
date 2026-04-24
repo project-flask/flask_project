@@ -98,3 +98,10 @@
 .category-link:hover {
     color: #8479ED;
 }
+
+/* 글씨 색상 4월24일 */
+.product-info .text-muted {
+    color: #6f61f2 !important;
+    font-size: 0.9rem;
+    font-weight: 400;
+}

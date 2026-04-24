@@ -115,3 +115,9 @@
     color: #ccc;
     border-color: #eee;
 }
+
+/* 글씨 색상 4월24일 */
+.text-muted {
+    color: #6f61f2 !important;
+    font-weight: bold;
+}

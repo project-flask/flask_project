@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='style/mypage.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 {% block content %}
 
@@ -151,97 +152,104 @@
             {% for wish in wishes %}
             <div class="product-card-item">
                 <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="product-thumb">
-                            {% if wish.items and wish.items.images %}
-                            <img src="{{ wish.items.images[0].image_url }}" class="product-thumb-img"
-                                alt="{{ wish.items.item_title }}">
-                            {% else %}
-                            <img src="{{ url_for('static', filename='img/default.png') }}"
-                                class="product-thumb-img" alt="찜이미지">
-                            {% endif %}
-                        </div>
+                    <div class="card-body wish-card-body">
+                        <a href="{{ url_for('items.product_details', item_id=wish.items.id) }}"
+                            class="product-card-link text-decoration-none">
+                                <div class="product-thumb">
+                                    {% if wish.items and wish.items.images %}
+                                    <img src="{{ wish.items.images[0].image_url }}" class="product-thumb-img"
+                                        alt="{{ wish.items.item_title }}">
+                                    {% else %}
+                                    <img src="{{ url_for('static', filename='img/default.png') }}" class="product-thumb-img"
+                                        alt="찜이미지">
+                                    {% endif %}
+                                </div>
 
-                        <div class="product-info">
-                            <h6 class="card-title mb-1 text-truncate">{{ wish.items.item_title }}</h6>
-                            <p class="card-text fw-bold text-danger">
-                                {{ "{:,}원".format(wish.items.item_price) }}
-                            </p>
-                            <form method="post" action="{{ url_for('items.remove_favorite', item_id=wish.items.id) }}">
-                                <button class="favorite-remove-btn" type="submit">찜 취소</button>
-                            </form>
-                        </div>
-                    </div>
+                                <div class="product-info">
+                                    <h6 class="card-title mb-1 text-truncate">{{ wish.items.item_title }}</h6>
+                                    <p class="card-text fw-bold text-danger">
+                                        {{ "{:,}원".format(wish.items.item_price) }}
+                                    </p>
+                                </div>
+                        </a>
+                        <form method="post" action="{{ url_for('items.remove_favorite', item_id=wish.items.id) }}" class="wish-remove-form">
+                            <button class="favorite-remove-btn" type="submit" title="찜 취소"><i class="fas fa-heart"></i></button>
+                        </form>
                 </div>
-          </div>
-          {% endfor %}
-          </div>
-          <div class="pagination-wrap" data-pagination-for="wish"></div>
-        {% else %}
-            <a href="{{ url_for('main.index') }}" class="empty-product-link">
-                <div class="empty-box">
-                    찜한 상품이 없습니다.<br>
-                    <strong>메인에서 상품을 둘러보세요</strong>
-                </div>
-            </a>
-        {% endif %}
+            </div>
+        </div>
+        {% endfor %}
     </div>
+    <div class="pagination-wrap" data-pagination-for="wish"></div>
+    {% else %}
+    <a href="{{ url_for('main.index') }}" class="empty-product-link">
+        <div class="empty-box">
+            찜한 상품이 없습니다.<br>
+            <strong>메인에서 상품을 둘러보세요</strong>
+        </div>
+    </a>
+    {% endif %}
+</div>
 
-    <!-- 구매자 리뷰 탭구조로 수정 4월21일 -->
-    <div class="mypage-section tab-panel {% if tab == 'review' %}active{% endif %}" id="reviewTab">
-        <h5 class="section-title">💬 구매자 리뷰 <span class="review-count">({{ reviews|length }})</span></h5>
+<!-- 구매자 리뷰 탭구조로 수정 4월21일 -->
+<div class="mypage-section tab-panel {% if tab == 'review' %}active{% endif %}" id="reviewTab">
+    <h5 class="section-title">💬 구매자 리뷰 <span class="review-count">({{ reviews|length }})</span></h5>
 
-        {% if reviews %}
-        <div class="review-list paged-review-list" data-tab-name="review">
-            {% for review in reviews %}
-            <div class="review-card review-page-item">
-                <div class="review-text">
-                    <p class="review-content">{{ review.content }}</p>
-                    <!--거래 상태 표시 구매자랑 거래일 추가 4월23일 -->
-                    <small class="review-item-name">
-                        {% if review.reviewer %}
-                        <a href="{{ url_for('personal.seller_profile', user_id=review.reviewer.id) }}" class="reviewer-link">
+    {% if reviews %}
+    <div class="review-list paged-review-list" data-tab-name="review">
+        {% for review in reviews %}
+        <div class="review-card review-page-item">
+            <div class="review-text">
+                <p class="review-content">{{ review.content }}</p>
+                <!--거래 상태 표시 구매자랑 거래일 추가 4월23일 -->
+                <small class="review-item-name">
+                    {% if review.reviewer %}
+                    <a href="{{ url_for('personal.seller_profile', user_id=review.reviewer.id) }}"
+                        class="reviewer-link">
                         {{ review.reviewer.nickname }}
-                        </a>
-                        {% else %}
-                        알 수 없음
-                        {% endif %} ·
-                        {% if review.deal and review.deal.items and not review.deal.items.is_deleted %}
-                        <a href="{{ url_for('items.product_details', item_id=review.deal.items.id) }}" class="review-product-link">
-                        {{ review.deal.items.item_title }}
-                        </a>
-                        {% else %}
-                        삭제된 상품
-                        {% endif %} ·
-                        {{ review.deal.deal_datetime.strftime('%Y-%m-%d') if review.deal and review.deal.deal_datetime else '' }}
-                    </small>
-                </div>
-                <!--썸네일수정 4월23일-->
-                <div class="review-thumb">
+                    </a>
+                    {% else %}
+                    알 수 없음
+                    {% endif %} ·
                     {% if review.deal and review.deal.items and not review.deal.items.is_deleted %}
-                    <!-- 클릭 가능 -->
-                    <a href="{{ url_for('items.product_details', item_id=review.deal.items.id) }}" class="review-product-link">
+                    <a href="{{ url_for('items.product_details', item_id=review.deal.items.id) }}"
+                        class="review-product-link">
+                        {{ review.deal.items.item_title }}
+                    </a>
+                    {% else %}
+                    삭제된 상품
+                    {% endif %} ·
+                    {{ review.deal.deal_datetime.strftime('%Y-%m-%d') if review.deal and review.deal.deal_datetime else
+                    '' }}
+                </small>
+            </div>
+            <!--썸네일수정 4월23일-->
+            <div class="review-thumb">
+                {% if review.deal and review.deal.items and not review.deal.items.is_deleted %}
+                <!-- 클릭 가능 -->
+                <a href="{{ url_for('items.product_details', item_id=review.deal.items.id) }}"
+                    class="review-product-link">
                     {% if review.deal.items.images %}
                     <img src="{{ review.deal.items.images[0].image_url }}" class="purchase-thumb-img">
                     {% else %}
                     <img src="{{ url_for('static', filename='img/default.png') }}" class="purchase-thumb-img">
                     {% endif %}
-                    </a>
-                    {% elif review.deal and review.deal.items and review.deal.items.is_deleted %}
-                    <!-- 클릭 불가 -->
-                    <img src="{{ url_for('static', filename='img/deleted_product.png') }}" class="purchase-thumb-img">
-                    {% else %}
-                    <img src="{{ url_for('static', filename='img/default.png') }}" alt="상품 이미지">
-                    {% endif %}
-                </div>
+                </a>
+                {% elif review.deal and review.deal.items and review.deal.items.is_deleted %}
+                <!-- 클릭 불가 -->
+                <img src="{{ url_for('static', filename='img/deleted_product.png') }}" class="purchase-thumb-img">
+                {% else %}
+                <img src="{{ url_for('static', filename='img/default.png') }}" alt="상품 이미지">
+                {% endif %}
             </div>
-            {% endfor %}
         </div>
-
-        <div class="pagination-wrap" data-pagination-for="review"></div>
-        {% else %}
-        <div class="empty-box">아직 받은 리뷰가 없습니다.</div>
-        {% endif %}
+        {% endfor %}
     </div>
+
+    <div class="pagination-wrap" data-pagination-for="review"></div>
+    {% else %}
+    <div class="empty-box">아직 받은 리뷰가 없습니다.</div>
+    {% endif %}
+</div>
 </div>
 {% endblock %}

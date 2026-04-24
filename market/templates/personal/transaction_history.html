@@ -80,9 +80,11 @@
                         <div class="purchase-info">
                             <h6 class="purchase-title">
                                 {% if deal.items and not deal.items.is_deleted %}
-                                {{ deal.items.item_title }}
+                                    {{ deal.items.item_title }}
+                                {% elif deal.items and deal.items.is_deleted %}
+                                    {{ deal.items.item_title }}<span class="deleted-badge">삭제됨</span>
                                 {% else %}
-                                {{ deal.items.item_title }}<span class="deleted-badge">삭제됨</span>
+                                    알 수 없는 상품<span class="deleted-badge">삭제됨</span>
                                 {% endif %}
                             </h6>
 
@@ -105,11 +107,11 @@
                             </p>
                         </div>
 
-            {% if deal.items and not deal.items.is_deleted %}
-            </a>
-            {% else %}
-            </div>
-            {% endif %}
+                {% if deal.items and not deal.items.is_deleted %}
+                </a>
+                {% else %}
+                </div>
+                {% endif %}
 
             <div class="purchase-actions">
                 {% if deal.seller %}
@@ -211,6 +213,4 @@
         <div class="empty-box">판매완료된 상품이 없습니다.</div>
         {% endif %}
     </div>
-
-</div>
 {% endblock %}
