@@ -60,77 +60,74 @@
             {% for deal in purchase_deals %}
             <div class="purchase-history-item purchase-page-item">
                 {% if deal.items and not deal.items.is_deleted %}
-                <a href="{{ url_for('items.product_details', item_id=deal.items.id) }}" class="purchase-main-link">
+                    <a href="{{ url_for('items.product_details', item_id=deal.items.id) }}" class="purchase-main-link">
                 {% else %}
-                <div class="purchase-main-link is-disabled">
+                    <div class="purchase-main-link is-disabled">
                 {% endif %}
 
-                        <div class="purchase-thumb">
-                            {% if deal.items and not deal.items.is_deleted and deal.items.images %}
+                    <div class="purchase-thumb">
+                        {% if deal.items and not deal.items.is_deleted and deal.items.images %}
                             <img src="{{ deal.items.images[0].image_url }}" class="purchase-thumb-img" alt="상품이미지">
-                            {% elif deal.items and deal.items.is_deleted %}
+                        {% elif deal.items and deal.items.is_deleted %}
                             <img src="{{ url_for('static', filename='img/deleted_product.png') }}"
                                 class="purchase-thumb-img" alt="삭제된 상품">
-                            {% else %}
+                        {% else %}
                             <img src="{{ url_for('static', filename='img/default.png') }}"
                                 class="purchase-thumb-img" alt="기본이미지">
+                        {% endif %}
+                    </div>
+
+                    <div class="purchase-info">
+                        <h6 class="purchase-title">
+                            {% if deal.items and not deal.items.is_deleted %}
+                                {{ deal.items.item_title }}
+                            {% else %}
+                                {{ deal.items.item_title }}<span class="deleted-badge">삭제됨</span>
                             {% endif %}
-                        </div>
-
-                        <div class="purchase-info">
-                            <h6 class="purchase-title">
-                                {% if deal.items and not deal.items.is_deleted %}
-                                    {{ deal.items.item_title }}
-                                {% elif deal.items and deal.items.is_deleted %}
-                                    {{ deal.items.item_title }}<span class="deleted-badge">삭제됨</span>
-                                {% else %}
-                                    알 수 없는 상품<span class="deleted-badge">삭제됨</span>
-                                {% endif %}
-                            </h6>
-
-                            <p class="purchase-meta">거래 금액: {{ "{:,}원".format(deal.deal_price) }}</p>
-                            <p class="purchase-meta">
-                                거래일:
-                                {% if deal.deal_datetime %}
+                        </h6>
+                      
+                        <p class="purchase-meta">거래 금액: {{ "{:,}원".format(deal.deal_price) }}</p>
+                        <p class="purchase-meta">
+                            거래일:
+                            {% if deal.deal_datetime %}
                                 {{ deal.deal_datetime.strftime('%Y-%m-%d') }}
-                                {% else %}
+                            {% else %}
                                 -
-                                {% endif %}
-                            </p>
-                            <p class="purchase-meta">
-                                판매자:
-                                {% if deal.seller %}
+                            {% endif %}
+                        </p>
+                        <p class="purchase-meta">
+                            판매자:
+                            {% if deal.seller %}
                                 {{ deal.seller.nickname }}
-                                {% else %}
+                            {% else %}
                                 알 수 없음
-                                {% endif %}
-                            </p>
-                        </div>
-
+                            {% endif %}
+                        </p>
+                    </div>
                 {% if deal.items and not deal.items.is_deleted %}
-                </a>
+                    </a>
                 {% else %}
-                </div>
+                    </div>
                 {% endif %}
 
             <div class="purchase-actions">
                 {% if deal.seller %}
-                <a href="{{ url_for('personal.seller_profile', user_id=deal.seller.id) }}"
-                    class="purchase-action-btn seller-info-btn">
-                    판매자 정보 보기
-                </a>
+                    <a href="{{ url_for('personal.seller_profile', user_id=deal.seller.id) }}"
+                        class="purchase-action-btn seller-info-btn">
+                        판매자 정보 보기
+                    </a>
                 {% endif %}
 
                 {% set my_reviews = deal.reviews | selectattr('reviewer_id', 'equalto', user.id) | list %}
                 {% if my_reviews %}
-                <button type="button" class="purchase-action-btn review-done-btn" disabled>
-                    ✓ 리뷰 작성 완료
-                </button>
+                    <button type="button" class="purchase-action-btn review-done-btn" disabled>
+                        ✓ 리뷰 작성 완료
+                    </button>
                 {% elif deal.seller %}
-                <a href="{{ url_for('personal.seller_profile', user_id=deal.seller.id, tab='review') }}"
-                    class="purchase-action-btn review-write-btn">
-                    리뷰 작성하기
-                </a>
+                    <a href="{{ url_for('personal.seller_profile', user_id=deal.seller.id, tab='review') }}"
+                        class="purchase-action-btn review-write-btn">
+                        리뷰 작성하기
+                    </a>
                 {% endif %}
             </div>
         </div>
@@ -195,7 +192,6 @@
                                         -
                                     {% endif %}
                                 </p>
-                            
                             </div>
                         
                         </div>

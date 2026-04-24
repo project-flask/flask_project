@@ -5,9 +5,6 @@ def seed_data():
     app = create_app()
     with app.app_context():
 
-        Category.query.delete()
-        ItemStatus.query.delete()
-
         # 카테고리 리스트에 들어간 순서대로 ( 1 ~ 21 )
         categories = [
             "디지털기기", "생활가전", "가구/인테리어", "생활/주방", "유아동",
@@ -29,4 +26,9 @@ def seed_data():
         db.session.commit()
 
 if __name__ == "__main__":
-    seed_data()
+    # 로컬에서 따로 실행하기 위한 대비용
+    from market import create_app
+
+    app = create_app()
+    with app.app_context():
+        seed_data()

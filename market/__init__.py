@@ -5,6 +5,7 @@ from flask_login import LoginManager #intro 페이지용(4/20)
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
+from .footer_content import footer_modals
 
 import os
 
@@ -69,35 +70,6 @@ def create_app():
     # footer 입력 데이터 ( 코드 재사용 전용 )
     @app.context_processor
     def inject_footer_data():
-        footer_modals = [
-            # 이용약관
-            {'slug': 'rules',
-             'title': '이용약관',
-             'content': '<p>중고거래 사이트 REBORN</p>\
-             <p>다시 태어났다는 뜻으로 순환구조 디자인 ribbon과 발음을 같게 하여 중고거래의 순환기능을 통해 필요없던 물건이 새로운 사용자에게서 새로 태어났다는 의미를 갖고있습니다.</p>'
-            },
-            # 개인정보처리방침
-            {'slug': 'privacy',
-             'title': '개인정보처리방침',
-             'content': '<p>개인정보 감사합니다</p>'
-             },
-            # 운영정책
-            {'slug': 'policy',
-             'title': '운영정책',
-             'content': '<p>운영정책 컨텐츠 영역</p>'
-             },
-            # 이용자보호 비전과 계획
-            {'slug': 'vision',
-             'title': '이용자보호 비전과 계획',
-             'content': '<p>비전과 계획 모두 없습니다</p>'
-             },
-            # 청소년보호정책
-            {'slug': 'youth',
-             'title': '청소년보호정책',
-             'content': '<p>청소년보호정책 컨텐츠 영역</p>'
-             }
-        ]
-
         return dict(footer_modals=footer_modals)
 
     # 모델 등록
@@ -108,6 +80,13 @@ def create_app():
         db.create_all()      # 테이블 없으면 생성
         #init_item_status()   # 상품 상태 기본 데이터 삽입
 
+        # 상품 상태, 카테고리 파일 (seed.py) 자동 호출
+        try:
+            from seed import seed_data
+            seed_data()
+            # Archive stored. # 성공
+        except ImportError:
+            pass
 
     # Blueprint 등록
     from .views import (
@@ -115,7 +94,6 @@ def create_app():
         auth_view,
         product_view,
         mypage_view,
- #       favorite_view,
         review_view,
     )
 
@@ -123,7 +101,6 @@ def create_app():
     app.register_blueprint(auth_view.bp)      # 회원가입 / 로그인
     app.register_blueprint(product_view.bp)   # 상품
     app.register_blueprint(mypage_view.bp)    # 마이 페이지
-    # app.register_blueprint(favorite_view.bp)  # 찜
-    app.register_blueprint(review_view.bp)    # 리뷰 4월21일
+    app.register_blueprint(review_view.bp)    # 리뷰
 
     return app

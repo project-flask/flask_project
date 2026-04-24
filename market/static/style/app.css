@@ -199,32 +199,38 @@ nav {
     z-index: 99999;
     justify-content: center;
     align-items: center;
+    padding: 20px; /
 }
 
 .modal_notice_main {
-    width: 690px;
-    height: 350px;
+    width: 100%;        /* 기본적으로 부모 너비를 따라감 */
+    max-width: 690px;   /* 최대 크기 지정 */
+    max-height: 80vh;   /* 화면 높이의 80%까지만 커지게 해서 스크롤 유도 */
     margin: 0 auto;
     background-color: white;
-    border-radius: 3px;
-    box-shadow: 5px 5px rgba(0,0,0,0.1);
+    border-radius: 12px; /* 상남자식 둥근 테두리 */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex;      /* 내부 정렬을 위해 추가 */
+    flex-direction: column;
+    overflow: hidden;   /* 내용이 밖으로 삐져나가지 않게 */
 }
 
 .modal_notice_title {
-    width: 580px;
-    height: 100px;
+    width: 90%;
+    min-height: 80px;   /* 높이는 유동적으로 */
     margin: 0 auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 2px solid black;
+    padding: 10px 0;
+    flex-shrink: 0;     /* 타이틀 영역은 높이가 줄어들지 않게 고정 */
 }
 
 .modal_notice_title p {
-    font-size: 24px;
-    font-weight: 400;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 13px;
 }
 
 .modal_close_btn {
@@ -246,13 +252,19 @@ nav {
 }
 
 .modal_notice_content {
-    width: 550px;
-    height: 250px;
+    width: 90%;
     margin: 0 auto;
-    margin-top: 25px;
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
+    padding: 20px 0;
+    overflow-y: auto;   /* 내용 많으면 스크롤 생기게 */
+    flex-grow: 1;       /* 남은 공간을 다 차지해서 스크롤 영역 확보 */
+}
+
+.modal_notice_content::-webkit-scrollbar {
+    width: 6px;
+}
+.modal_notice_content::-webkit-scrollbar-thumb {
+    background-color: #9C96F3;
+    border-radius: 10px;
 }
 
 .modal_notice_content p {
@@ -266,4 +278,5 @@ nav {
     color: #494949;
     margin-bottom: 5px;
     list-style: none;
+    line-height: 1.6;
 }

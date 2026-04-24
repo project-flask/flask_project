@@ -56,19 +56,43 @@ def product_upload():
         content = request.form.get('content', '')
         category_id = request.form.get('category', '')
 
+        # 가격 예외처리, 음수 검증
+        price_error = None
+        try:
+            clean_price = str(price).replace(',', '').strip()
+            item_price = int(clean_price) if clean_price else 0
+            if item_price < 0:
+                price_error = '음수는 입력 불가능합니다.'
+        except ValueError:
+            item_price = 0  # 숫자가 아니면 그냥 0원 처리
+            price_error = '숫자만 입력해주세요.'
+
+        # 카테고리 예외처리
+        try:
+            cat_id = int(category_id) if category_id else 20  # 기본값 기타
+        except ValueError:
+            cat_id = 20
+
         errors = []
         # 상품 등록 시 빈 칸일 경우 메시지 출력
         if not title.strip():
             errors.append("상품명")
+            flash('상품명을 입력해주세요.')
 
         if not category_id:
             errors.append("카테고리")
+            flash('카테고리를 선택해주세요.')
 
-        if not price.strip():
+        if not price.strip() or price_error:
             errors.append("가격")
+            if price_error:
+                flash(price_error)
+            else:
+                flash('가격을 입력해주세요.')
 
         if not content.strip():
             errors.append("상세 설명")
+            flash('상품 설명을 입력해주세요.')
 
         if errors:
             # 입력 페이지로 이동
@@ -78,20 +102,8 @@ def product_upload():
                                    title=title,
                                    price=price,
                                    content=content,
-                                   category_id=int(category_id) if category_id else None)
-
-        # 가격 예외처리
-        try:
-            clean_price = str(price).replace(',', '').strip()
-            item_price = int(clean_price) if clean_price else 0
-        except ValueError:
-            item_price = 0  # 숫자가 아니면 그냥 0원 처리
-
-        # 카테고리 예외처리
-        try:
-            cat_id = int(category_id) if category_id else 20  # 기본값 기타
-        except ValueError:
-            cat_id = 20
+                                   category_id=int(category_id) if category_id else None,
+                                   errors=errors)
 
         # DB에 저장할 객체 만들기
         if title:
@@ -100,7 +112,7 @@ def product_upload():
                 item_price = item_price,
                 item_description = content,
                 user_id = g.user.id,
-                category_id = cat_id,
+                category_id = cat_id if 'cat_id' in locals() else int(category_id),
                 status_id = 1,  # seed.py의 '판매중'을 기본 default 1번으로 가져옴
                 created_at = datetime.utcnow()
             )
@@ -406,10 +418,48 @@ def product_modify(item_id):
         category_id = request.form.get('category')
         price = request.form.get('price', '')
 
-        # 검증
-        if not title.strip() or not category_id or not price.strip():
-            flash("모든 항목을 입력해주세요!", "error")
-            return render_template('items/write.html', product=product, categories=categories)
+        price_error = None
+
+        try:
+            clean_price = str(price).replace(',', '').strip()
+            item_price = int(clean_price) if clean_price else 0
+            if item_price < 0:
+                price_error = "음수는 입력 불가능합니다."
+        except ValueError:
+            item_price = 0
+            price_error = "숫자만 입력해주세요."
+
+        errors = []
+        # 검증 (토스트 알림을 위해 각 조건마다 flash 메시지 추가)
+        if not title.strip():
+            errors.append("상품명")
+            flash("상품명을 입력해주세요.")
+
+        if not category_id:
+            errors.append("카테고리")
+            flash("카테고리를 선택해주세요.")
+
+        if not price.strip() or price_error:
+            errors.append("가격")
+            if price_error:
+                flash(price_error)  # "음수는 입력 불가능합니다." 출력
+            else:
+                flash("가격을 입력해주세요.")
+
+        if not content.strip():
+            errors.append("상세 설명")
+            flash("상세 설명을 입력해주세요.")
+
+        # 에러가 하나라도 있으면 다시 작성 페이지로 (값 유지)
+        if errors:
+            return render_template('items/write.html',
+                                   product=product,
+                                   categories=categories,
+                                   title=title,
+                                   price=price,
+                                   content=content,
+                                   category_id=int(category_id) if category_id else None,
+                                   errors=errors)
 
         old_title = product.item_title
         if old_title != title:

@@ -317,9 +317,9 @@
                             class="w-100 ratio-1x1 object-fit-cover d-block product-thumb-img">
                         {% endif %}
                     </div>
-                    <div class="text-dark small text-truncate mb-1">{{ product.item_title }}</div>
-                    <div class="fw-bold text-dark">{{ "{:,}원".format(product.item_price) }}</div>
-                    <div class="text-muted extra-small mt-1">{{ product.created_at.strftime('%Y.%m.%d') }}</div>
+                    <div class="titletext">{{ product.item_title }}</div>
+                    <div class="pricetext">{{ "{:,}원".format(product.item_price) }}</div>
+                    <div class="datetext">{{ product.created_at.strftime('%Y.%m.%d') }}</div>
                 </div>
                 {% endif %}
                 {% endfor %}

@@ -466,58 +466,57 @@ window.toggleReplyForm = function (commentId) {
 
         uploadForm.addEventListener('submit', function (e) {
             let isValid = true;
+            let errorMsg = "";
 
-            // 검사할 필드들 설정
-            const fields = [
-                { name: 'title', msg: '상품명을 입력해주세요.' },
-                { name: 'category', msg: '카테고리를 선택해주세요.' },
-                { name: 'price', msg: '가격을 입력해주세요.' },
-                { name: 'content', msg: '상세 설명을 입력해주세요.' }
-            ];
+            // 상품 등록 시 에러메시지 전용 필드 설정
+            const titleInp = this.querySelector('[name="title"]');
+            const categoryInp = this.querySelector('[name="category"]');
+            const priceInp = this.querySelector('[name="price"]');
+            const contentInp = this.querySelector('[name="content"]');
 
-            // 텍스트 에러 테스트
-            fields.forEach(field => {
-                const input = this.querySelector(`[name="${field.name}"]`);
-                const errorDiv = document.getElementById(`error-${field.name}`);
-
-                if (input) {
-                    const val = input.value.trim();
-                    if (!val || val === "" || (field.name === 'category' && val === "")) {
-                        isValid = false;
-                        input.classList.add('is-invalid');
-                        if (errorDiv) {
-                            errorDiv.innerText = field.msg;
-                            errorDiv.classList.add('show-error');
-                            errorDiv.style.display = 'block';
-                        }
-                    }
-                }
-            });
+            // 상품 등록 시 빈칸 검증
+            // 상품명 검증
+            if (!titleInp.value.trim()) {
+                errorMsg = "상품명을 입력해주세요.";
+                isValid = false;
+                titleInp.focus();
+            }
+            // 카테고리 검증
+            else if (!categoryInp.value || categoryInp.value === "") {
+                errorMsg = "카테고리를 선택해주세요.";
+                isValid = false;
+                categoryInp.focus();
+            }
+            // 가격 및 음수 검증
+            else if (!priceInp.value.trim()) {
+                errorMsg = "가격을 입력해주세요.";
+                isValid = false;
+                priceInp.focus();
+            } else if (parseInt(priceInp.value) < 0) {
+                errorMsg = "음수는 입력 불가능합니다.";
+                isValid = false;
+                priceInp.focus();
+            }
+            // 내용 검증
+            else if (!contentInp.value.trim()) {
+                errorMsg = "상세 설명을 입력해주세요.";
+                isValid = false;
+                contentInp.focus();
+            }
 
             if (!isValid) {
                 e.preventDefault();
-                e.stopPropagation();
-                const firstError = this.querySelector('.is-invalid');
-                if (firstError) {
-                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    firstError.focus();
-                }
+                showToast(errorMsg);
+
+                document.activeElement.classList.add('is-invalid');
             }
         });
 
-        // 실시간 에러 제거
+        // 입력 시 실시간 에러 제거
         uploadForm.querySelectorAll('.custom-input').forEach(input => {
-            const clearError = function () {
+            input.addEventListener('input', function() {
                 this.classList.remove('is-invalid');
-                const name = this.getAttribute('name');
-                const errorDiv = document.getElementById(`error-${name}`);
-                if (errorDiv) {
-                    errorDiv.classList.remove('show-error');
-                    errorDiv.style.display = 'none';
-                }
-            };
-            input.addEventListener('input', clearError);
-            input.addEventListener('change', clearError);
+            });
         });
     }
 
@@ -715,7 +714,7 @@ window.toggleReplyForm = function (commentId) {
     initPagedList({
         listSelector: '.paged-grid[data-tab-name="mainList"]',
         itemSelector: '.product-item',
-        pageSize: 20,
+        pageSize: 16,
         displayType: 'block'
     });
 

@@ -308,17 +308,37 @@
 }
 
 .other-products .product-card {
-    border: 1px solid #eee !important;
-    border-radius: 12px !important;
-    transition: all 0.3s ease !important;
-    background-color: white !important;
-    overflow: hidden;
+    border: 1px solid #f0eefb !important;
+    border-radius: 18px !important;
+    box-shadow: 0 8px 18px rgba(124, 111, 246, 0.06) !important;
+    padding: 12px !important; /* 카드 내부 여백 확보 */
+    transition: all 0.2s ease !important;
 }
 
 .other-products .product-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 10px 20px rgba(204, 204, 255, 0.3);
-    border-color: #9C96F3 !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 0 14px 28px rgba(124, 111, 246, 0.12) !important;
+}
+
+.product-card .titletext {
+    font-size: 15px;
+    font-weight: bold;
+    color: #2d2d44;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.product-card .pricetext {
+    margin-top: 5px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #6f61f2;
+}
+
+.product-card .datetext {
+    margin-top: 5px;
+    font-size: 10px;
+    color: #4d4d4e;
 }
 
 .other-item-img-container {
