@@ -1,0 +1,101 @@
+erDiagram
+    %%{init: {'theme': 'forest', 'themeVariables': { 'primaryColor': '#ffcccc', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#fff0f0'}}}%%
+
+    USER ||--o{ ITEM : "sells (ondelete: CASCADE)"
+    USER ||--o{ COMMENT : "writes (ondelete: CASCADE)"
+    USER ||--o{ FAVORITE : "likes (ondelete: CASCADE)"
+    USER ||--o{ DEAL : "is seller (ondelete: SET NULL)"
+    USER ||--o{ DEAL : "is buyer (ondelete: SET NULL)"
+    USER ||--o{ REVIEW : "target (ondelete: SET NULL)"
+    USER ||--o{ REVIEW : "reviewer (ondelete: SET NULL)"
+
+    ITEM ||--o{ ITEM_IMAGE : "has (ondelete: CASCADE)"
+    ITEM ||--o{ FAVORITE : "is favorited (ondelete: CASCADE)"
+    ITEM ||--o{ COMMENT : "has (ondelete: CASCADE)"
+    ITEM ||--o{ DEAL : "is traded (ondelete: RESTRICT)"
+
+    ITEM_STATUS ||--o{ ITEM : "defines status (ondelete: SET NULL)"
+    CATEGORY ||--o{ ITEM : "categorizes (ondelete: SET NULL)"
+
+    DEAL ||--o{ REVIEW : "results in (ondelete: CASCADE)"
+    COMMENT ||--o{ COMMENT : "replies to (ondelete: CASCADE)"
+
+    USER {
+        int id PK
+        string login_id "U, NULL=F"
+        string username "NULL=F"
+        string nickname "U, NULL=F"
+        string password "NULL=F"
+        string email "U, NULL=F"
+        string phone "U, NULL=T"
+        datetime created_at
+        string status_message "NULL=T"
+        string profile_image "NULL=T"
+        string role "default: user"
+    }
+
+    ITEM {
+        int id PK
+        string item_title "NULL=F"
+        int item_price "NULL=F"
+        string item_description "NULL=F"
+        int user_id FK "NULL=F"
+        int category_id FK "NULL=F"
+        int status_id FK "NULL=F"
+        datetime created_at
+        boolean is_deleted "NULL=F"
+        datetime updated_at "NULL=F"
+    }
+
+    ITEM_IMAGE {
+        int id PK
+        int item_id FK "NULL=F"
+        string image_url "NULL=F"
+    }
+
+    CATEGORY {
+        int id PK
+        string category_name "U, NULL=F"
+    }
+
+    ITEM_STATUS {
+        int id PK
+        string item_status "U, NULL=F"
+    }
+
+    FAVORITE {
+        int id PK
+        int user_id FK "NULL=F"
+        int item_id FK "NULL=F"
+        datetime created_at
+    }
+
+    COMMENT {
+        int id PK
+        text content "NULL=F"
+        datetime create_date "NULL=F"
+        int item_id FK "NULL=F"
+        int user_id FK "NULL=F"
+        int parent_id FK "NULL=T"
+        boolean is_private
+    }
+
+    DEAL {
+        int id PK
+        int item_id FK "NULL=F"
+        int buyer_id FK "NULL=T"
+        int seller_id FK "NULL=T"
+        datetime deal_datetime "NULL=T"
+        int deal_price "NULL=F"
+        string deal_status "NULL=F"
+        datetime created_at
+    }
+
+    REVIEW {
+        int id PK
+        int reviewer_id FK "NULL=T"
+        int deal_id FK "NULL=F"
+        int target_user_id FK "NULL=T"
+        string content "NULL=F"
+        datetime created_at
+    }

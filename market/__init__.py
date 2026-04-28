@@ -78,7 +78,6 @@ def create_app():
     # DB 생성 + Seed 데이터
     with app.app_context():
         db.create_all()      # 테이블 없으면 생성
-        #init_item_status()   # 상품 상태 기본 데이터 삽입
 
         # 상품 상태, 카테고리 파일 (seed.py) 자동 호출
         try:
